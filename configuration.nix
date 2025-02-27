@@ -14,6 +14,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  boot.initrd.luks.devices."luks-c495ce95-125f-4d64-aa6f-be17f9eb76bc".device = "/dev/disk/by-uuid/c495ce95-125f-4d64-aa6f-be17f9eb76bc";
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -43,15 +44,15 @@
   };
 
   # Configure keymap in X11
-  services.xserver = {
+  services.xserver.xkb = {
     layout = "us";
-    xkbVariant = "";
+    variant = "";
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.alan = {
     isNormalUser = true;
-    description = "alan";
+    description = "Alan Sartorio";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [];
   };
@@ -62,13 +63,11 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-    nerdfonts
+    # nerdfonts
     git
     neovim
     chezmoi
-    eww-wayland
+    eww
     age
     alacritty
     pavucontrol
@@ -81,10 +80,15 @@
     pulseaudio
   ];
 
-  environment.sessionVariables = {
-    WLR_RENDERER_ALLOW_SOFTWARE = "1";
-  };
+  # Some programs need SUID wrappers, can be configured further or are
+  # started in user sessions.
+  # programs.mtr.enable = true;
+  # programs.gnupg.agent = {
+  #   enable = true;
+  #   enableSSHSupport = true;
+  # };
 
+  # List services that you want to enable:
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -94,7 +98,6 @@
     enable = true;
     settings = rec {
       initial_session = {
-        # command = "WLR_NO_HARDWARE_CURSORS=1 WLR_RENDERER_ALLOW_SOFTWARE=1 ${pkgs.hyprland}/bin/Hyprland";
         command = "${pkgs.hyprland}/bin/Hyprland";
 	user = "alan";
       };
@@ -102,11 +105,7 @@
     };
   };
 
-  hardware.opengl = {
-    enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
-  };
+  hardware.graphics.enable = true;
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -117,7 +116,7 @@
     pulse.enable = true;
     jack.enable = true;
   };
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
 
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
@@ -138,5 +137,21 @@
     };
   };
 
-  system.stateVersion = "23.11";
+  # Enable the OpenSSH daemon.
+  # services.openssh.enable = true;
+
+  # Open ports in the firewall.
+  # networking.firewall.allowedTCPPorts = [ ... ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+  # Or disable the firewall altogether.
+  # networking.firewall.enable = false;
+
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
+  # Before changing this value read the documentation for this option
+  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  system.stateVersion = "24.11"; # Did you read the comment?
+
 }
