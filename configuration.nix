@@ -53,7 +53,7 @@
   users.users.alan = {
     isNormalUser = true;
     description = "Alan Sartorio";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
     packages = with pkgs; [];
   };
 
@@ -69,26 +69,42 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    # Utils
+    openssl
+    age
     jq
     socat
     alsa-utils
+    brightnessctl
+
+    # Theming
     rose-pine-hyprcursor
     wl-clipboard
     git
     neovim
-    #luajit
+
+    # LSPs
     lua-language-server
+    jdt-language-server
+
+    # Developer tools
+    rustup # install rustanalyzer after
+
+    # Environment
     chezmoi
-    eww
-    age
+    swaybg
+    dunst
     alacritty
+    eww
+    kdePackages.dolphin
+    firefox
     pavucontrol
     rofi-wayland
+
+    gcc
+    ntfs3g
     gnumake
     polkit_gnome
-    swaybg
-    firefox
-    dunst
     pulseaudio
   ];
 
@@ -117,7 +133,9 @@
     };
   };
 
+  services.locate.locate = pkgs.mlocate;
   hardware.graphics.enable = true;
+  virtualisation.docker.enable = true;
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -132,6 +150,10 @@
 
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
+  services.zerotierone = {
+    enable = true;
+  };
+  networking.wireguard.enable = true;
 
   systemd = {
     user.services.polkit-gnome-authentication-agent-1 = {
