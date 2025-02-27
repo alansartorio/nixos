@@ -86,9 +86,12 @@
     # LSPs
     lua-language-server
     jdt-language-server
+    typescript-language-server
+    nixd
 
     # Developer tools
     rustup # install rustanalyzer after
+    nixfmt-rfc-style
 
     # Environment
     chezmoi
@@ -106,6 +109,10 @@
     gnumake
     polkit_gnome
     pulseaudio
+    networkmanagerapplet
+    htop
+    btop
+    ripgrep
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -134,6 +141,7 @@
   };
 
   services.locate.locate = pkgs.mlocate;
+  services.udisks2.enable = true;
   hardware.graphics.enable = true;
   virtualisation.docker.enable = true;
 
@@ -155,6 +163,7 @@
   };
   networking.wireguard.enable = true;
 
+  security.polkit.enable = true;
   systemd = {
     user.services.polkit-gnome-authentication-agent-1 = {
       description = "polkit-gnome-authentication-agent-1";
