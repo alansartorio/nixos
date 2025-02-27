@@ -5,16 +5,17 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.luks.devices."luks-c495ce95-125f-4d64-aa6f-be17f9eb76bc".device = "/dev/disk/by-uuid/c495ce95-125f-4d64-aa6f-be17f9eb76bc";
+  boot.initrd.luks.devices."luks-c495ce95-125f-4d64-aa6f-be17f9eb76bc".device =
+    "/dev/disk/by-uuid/c495ce95-125f-4d64-aa6f-be17f9eb76bc";
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -53,8 +54,12 @@
   users.users.alan = {
     isNormalUser = true;
     description = "Alan Sartorio";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
-    packages = with pkgs; [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "docker"
+    ];
+    packages = with pkgs; [ ];
   };
 
   # Allow unfree packages
@@ -134,7 +139,7 @@
     settings = rec {
       initial_session = {
         command = "${pkgs.hyprland}/bin/Hyprland";
-	user = "alan";
+        user = "alan";
       };
       default_session = initial_session;
     };
@@ -172,10 +177,10 @@
       after = [ "graphical-session.target" ];
       serviceConfig = {
         Type = "simple";
-	ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-	Restart = "on-failure";
-	RestartSec = 1;
-	TimeoutStopSec = 10;
+        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+        Restart = "on-failure";
+        RestartSec = 1;
+        TimeoutStopSec = 10;
       };
     };
   };
