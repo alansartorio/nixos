@@ -60,12 +60,24 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  fonts.packages = with pkgs; [
+    #nerd-fonts.symbols-only
+    material-design-icons
+    nerd-fonts.roboto-mono
+  ];
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    # nerdfonts
+    jq
+    socat
+    alsa-utils
+    rose-pine-hyprcursor
+    wl-clipboard
     git
     neovim
+    #luajit
+    lua-language-server
     chezmoi
     eww
     age
