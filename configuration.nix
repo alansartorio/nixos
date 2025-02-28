@@ -70,6 +70,7 @@
     material-design-icons
     nerd-fonts.roboto-mono
   ];
+  fonts.fontconfig.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -105,11 +106,14 @@
     alacritty
     eww
     kdePackages.dolphin
-    firefox
+    #firefox
     pavucontrol
     rofi-wayland
+    thunderbird
 
     gcc
+    cmake
+    pkg-config
     ntfs3g
     gnumake
     polkit_gnome
@@ -118,7 +122,28 @@
     htop
     btop
     ripgrep
+    ncdu
+    mlocate
+    firefoxpwa
+    xorg.libxcb
+    wayland
+    #kdePackages.kservice
+    libsForQt5.kservice
+    dive
+    #podman-tui
+    docker-compose
+    #podman-compose
+
+    python3
+
+    qt6.qtwayland
   ];
+
+  programs.firefox = {
+    enable = true;
+    package = pkgs.firefox;
+    nativeMessagingHosts.packages = [ pkgs.firefoxpwa ];
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -145,7 +170,7 @@
     };
   };
 
-  services.locate.locate = pkgs.mlocate;
+  services.locate.package = pkgs.mlocate;
   services.udisks2.enable = true;
   hardware.graphics.enable = true;
   virtualisation.docker.enable = true;
