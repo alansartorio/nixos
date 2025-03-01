@@ -92,6 +92,7 @@
     # LSPs
     lua-language-server
     jdt-language-server
+    roslyn-ls
     typescript-language-server
     nixd
 
@@ -133,6 +134,7 @@
     #podman-tui
     docker-compose
     #podman-compose
+    erdtree
 
     python3
 
