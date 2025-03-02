@@ -107,6 +107,7 @@
     alacritty
     eww
     kdePackages.dolphin
+    kdePackages.ark
     #firefox
     pavucontrol
     rofi-wayland
