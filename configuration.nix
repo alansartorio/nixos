@@ -85,6 +85,8 @@
     socat
     alsa-utils
     brightnessctl
+    zip
+    dig
 
     # Theming
     rose-pine-hyprcursor
@@ -98,10 +100,14 @@
     roslyn-ls
     typescript-language-server
     nixd
+    terraform-ls
+    terraform
 
     # Developer tools
     rustup # install rustanalyzer after
     nixfmt-rfc-style
+    luajit
+    luarocks
 
     # Environment
     chezmoi
@@ -115,6 +121,7 @@
     pavucontrol
     rofi-wayland
     thunderbird
+    kdePackages.kdenlive
 
     gcc
     cmake
@@ -130,6 +137,7 @@
     ncdu
     mlocate
     firefoxpwa
+    chromium
     xorg.libxcb
     wayland
     #kdePackages.kservice
@@ -139,11 +147,27 @@
     docker-compose
     #podman-compose
     erdtree
+    gnuplot
 
+    vmpk
+    fluidsynth
+    soundfont-fluid
     python3
+    love
 
     qt6.qtwayland
+    mpv
+    oculante
+    nodejs_23
+
+    gimp
+    inkscape
+
+    vulkan-tools
+    nmap
   ];
+
+  services.flatpak.enable = true;
 
   programs.firefox = {
     enable = true;
@@ -178,7 +202,13 @@
 
   services.locate.package = pkgs.mlocate;
   services.udisks2.enable = true;
-  hardware.graphics.enable = true;
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      vaapiIntel
+      intel-media-driver
+    ];
+  };
   virtualisation.docker.enable = true;
 
   security.rtkit.enable = true;
