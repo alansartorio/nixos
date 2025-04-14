@@ -189,6 +189,8 @@
     xwayland.enable = true;
   };
 
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+
   services.greetd = {
     enable = true;
     settings = rec {
