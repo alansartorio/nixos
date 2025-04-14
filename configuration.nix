@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ inputs, system, config, pkgs, ... }:
 
 {
   nix.settings.experimental-features = [
@@ -163,6 +163,8 @@
 
     vulkan-tools
     nmap
+
+    inputs.clockin.packages.${system}.default
   ];
 
   services.flatpak.enable = true;
@@ -223,7 +225,14 @@
   services.pulseaudio.enable = false;
 
   users.defaultUserShell = pkgs.zsh;
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    shellAliases = {
+      clockin-sync = ''
+        clockin exec '( git add . && git commit -m "sync" ) || git pull --rebase && git push'
+      '';
+    };
+  };
   services.zerotierone = {
     enable = true;
   };

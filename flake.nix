@@ -1,9 +1,15 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    clockin.url = "github:alansartorio/clockin";
+    clockin.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs =
-    { self, nixpkgs }@inputs:
+    {
+      self,
+      nixpkgs,
+      clockin,
+    }@inputs:
     {
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem rec {
         pkgs = import nixpkgs {
@@ -13,7 +19,7 @@
           };
         };
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs system; };
         modules = [
           ./configuration.nix
           # This fixes nixpkgs (for e.g. "nix shell") to match the system nixpkgs
