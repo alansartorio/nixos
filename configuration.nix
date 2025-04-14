@@ -66,9 +66,6 @@
     packages = with pkgs; [ ];
   };
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
   fonts.packages = with pkgs; [
     #nerd-fonts.symbols-only
     material-design-icons
