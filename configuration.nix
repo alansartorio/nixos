@@ -2,7 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ inputs, system, config, pkgs, ... }:
+{
+  inputs,
+  system,
+  config,
+  pkgs,
+  ...
+}:
 
 {
   nix.settings.experimental-features = [
@@ -12,14 +18,12 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ./notebook.nix
   ];
-
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.luks.devices."luks-97440c40-cde6-47b0-97ba-bb3ac82b6e3c".device =
-    "/dev/disk/by-uuid/97440c40-cde6-47b0-97ba-bb3ac82b6e3c";
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -31,7 +35,9 @@
   networking.networkmanager.enable = true;
 
   # Set your time zone.
-  time.timeZone = "America/Argentina/Buenos_Aires";
+  #time.timeZone = "America/Argentina/Buenos_Aires";
+  #time.timeZone = "US/Pacific";
+  time.timeZone = "US/Mountain";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -209,10 +215,12 @@
   services.udisks2.enable = true;
   hardware.graphics = {
     enable = true;
-    extraPackages = with pkgs; [
-      vaapiIntel
-      intel-media-driver
-    ];
+    extraPackages =
+      with pkgs;
+      lib.optionals config.alan.intel [
+        vaapiIntel
+        intel-media-driver
+      ];
   };
   virtualisation.docker.enable = true;
 

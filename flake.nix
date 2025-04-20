@@ -6,9 +6,8 @@
   };
   outputs =
     {
-      self,
       nixpkgs,
-      clockin,
+      ...
     }@inputs:
     {
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem rec {
@@ -24,16 +23,17 @@
           ./configuration.nix
           # This fixes nixpkgs (for e.g. "nix shell") to match the system nixpkgs
           (
-            {
-              config,
-              pkgs,
-              options,
-              ...
-            }:
+            { ... }:
             {
               nix.registry.nixpkgs.flake = nixpkgs;
             }
           )
+
+          {
+            imports = [
+              ./options.nix
+            ];
+          }
         ];
       };
     };
