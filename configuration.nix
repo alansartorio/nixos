@@ -53,6 +53,7 @@
     layout = "us";
     variant = "";
   };
+  services.gvfs.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.alan = {
@@ -114,6 +115,7 @@
     alacritty
     eww
     kdePackages.dolphin
+    kdePackages.kdeconnect-kde
     kdePackages.ark
     #firefox
     pavucontrol
@@ -163,6 +165,7 @@
 
     vulkan-tools
     nmap
+    ffmpeg
 
     inputs.clockin.packages.${system}.default
   ];
@@ -223,6 +226,7 @@
     jack.enable = true;
   };
   services.pulseaudio.enable = false;
+  services.upower.enable = true;
 
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
