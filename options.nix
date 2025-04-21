@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   ...
 }:
@@ -14,12 +15,16 @@ in
   options = {
     alan = {
       intel = mkBoolOption;
+      email = mkStrOption;
     };
   };
 
-  config = {
-    alan = {
-      intel = true;
-    };
-  };
+  config.alan = fromTOML (
+    fileContents (
+      builtins.path {
+        path = ./config.toml;
+        name = "config";
+      }
+    )
+  );
 }

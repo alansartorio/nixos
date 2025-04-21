@@ -3,10 +3,13 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     clockin.url = "github:alansartorio/clockin";
     clockin.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs =
     {
       nixpkgs,
+      home-manager,
       ...
     }@inputs:
     {
@@ -33,6 +36,12 @@
             imports = [
               ./options.nix
             ];
+          }
+
+          home-manager.nixosModules.home-manager {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.alan = ./home.nix;
           }
         ];
       };
