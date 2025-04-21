@@ -92,6 +92,9 @@
     brightnessctl
     zip
     dig
+    bind
+    iproute2
+    curl
 
     # Theming
     rose-pine-hyprcursor
