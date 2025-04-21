@@ -6,6 +6,12 @@
   ...
 }:
 {
+  home.packages = with pkgs; [
+    chezmoi
+    less
+    age
+  ];
+
   home.stateVersion = "24.11";
   home.username = "alan";
   home.homeDirectory = "/home/alan";
@@ -18,14 +24,6 @@
     extraConfig = {
       init.defaultBranch = "main";
       core.excludesFile = "~/.gitignore";
-    };
-  };
-
-  home.file = {
-    ".gitignore" = {
-      text = ''
-        .clockin
-      '';
     };
   };
 }
