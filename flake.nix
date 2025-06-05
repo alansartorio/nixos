@@ -47,7 +47,7 @@
               (
                 { ... }:
                 import ./home.nix {
-                  inherit system-config pkgs;
+                  inherit pkgs system-config;
                   lib = nixpkgs.lib;
                 }
               )

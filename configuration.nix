@@ -18,7 +18,6 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ./notebook.nix
   ];
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
