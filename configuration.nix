@@ -17,7 +17,7 @@
   ];
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configuration.nix
+    system-config.hardware
   ];
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -219,7 +219,7 @@
     enable = true;
     extraPackages =
       with pkgs;
-      lib.optionals system-config.alan.intel [
+      lib.optionals system-config.options.intel [
         vaapiIntel
         intel-media-driver
       ];

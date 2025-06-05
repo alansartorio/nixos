@@ -19,7 +19,7 @@
   programs.git = {
     enable = true;
     userName = "Alan Sartorio";
-    userEmail = system-config.alan.email;
+    userEmail = system-config.options.email;
     extraConfig = {
       init.defaultBranch = "main";
       core.excludesFile = "~/.gitignore";
