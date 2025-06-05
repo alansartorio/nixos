@@ -5,11 +5,16 @@
     clockin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    system-config = {
+      type = "path";
+      path = "/home/alan/nixos/config";
+    };
   };
   outputs =
     {
       nixpkgs,
       home-manager,
+      system-config,
       ...
     }@inputs:
     {
@@ -21,7 +26,9 @@
           };
         };
         system = "x86_64-linux";
-        specialArgs = { inherit inputs system; };
+        specialArgs = {
+          inherit inputs system system-config;
+        };
         modules = [
           ./configuration.nix
           # This fixes nixpkgs (for e.g. "nix shell") to match the system nixpkgs
@@ -32,16 +39,19 @@
             }
           )
 
+          home-manager.nixosModules.home-manager
           {
-            imports = [
-              ./options.nix
-            ];
-          }
-
-          home-manager.nixosModules.home-manager {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.alan = ./home.nix;
+            home-manager.users.alan.imports = [
+              (
+                { ... }:
+                import ./home.nix {
+                  inherit system-config pkgs;
+                  lib = nixpkgs.lib;
+                }
+              )
+            ];
           }
         ];
       };

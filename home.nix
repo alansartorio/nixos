@@ -1,6 +1,5 @@
 {
-  config,
-  osConfig,
+  system-config,
   pkgs,
   lib,
   ...
@@ -20,7 +19,7 @@
   programs.git = {
     enable = true;
     userName = "Alan Sartorio";
-    userEmail = osConfig.alan.email;
+    userEmail = system-config.alan.email;
     extraConfig = {
       init.defaultBranch = "main";
       core.excludesFile = "~/.gitignore";

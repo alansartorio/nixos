@@ -5,7 +5,7 @@
 {
   inputs,
   system,
-  config,
+  system-config,
   pkgs,
   ...
 }:
@@ -167,7 +167,7 @@
     qt6.qtwayland
     mpv
     oculante
-    nodejs_23
+    nodejs_latest
 
     gimp
     inkscape
@@ -220,7 +220,7 @@
     enable = true;
     extraPackages =
       with pkgs;
-      lib.optionals config.alan.intel [
+      lib.optionals system-config.alan.intel [
         vaapiIntel
         intel-media-driver
       ];
