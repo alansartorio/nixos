@@ -5,10 +5,7 @@
     clockin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    system-config = {
-      type = "path";
-      path = "/home/alan/nixos/config";
-    };
+    system-config.url = "/home/alan/nixos/config";
   };
   outputs =
     {

@@ -1,5 +1,5 @@
 {
-  description = "Reads config file";
+  description = "System configuration";
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
   };
