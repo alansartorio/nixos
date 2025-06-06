@@ -1,18 +1,16 @@
 {
   description = "System configuration";
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    hardware-configuration.url = "path:/etc/nixos/hardware-configuration.nix";
+    hardware-configuration.flake = false;
   };
   outputs =
     {
-      nixpkgs,
+      hardware-configuration,
       ...
     }:
-    let
-      inherit (nixpkgs.lib) fileContents;
-    in
     {
-        options = import ./options.nix;
-        hardware = import ./hardware.nix;
+      options = import ./options.nix;
+      hardware = import hardware-configuration;
     };
 }
