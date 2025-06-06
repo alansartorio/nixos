@@ -189,7 +189,10 @@
   programs.firefox = {
     enable = true;
     package = pkgs.firefox;
-    nativeMessagingHosts.packages = [ pkgs.firefoxpwa ];
+    nativeMessagingHosts.packages = [
+      pkgs.firefoxpwa
+      inputs.pipewire-screenaudio.packages.${pkgs.system}.default
+    ];
   };
 
   # Some programs need SUID wrappers, can be configured further or are

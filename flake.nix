@@ -3,6 +3,8 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     clockin.url = "github:alansartorio/clockin";
     clockin.inputs.nixpkgs.follows = "nixpkgs";
+    pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio";
+    pipewire-screenaudio.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     system-config.url = "/home/alan/nixos/config";
