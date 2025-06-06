@@ -35,9 +35,7 @@
   networking.networkmanager.enable = true;
 
   # Set your time zone.
-  #time.timeZone = "America/Argentina/Buenos_Aires";
-  #time.timeZone = "US/Pacific";
-  time.timeZone = "US/Mountain";
+  time.timeZone = "America/Argentina/Buenos_Aires";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
