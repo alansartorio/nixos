@@ -15,6 +15,7 @@
     "nix-command"
     "flakes"
   ];
+  environment.localBinInPath = true;
   imports = [
     # Include the results of the hardware scan.
     system-config.hardware
@@ -86,7 +87,6 @@
     openssl
     age
     jq
-    socat
     alsa-utils
     brightnessctl
     zip
@@ -121,7 +121,13 @@
     swaybg
     dunst
     alacritty
+
+    # Required for my eww config
     eww
+    pamixer
+    socat
+    rust-script
+
     kdePackages.dolphin
     kdePackages.kdeconnect-kde
     kdePackages.ark
