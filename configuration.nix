@@ -162,6 +162,9 @@
     #podman-compose
     erdtree
     gnuplot
+    easyeffects
+
+    gnupg
 
     vmpk
     fluidsynth
