@@ -33,5 +33,5 @@ nix flake update
 
 # Rebuild
 
-nixos-rebuild --use-remote-sudo --upgrade
+nixos-rebuild --use-remote-sudo switch --upgrade
 
