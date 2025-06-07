@@ -72,6 +72,7 @@
       "networkmanager"
       "wheel"
       "docker"
+      "wireshark"
     ];
     packages = with pkgs; [ ];
   };
@@ -175,22 +176,34 @@
     soundfont-fluid
     python3
     love
+    go
+    gopls
 
     qt6.qtwayland
     mpv
     oculante
     nodejs_latest
 
-    gimp
-    inkscape
-
     vulkan-tools
     nmap
     ffmpeg
 
+    orca-slicer
+    freecad
     (if (system-config.options.gpu == "amd") then blender-hip else blender)
+
+    gimp3
+    inkscape
+    obs-studio
+
     inputs.clockin.packages.${system}.default
+    inputs.hass-light-eww.packages.${system}.default
   ];
+
+  programs.wireshark = {
+    enable = true;
+    package = pkgs.wireshark;
+  };
 
   services.flatpak.enable = true;
 
