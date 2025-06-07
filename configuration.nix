@@ -9,6 +9,9 @@
   pkgs,
   ...
 }:
+let
+  lib = pkgs.lib;
+in
 {
   boot.kernelPackages = pkgs.linuxPackages_latest;
   nix.settings.experimental-features = [
@@ -24,8 +27,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.kernelModules = pkgs.lib.optionals (system-config.options.gpu == "amd") [ "amdgpu" ];
-  systemd.tmpfiles.rules = pkgs.lib.optionals (system-config.options.gpu == "amd") [
+  boot.initrd.kernelModules = lib.optionals (system-config.options.gpu == "amd") [ "amdgpu" ];
+  systemd.tmpfiles.rules = lib.optionals (system-config.options.gpu == "amd") [
     "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
   ];
 
