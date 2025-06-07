@@ -11,7 +11,7 @@
     age
   ];
 
-  home.stateVersion = "24.11";
+  home.stateVersion = system-config.options.stateVersion;
   home.username = "alan";
   home.homeDirectory = "/home/alan";
   programs.home-manager.enable = true;
