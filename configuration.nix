@@ -24,6 +24,11 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  boot.initrd.kernelModules = pkgs.lib.optionals (system-config.options.gpu == "amd") [ "amdgpu" ];
+  systemd.tmpfiles.rules = pkgs.lib.optionals (system-config.options.gpu == "amd") [
+    "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
+  ];
+
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -183,6 +188,7 @@
     nmap
     ffmpeg
 
+    (if (system-config.options.gpu == "amd") then blender-hip else blender)
     inputs.clockin.packages.${system}.default
   ];
 
@@ -230,7 +236,7 @@
     enable = true;
     extraPackages =
       with pkgs;
-      lib.optionals system-config.options.intel [
+      lib.optionals (system-config.options.gpu == "intel") [
         vaapiIntel
         intel-media-driver
       ];
