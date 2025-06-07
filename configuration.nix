@@ -312,6 +312,31 @@ in
     };
   };
 
+  services.ollama = {
+    enable = true;
+    acceleration = if (system-config.options.gpu == "amd") then "rocm" else null;
+    home = system-config.options.ollamaHome;
+    #rocmOverrideGfx = "10.3.1";
+  };
+  systemd.services.ollama = {
+    wantedBy = lib.mkForce [ ];
+    stopIfChanged = lib.mkForce true;
+    serviceConfig = {
+      DynamicUser = lib.mkForce false;
+      User = "alan";
+    };
+  };
+
+  services.open-webui = {
+    enable = true;
+    package = pkgs.open-webui;
+    port = 5000;
+  };
+  systemd.services.open-webui = {
+    wantedBy = lib.mkForce [ ];
+    stopIfChanged = lib.mkForce true;
+  };
+
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
