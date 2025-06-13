@@ -197,6 +197,7 @@ in
     oculante
     nodejs_latest
     qbittorrent
+    ethtool
 
     vulkan-tools
     nmap
