@@ -146,6 +146,11 @@ in
     thunderbird
     kdePackages.kdenlive
 
+    (dotnetCorePackages.combinePackages [
+      dotnetCorePackages.dotnet_8.sdk
+      dotnetCorePackages.dotnet_8.aspnetcore
+      dotnetCorePackages.dotnet_9.sdk
+    ])
     gcc
     cmake
     pkg-config
