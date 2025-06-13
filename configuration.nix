@@ -212,6 +212,15 @@ in
     inputs.hass-light-eww.packages.${system}.default
   ];
 
+  programs.virt-manager.enable = true;
+
+  users.groups.libvirtd.members = [ "alan" ];
+
+  virtualisation.libvirtd = {
+    enable = true;
+  };
+  virtualisation.spiceUSBRedirection.enable = true;
+
   programs.wireshark = {
     enable = true;
     package = pkgs.wireshark;
