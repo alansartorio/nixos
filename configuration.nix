@@ -117,6 +117,7 @@ in
     nixd
     terraform-ls
     terraform
+    gparted
 
     # Developer tools
     rustup # install rustanalyzer after
@@ -174,11 +175,13 @@ in
     easyeffects
 
     gnupg
+    wlr-randr
 
     vmpk
     fluidsynth
     soundfont-fluid
     python3
+    pyright
     love
     go
     gopls
@@ -187,6 +190,7 @@ in
     mpv
     oculante
     nodejs_latest
+    qbittorrent
 
     vulkan-tools
     nmap
@@ -199,6 +203,9 @@ in
     gimp3
     inkscape
     obs-studio
+    sshpass
+    xxd
+    postgresql
     immich-go
 
     inputs.clockin.packages.${system}.default
