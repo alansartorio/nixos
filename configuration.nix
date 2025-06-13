@@ -368,10 +368,10 @@ in
     port = 2283;
     host = "0.0.0.0";
   };
-  systemd.services.immich-server = {
-    wantedBy = lib.mkForce [ ];
-    stopIfChanged = lib.mkForce true;
-  };
+  #systemd.services.immich-server = {
+    #wantedBy = lib.mkForce [ ];
+    #stopIfChanged = lib.mkForce true;
+  #};
 
   # Enable the OpenSSH daemon.
   services.openssh = {
