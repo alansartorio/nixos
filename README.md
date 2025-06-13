@@ -23,7 +23,6 @@ git clone https://github.com/alansartorio/nixos.git
 
 # Setup symlinks
 
-ln -s /etc/nixos/hardware-configuration.nix config/hardware.nix
 sudo ln -s ~/nixos/flake.nix /etc/nixos/flake.nix
 sudo rm /etc/nixos/configuration.nix
 

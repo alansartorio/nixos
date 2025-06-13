@@ -9,8 +9,13 @@
       hardware-configuration,
       ...
     }:
-    {
+    rec {
       options = import ./options.nix;
       hardware = import hardware-configuration;
+      mounts = import ./mounts.nix {
+        system-config = {
+          inherit options;
+        };
+      };
     };
 }

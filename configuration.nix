@@ -22,6 +22,7 @@ in
   imports = [
     # Include the results of the hardware scan.
     system-config.hardware
+    system-config.mounts
   ];
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -338,8 +339,6 @@ in
   services.ollama = {
     enable = true;
     acceleration = if (system-config.options.gpu == "amd") then "rocm" else null;
-    home = system-config.options.ollamaHome;
-    #rocmOverrideGfx = "10.3.1";
   };
   systemd.services.ollama = {
     wantedBy = lib.mkForce [ ];
@@ -360,10 +359,6 @@ in
     stopIfChanged = lib.mkForce true;
   };
 
-  fileSystems."/var/lib/immich" = {
-    device = system-config.options.immichMedia;
-    options = [ "bind" ];
-  };
   services.immich = {
     enable = true;
     package = pkgs.immich;
