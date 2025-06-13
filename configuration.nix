@@ -76,6 +76,7 @@ in
       "wheel"
       "docker"
       "wireshark"
+      "immich"
     ];
     packages = with pkgs; [ ];
   };
@@ -198,6 +199,7 @@ in
     gimp3
     inkscape
     obs-studio
+    immich-go
 
     inputs.clockin.packages.${system}.default
     inputs.hass-light-eww.packages.${system}.default
@@ -333,6 +335,21 @@ in
     port = 5000;
   };
   systemd.services.open-webui = {
+    wantedBy = lib.mkForce [ ];
+    stopIfChanged = lib.mkForce true;
+  };
+
+  fileSystems."/var/lib/immich" = {
+    device = system-config.options.immichMedia;
+    options = [ "bind" ];
+  };
+  services.immich = {
+    enable = true;
+    package = pkgs.immich;
+    port = 2283;
+    host = "0.0.0.0";
+  };
+  systemd.services.immich-server = {
     wantedBy = lib.mkForce [ ];
     stopIfChanged = lib.mkForce true;
   };
