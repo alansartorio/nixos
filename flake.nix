@@ -19,7 +19,7 @@
       ...
     }@inputs:
     {
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem rec {
+      nixosConfigurations."${system-config.options.hostname}" = nixpkgs.lib.nixosSystem rec {
         pkgs = import nixpkgs {
           inherit system;
           config = {
