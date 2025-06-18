@@ -87,6 +87,10 @@ in
     ];
     packages = with pkgs; [ ];
   };
+  users.users.miri = {
+    isNormalUser = true;
+    createHome = false;
+  };
 
   fonts.packages = with pkgs; [
     #nerd-fonts.symbols-only
@@ -403,7 +407,40 @@ in
     };
   };
 
+  services.samba = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      global = {
+        "workgroup" = "WORKGROUP";
+        "server string" = system-config.options.hostname;
+        "netbios name" =  system-config.options.hostname;
+        "security" = "user";
+        # note: localhost is the ipv6 localhost ::1
+        "hosts allow" = "192.168.0. 127.0.0.1 localhost";
+        "hosts deny" = "0.0.0.0/0";
+        "guest account" = "nobody";
+        "map to guest" = "bad user";
+      };
+      "miri" = {
+        "path" = "/huge-storage/miri-network-share";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "no";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "force user" = "miri";
+        "force group" = "users";
+      };
+    };
+  };
+
   services.peerflix.enable = true;
+
+  services.samba-wsdd = {
+    enable = true;
+    openFirewall = true;
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
