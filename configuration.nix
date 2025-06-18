@@ -33,6 +33,12 @@ in
     "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
   ];
 
+  environment.etc."libinput/local-overrides.quirks".text = ''
+    [Logitech G502]
+    MatchName=Logitech G502
+    AttrEventCode=-REL_WHEEL_HI_RES;-REL_HWHEEL_HI_RES;
+  '';
+
   networking.hostName = system-config.options.hostname; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
