@@ -143,6 +143,8 @@ in
     pamixer
     socat
     rust-script
+    grim
+    slurp
 
     kdePackages.dolphin
     kdePackages.kdeconnect-kde
@@ -158,6 +160,7 @@ in
       dotnetCorePackages.dotnet_8.aspnetcore
       dotnetCorePackages.dotnet_9.sdk
     ])
+    csharprepl
     gcc
     cmake
     pkg-config
@@ -197,6 +200,8 @@ in
     love
     go
     gopls
+    camset
+    qpwgraph
 
     qt6.qtwayland
     mpv
@@ -220,6 +225,10 @@ in
     xxd
     postgresql
     immich-go
+    exiftool
+    libreoffice
+    smartmontools
+    piper
 
     inputs.clockin.packages.${system}.default
     inputs.hass-light-eww.packages.${system}.default
@@ -237,6 +246,11 @@ in
   programs.wireshark = {
     enable = true;
     package = pkgs.wireshark;
+  };
+
+  services.ratbagd = {
+    enable = true;
+    package = pkgs.libratbag;
   };
 
   services.flatpak.enable = true;
@@ -388,6 +402,8 @@ in
       PasswordAuthentication = true;
     };
   };
+
+  services.peerflix.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
