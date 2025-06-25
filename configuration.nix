@@ -117,8 +117,8 @@ in
     # Theming
     rose-pine-hyprcursor
     wl-clipboard
-    git
     neovim
+    vscode.fhs
 
     # LSPs
     lua-language-server
@@ -149,6 +149,7 @@ in
     rust-script
     grim
     slurp
+    sqlite
 
     kdePackages.dolphin
     kdePackages.kdeconnect-kde
@@ -158,6 +159,7 @@ in
     rofi-wayland
     thunderbird
     kdePackages.kdenlive
+    kdePackages.qtbase
 
     (dotnetCorePackages.combinePackages [
       dotnetCorePackages.dotnet_8.sdk
@@ -192,7 +194,10 @@ in
     gnuplot
     killall
     easyeffects
+    kdePackages.kio-extras
+    kdePackages.ffmpegthumbs
 
+    mitmproxy
     gnupg
     wlr-randr
 
@@ -222,6 +227,9 @@ in
     freecad
     (if (system-config.options.gpu == "amd") then blender-hip else blender)
 
+    unzip
+    file
+
     gimp3
     inkscape
     obs-studio
@@ -233,10 +241,20 @@ in
     libreoffice
     smartmontools
     piper
+    lmms
+    prettier
+    ruff
+    spotify
 
     inputs.clockin.packages.${system}.default
     inputs.hass-light-eww.packages.${system}.default
   ];
+
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+    package = pkgs.appimage-run;
+  };
 
   programs.virt-manager.enable = true;
 
@@ -321,6 +339,10 @@ in
   services.upower.enable = true;
 
   users.defaultUserShell = pkgs.zsh;
+  programs.git = {
+    enable = true;
+    lfs.enable = true;
+  };
   programs.zsh = {
     enable = true;
     shellAliases = {
