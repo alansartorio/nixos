@@ -68,7 +68,8 @@ let
     freecad
     (if (system-config.options.gpu == "amd") then blender-hip else blender)
     libreoffice
-    lmms
+    #unityhub
+    #lmms
   ];
 
   players = with pkgs; [
