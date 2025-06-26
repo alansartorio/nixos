@@ -35,6 +35,7 @@ let
     xxd
     #immich-go
     #smartmontools
+    distrobox
     inputs.clockin.packages.${system}.default
   ];
 
