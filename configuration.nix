@@ -13,22 +13,17 @@ let
   lib = pkgs.lib;
 in
 {
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
   environment.localBinInPath = true;
   imports = [
-    # Include the results of the hardware scan.
-    system-config.hardware
-    system-config.mounts
+    # include nixos-avf modules
+    <nixos-avf/avf>
   ];
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.kernelModules = lib.optionals (system-config.options.gpu == "amd") [ "amdgpu" ];
   systemd.tmpfiles.rules = lib.optionals (system-config.options.gpu == "amd") [
     "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
   ];
@@ -47,7 +42,7 @@ in
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
-  networking.networkmanager.enable = true;
+  # networking.networkmanager.enable = true;
 
   # Set your time zone.
   time.timeZone = "America/Argentina/Buenos_Aires";
@@ -73,7 +68,9 @@ in
     variant = "";
   };
   services.gvfs.enable = true;
-
+ 
+  # Change default user
+  avf.defaultUser = "alan";
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.alan = {
     isNormalUser = true;
@@ -83,21 +80,9 @@ in
       "wheel"
       "docker"
       "wireshark"
-      "immich"
     ];
     packages = with pkgs; [ ];
   };
-  users.users.miri = {
-    isNormalUser = true;
-    createHome = false;
-  };
-
-  fonts.packages = with pkgs; [
-    #nerd-fonts.symbols-only
-    material-design-icons
-    nerd-fonts.roboto-mono
-  ];
-  fonts.fontconfig.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -115,8 +100,6 @@ in
     curl
 
     # Theming
-    rose-pine-hyprcursor
-    wl-clipboard
     git
     neovim
 
@@ -128,7 +111,6 @@ in
     nixd
     terraform-ls
     terraform
-    gparted
 
     # Developer tools
     rustup # install rustanalyzer after
@@ -138,27 +120,13 @@ in
 
     # Environment
     chezmoi
-    swaybg
-    dunst
-    alacritty
 
     # Required for my eww config
-    eww
     pamixer
     socat
     rust-script
-    grim
-    slurp
 
-    kdePackages.dolphin
     kdePackages.kdeconnect-kde
-    kdePackages.ark
-    #firefox
-    pavucontrol
-    rofi-wayland
-    thunderbird
-    kdePackages.kdenlive
-
     (dotnetCorePackages.combinePackages [
       dotnetCorePackages.dotnet_8.sdk
       dotnetCorePackages.dotnet_8.aspnetcore
@@ -172,153 +140,41 @@ in
     gnumake
     polkit_gnome
     pulseaudio
-    networkmanagerapplet
     htop
     btop
     ripgrep
     ncdu
     mlocate
-    firefoxpwa
-    chromium
-    xorg.libxcb
-    wayland
-    #kdePackages.kservice
-    libsForQt5.kservice
     dive
-    #podman-tui
     docker-compose
-    #podman-compose
     erdtree
-    gnuplot
     killall
-    easyeffects
 
     gnupg
-    wlr-randr
 
-    vmpk
-    fluidsynth
-    soundfont-fluid
     python3
     pyright
-    love
     go
     gopls
-    camset
-    qpwgraph
 
-    qt6.qtwayland
-    mpv
-    oculante
     nodejs_latest
-    qbittorrent
     ethtool
 
-    vulkan-tools
     nmap
     ffmpeg
 
-    orca-slicer
-    freecad
-    (if (system-config.options.gpu == "amd") then blender-hip else blender)
-
-    gimp3
-    inkscape
-    obs-studio
     sshpass
     xxd
     postgresql
     immich-go
     exiftool
-    libreoffice
     smartmontools
-    piper
-
-    inputs.clockin.packages.${system}.default
-    inputs.hass-light-eww.packages.${system}.default
   ];
-
-  programs.virt-manager.enable = true;
 
   users.groups.libvirtd.members = [ "alan" ];
 
-  virtualisation.libvirtd = {
-    enable = true;
-  };
-  virtualisation.spiceUSBRedirection.enable = true;
-
-  programs.wireshark = {
-    enable = true;
-    package = pkgs.wireshark;
-  };
-
-  services.ratbagd = {
-    enable = true;
-    package = pkgs.libratbag;
-  };
-
-  services.flatpak.enable = true;
-
-  programs.firefox = {
-    enable = true;
-    package = pkgs.firefox;
-    nativeMessagingHosts.packages = [
-      pkgs.firefoxpwa
-      inputs.pipewire-screenaudio.packages.${pkgs.system}.default
-    ];
-  };
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-  programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;
-  };
-
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
-
-  services.greetd = {
-    enable = true;
-    settings = rec {
-      initial_session = {
-        command = "${pkgs.uwsm}/bin/uwsm start -S -F ${pkgs.hyprland}/bin/Hyprland";
-        user = "alan";
-      };
-      default_session = initial_session;
-    };
-  };
-
   services.locate.package = pkgs.mlocate;
-  services.udisks2.enable = true;
-  hardware.graphics = {
-    enable = true;
-    extraPackages =
-      with pkgs;
-      lib.optionals (system-config.options.gpu == "intel") [
-        vaapiIntel
-        intel-media-driver
-      ];
-  };
   virtualisation.docker.enable = true;
-
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    wireplumber.enable = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
-  services.pulseaudio.enable = false;
-  services.upower.enable = true;
 
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
@@ -336,117 +192,12 @@ in
     enable = true;
   };
   networking.wireguard.enable = true;
-  programs.uwsm = {
-    enable = true;
-    waylandCompositors = {
-      hyprland = {
-        prettyName = "Hyprland";
-        comment = "Hyprland compositor managed by UWSM";
-        binPath = "/run/current-system/sw/bin/Hyprland";
-      };
-    };
-  };
-
-  security.polkit.enable = true;
-  systemd = {
-    user.services.polkit-gnome-authentication-agent-1 = {
-      description = "polkit-gnome-authentication-agent-1";
-      wantedBy = [ "graphical-session.target" ];
-      wants = [ "graphical-session.target" ];
-      after = [ "graphical-session.target" ];
-      serviceConfig = {
-        Type = "simple";
-        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-        Restart = "on-failure";
-        RestartSec = 1;
-        TimeoutStopSec = 10;
-      };
-    };
-  };
-
-  services.ollama = {
-    enable = true;
-    acceleration = if (system-config.options.gpu == "amd") then "rocm" else null;
-  };
-  systemd.services.ollama = {
-    wantedBy = lib.mkForce [ ];
-    stopIfChanged = lib.mkForce true;
-    serviceConfig = {
-      DynamicUser = lib.mkForce false;
-      User = "alan";
-    };
-  };
-
-  services.open-webui = {
-    enable = true;
-    package = pkgs.open-webui;
-    port = 5000;
-  };
-  systemd.services.open-webui = {
-    wantedBy = lib.mkForce [ ];
-    stopIfChanged = lib.mkForce true;
-  };
-
-  services.immich = {
-    enable = true;
-    package = pkgs.immich;
-    port = 2283;
-    host = "0.0.0.0";
-  };
-  #systemd.services.immich-server = {
-    #wantedBy = lib.mkForce [ ];
-    #stopIfChanged = lib.mkForce true;
-  #};
-
-  # Enable the OpenSSH daemon.
-  services.openssh = {
-    enable = true;
-    settings = {
-      UseDns = true;
-      PasswordAuthentication = true;
-    };
-  };
-
-  services.samba = {
-    enable = true;
-    openFirewall = true;
-    settings = {
-      global = {
-        "workgroup" = "WORKGROUP";
-        "server string" = system-config.options.hostname;
-        "netbios name" =  system-config.options.hostname;
-        "security" = "user";
-        # note: localhost is the ipv6 localhost ::1
-        "hosts allow" = "192.168.0. 127.0.0.1 localhost";
-        "hosts deny" = "0.0.0.0/0";
-        "guest account" = "nobody";
-        "map to guest" = "bad user";
-      };
-      "miri" = {
-        "path" = "/huge-storage/miri-network-share";
-        "browseable" = "yes";
-        "read only" = "no";
-        "guest ok" = "no";
-        "create mask" = "0644";
-        "directory mask" = "0755";
-        "force user" = "miri";
-        "force group" = "users";
-      };
-    };
-  };
-
-  services.peerflix.enable = true;
-
-  services.samba-wsdd = {
-    enable = true;
-    openFirewall = true;
-  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  networking.firewall.enable = false;
+  networking.firewall.enable = lib.mkForce false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

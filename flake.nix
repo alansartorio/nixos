@@ -1,12 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    clockin.url = "github:alansartorio/clockin";
-    clockin.inputs.nixpkgs.follows = "nixpkgs";
-    hass-light-eww.url = "github:alansartorio/hass-light-eww";
-    hass-light-eww.inputs.nixpkgs.follows = "nixpkgs";
-    pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio";
-    pipewire-screenaudio.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "nixpkgs/nixos-25.05";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     system-config.url = "/home/alan/nixos/config";
@@ -26,7 +20,7 @@
             allowUnfree = true;
           };
         };
-        system = "x86_64-linux";
+        system = "aarch64-linux";
         specialArgs = {
           inherit inputs system system-config;
         };
