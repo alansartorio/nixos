@@ -54,6 +54,7 @@ in
       typescript-language-server
       nixd
       terraform-ls
+      bash-language-server
 
       pkg-config
     ])

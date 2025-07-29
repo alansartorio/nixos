@@ -24,6 +24,9 @@ in
     enable = true;
     package = pkgs.open-webui;
     port = 5000;
+    environment = {
+      HOME = "/var/lib/open-webui";
+    };
   };
   systemd.services.open-webui = {
     wantedBy = lib.mkForce [ ];
@@ -109,4 +112,9 @@ in
   services.gvfs.enable = true;
   services.locate.package = pkgs.mlocate;
   services.udisks2.enable = true;
+
+  services.lact = {
+    enable = true;
+    package = pkgs.lact;
+  };
 }

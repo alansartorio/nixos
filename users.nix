@@ -13,6 +13,7 @@
       "docker"
       "wireshark"
       "immich"
+      "audio"
     ];
   };
   users.users.miri = {

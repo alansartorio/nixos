@@ -20,7 +20,7 @@
     ./development.nix
     ./networking.nix
     ./virtualization.nix
-    ./hyprland.nix
+    ./desktop.nix
     ./audio.nix
     ./users.nix
   ];

@@ -5,6 +5,7 @@
   ...
 }:
 let
+  lib = pkgs.lib;
   browsers = with pkgs; [
     firefoxpwa
     chromium
@@ -36,10 +37,17 @@ let
     #immich-go
     #smartmontools
     distrobox
+    pandoc
+    texlive.combined.scheme-medium
+    #steam-run
+    nix-index
+    atftp
+    tmux
     inputs.clockin.packages.${system}.default
   ];
 
   gui-utils = with pkgs; [
+    songrec
     gparted
     thunderbird
     polkit_gnome
@@ -72,12 +80,21 @@ let
     #lmms
   ];
 
+  guitar = with pkgs; [
+    guitarix
+  ];
+
   players = with pkgs; [
     mpv
     oculante
     spotify
   ];
 
+  games = with pkgs; [
+    prismlauncher
+    gamescope
+    openjdk17
+  ];
 in
 {
   environment.systemPackages =
@@ -93,13 +110,29 @@ in
     ++ gui-utils
     ++ libs
     ++ creation
-    ++ players;
+    ++ players
+    ++ games
+    ++ guitar;
 
   programs.appimage = {
     enable = true;
     binfmt = true;
     package = pkgs.appimage-run;
   };
+
+  programs.chromium = {
+    enable = true;
+  };
+  environment.etc."chromium/native-messaging-hosts/com.icedborn.pipewirescreenaudioconnector.json".text =
+    builtins.toJSON {
+      name = "com.icedborn.pipewirescreenaudioconnector";
+      description = "Connector to communicate with the browser";
+      path = "${inputs.pipewire-screenaudio.packages.${pkgs.system}.default}/bin/connector-rs";
+      type = "stdio";
+      allowed_origins = [
+        "chrome-extension://gablikphdaflmahdnopphhpckhialbie/"
+      ];
+    };
 
   programs.firefox = {
     enable = true;
@@ -125,4 +158,20 @@ in
       '';
     };
   };
+
+  # to fix guitarix tuner
+  security.pam.loginLimits = [
+    {
+      domain = "*";
+      type = "-";
+      item = "memlock";
+      value = "8192000";
+    }
+    {
+      domain = "*";
+      type = "-";
+      item = "rtprio";
+      value = "95";
+    }
+  ];
 }
