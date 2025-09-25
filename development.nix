@@ -41,6 +41,7 @@ in
       csharprepl
       gopls
       pyright
+      basedpyright
       luarocks
       rust-script
 
@@ -57,6 +58,8 @@ in
       bash-language-server
 
       pkg-config
+      gitflow
+      git-filter-repo
     ])
     ++ docker
     ++ gui;
