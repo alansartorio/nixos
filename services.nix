@@ -117,4 +117,14 @@ in
     enable = true;
     package = pkgs.lact;
   };
+
+  services.printing = {
+    enable = true;
+    drivers = with pkgs; [ epson-escpr ];
+    listenAddresses = [ "*:631" ];
+    allowFrom = [ "all" ];
+    extraConf = ''
+      ServerAlias *
+    '';
+  };
 }
