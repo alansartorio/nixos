@@ -10,6 +10,7 @@
     ethtool
     mitmproxy
     networkmanagerapplet
+    wireguard-tools
   ];
   programs.wireshark = {
     enable = true;
@@ -20,6 +21,9 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.networkmanager.plugins = with pkgs; [
+    networkmanager-openvpn
+  ];
 
   networking.wireguard.enable = true;
 
