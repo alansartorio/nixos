@@ -23,6 +23,7 @@
     extraConfig = {
       init.defaultBranch = "main";
       core.excludesFile = "~/.gitignore";
+      commit.gpgsign = true;
     };
   };
 }
