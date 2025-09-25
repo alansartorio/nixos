@@ -43,6 +43,7 @@ let
     nix-index
     atftp
     tmux
+    android-tools
     inputs.clockin.packages.${system}.default
     inputs.rubik.packages.${system}.default
   ];
