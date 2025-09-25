@@ -156,7 +156,7 @@ in
         clockin exec '( git add . && git commit -m "sync" ) || git pull --rebase && git push'
       '';
       ftphere = ''
-        docker run --rm -p 20-21:20-21 -p 65500-65515:65500-65515 -v $(pwd):/var/ftp:ro metabrainz/docker-anon-ftp
+        docker run --rm -p 20-21:20-21 -p 65500-65515:65500-65515 -v "$(pwd)":/var/ftp:ro metabrainz/docker-anon-ftp
       '';
     };
   };
