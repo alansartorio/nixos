@@ -56,6 +56,7 @@ let
     qpwgraph
     qbittorrent
     piper
+    imhex
   ];
 
   libs = with pkgs; [
