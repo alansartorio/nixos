@@ -56,6 +56,9 @@ in
       nixd
       terraform-ls
       bash-language-server
+      clang-tools
+      clang-manpages
+      man-pages-posix
 
       pkg-config
       gitflow
