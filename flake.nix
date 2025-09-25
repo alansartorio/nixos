@@ -27,6 +27,23 @@
           config = {
             allowUnfree = true;
           };
+          overlays = [
+            (
+              final: prev:
+              let
+                roslynNixpkgs = (
+                  import (builtins.fetchGit {
+                    name = "roslyn-nixpkgs";
+                    url = "https://github.com/NixOS/nixpkgs/";
+                    rev = "85dbfc7aaf52ecb755f87e577ddbe6dbbdbc1054";
+                  }) { inherit system; }
+                );
+              in
+              {
+                roslyn-ls = roslynNixpkgs.roslyn-ls;
+              }
+            )
+          ];
         };
         system = "x86_64-linux";
         specialArgs = {
