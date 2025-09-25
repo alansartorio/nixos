@@ -44,6 +44,7 @@ let
     atftp
     tmux
     inputs.clockin.packages.${system}.default
+    inputs.rubik.packages.${system}.default
   ];
 
   gui-utils = with pkgs; [

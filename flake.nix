@@ -3,6 +3,8 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     clockin.url = "github:alansartorio/clockin";
     clockin.inputs.nixpkgs.follows = "nixpkgs";
+    rubik.url = "github:alansartorio/rubik";
+    rubik.inputs.nixpkgs.follows = "nixpkgs";
     hass-light-eww.url = "github:alansartorio/hass-light-eww";
     hass-light-eww.inputs.nixpkgs.follows = "nixpkgs";
     pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio";
