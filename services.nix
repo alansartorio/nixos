@@ -8,7 +8,7 @@ let
 in
 {
   services.ollama = {
-    enable = true;
+    enable = system-config.options.mainPc;
     acceleration = if (system-config.options.gpu == "amd") then "rocm" else null;
   };
   systemd.services.ollama = {
@@ -21,7 +21,7 @@ in
   };
 
   services.open-webui = {
-    enable = true;
+    enable = system-config.options.mainPc;
     package = pkgs.open-webui;
     port = 5000;
     environment = {
@@ -34,7 +34,7 @@ in
   };
 
   services.immich = {
-    enable = true;
+    enable = system-config.options.mainPc;
     package = pkgs.immich;
     port = 2283;
     host = "0.0.0.0";
@@ -46,7 +46,7 @@ in
 
   # Enable the OpenSSH daemon.
   services.openssh = {
-    enable = true;
+    enable = system-config.options.mainPc;
     settings = {
       UseDns = true;
       PasswordAuthentication = true;
@@ -54,7 +54,7 @@ in
   };
 
   services.samba = {
-    enable = true;
+    enable = system-config.options.mainPc;
     openFirewall = true;
     settings = {
       global = {
@@ -81,15 +81,15 @@ in
     };
   };
 
-  services.peerflix.enable = true;
+  services.peerflix.enable = system-config.options.mainPc;
 
   services.samba-wsdd = {
-    enable = true;
+    enable = system-config.options.mainPc;
     openFirewall = true;
   };
 
   services.ratbagd = {
-    enable = true;
+    enable = system-config.options.mainPc;
     package = pkgs.libratbag;
   };
 
@@ -114,7 +114,7 @@ in
   services.udisks2.enable = true;
 
   services.lact = {
-    enable = true;
+    enable = system-config.options.mainPc;
     package = pkgs.lact;
   };
 
