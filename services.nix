@@ -119,7 +119,7 @@ in
   };
 
   services.printing = {
-    enable = true;
+    enable = system-config.options.mainPc;
     drivers = with pkgs; [ epson-escpr ];
     listenAddresses = [ "*:631" ];
     allowFrom = [ "all" ];
