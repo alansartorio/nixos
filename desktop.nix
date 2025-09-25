@@ -8,7 +8,7 @@
     swaybg
     #dunst
     mako
-    rofi-wayland
+    rofi
     pavucontrol
     alacritty
 
