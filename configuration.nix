@@ -23,10 +23,12 @@
     ./desktop.nix
     ./audio.nix
     ./users.nix
+    ./vr.nix
     ./games.nix
   ];
 
   games.enable = system-config.options.mainPc;
+  vr.enable = system-config.options.mainPc;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
