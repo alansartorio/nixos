@@ -92,12 +92,6 @@ let
     oculante
     spotify
   ];
-
-  games = with pkgs; [
-    prismlauncher
-    gamescope
-    openjdk17
-  ];
 in
 {
   environment.systemPackages =
@@ -114,7 +108,6 @@ in
     ++ libs
     ++ creation
     ++ players
-    ++ games
     ++ guitar;
 
   programs.appimage = {

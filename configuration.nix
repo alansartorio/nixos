@@ -23,7 +23,10 @@
     ./desktop.nix
     ./audio.nix
     ./users.nix
+    ./games.nix
   ];
+
+  games.enable = system-config.options.mainPc;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
