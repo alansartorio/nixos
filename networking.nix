@@ -25,6 +25,17 @@
     networkmanager-openvpn
   ];
 
+  services.resolved = {
+    enable = true;
+    #dnssec = "true";
+    domains = [ "~." ];
+    fallbackDns = [
+      "1.1.1.1"
+      "1.0.0.1"
+    ];
+    #dnsovertls = "true";
+  };
+
   networking.wireguard.enable = true;
 
   # Open ports in the firewall.
