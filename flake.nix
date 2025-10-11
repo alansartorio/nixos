@@ -4,7 +4,7 @@
     clockin.url = "github:alansartorio/clockin";
     clockin.inputs.nixpkgs.follows = "nixpkgs";
     rubik.url = "github:alansartorio/rubik";
-    rubik.inputs.nixpkgs.follows = "nixpkgs";
+    #rubik.inputs.nixpkgs.follows = "nixpkgs";
     hass-light-eww.url = "github:alansartorio/hass-light-eww";
     hass-light-eww.inputs.nixpkgs.follows = "nixpkgs";
     pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio";
@@ -31,16 +31,16 @@
             (
               final: prev:
               let
-                roslynNixpkgs = (
+                cmake3Nixpkgs = (
                   import (builtins.fetchGit {
-                    name = "roslyn-nixpkgs";
+                    name = "cmake3-nixpkgs";
                     url = "https://github.com/NixOS/nixpkgs/";
-                    rev = "85dbfc7aaf52ecb755f87e577ddbe6dbbdbc1054";
+                    rev = "4b1164c3215f018c4442463a27689d973cffd750";
                   }) { inherit system; }
                 );
               in
               {
-                roslyn-ls = roslynNixpkgs.roslyn-ls;
+                oculante = cmake3Nixpkgs.oculante;
               }
             )
           ];
