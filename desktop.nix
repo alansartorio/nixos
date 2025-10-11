@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  config,
+  inputs,
+  ...
+}:
 {
   environment.systemPackages = with pkgs; [
     # Theming
@@ -31,8 +36,6 @@
     # needed for gnome file picker
     nautilus
 
-    #gamescope
-
     chezmoi
     inputs.hass-light-eww.packages.${system}.default
   ];
@@ -56,39 +59,15 @@
 
   services.greetd = {
     enable = true;
-    settings = rec {
+
+    settings = {
+      default_session = {
+        command = "${pkgs.tuigreet}/bin/tuigreet --sessions ${config.services.displayManager.sessionData.desktops}/share/xsessions:${config.services.displayManager.sessionData.desktops}/share/wayland-sessions --remember --remember-user-session";
+        user = "greeter";
+      };
       initial_session = {
         command = "${pkgs.niri}/bin/niri-session";
         user = "alan";
-      };
-      #initial_session = {
-      #command = "${pkgs.uwsm}/bin/uwsm start -S niri.desktop";
-      #user = "alan";
-      #};
-      hyprland = {
-        command = "env MESA_LOADER_DRIVER_OVERRIDE=zink ${pkgs.uwsm}/bin/uwsm start -S -F ${pkgs.hyprland}/bin/Hyprland";
-        user = "alan";
-      };
-      default_session = initial_session;
-    };
-  };
-
-  #systemd.services.niri = {
-
-  #};
-
-  programs.uwsm = {
-    enable = true;
-    waylandCompositors = {
-      niri = {
-        prettyName = "Niri";
-        comment = "Niri compositor managed by UWSM";
-        binPath = "${pkgs.niri}/bin/niri";
-      };
-      hyprland = {
-        prettyName = "Hyprland";
-        comment = "Hyprland compositor managed by UWSM";
-        binPath = "${pkgs.hyprland}/bin/Hyprland";
       };
     };
   };
@@ -107,30 +86,4 @@
       TimeoutStopSec = 10;
     };
   };
-  #systemd.user.services.eww-launcher = {
-    #enable = true;
-    #path = [
-      #pkgs.bash
-      #pkgs.niri
-      #pkgs.jq
-      #pkgs.procps
-      #pkgs.eww
-      ##pkgs.socat
-      ##pkgs.hyprland
-    #];
-    #serviceConfig = {
-      #PartOf = "graphical-session.target";
-      #After = "graphical-session.target";
-      #Requisite = "graphical-session.target";
-      #ExecStart = "/home/alan/.local/bin/eww-launcher";
-      #Restart = "on-failure";
-    #};
-  #};
-  #systemd.user.services.niri = {
-    #wants = [
-      ##"dunst.service"
-      #"mako.service"
-      ##"eww-launcher.service"
-    #];
-  #};
 }
