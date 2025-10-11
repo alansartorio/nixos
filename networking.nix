@@ -22,10 +22,12 @@
   networking.hostName = system-config.options.hostname; # Define your hostname.
 
   # Enable networking
-  networking.networkmanager.enable = true;
-  networking.networkmanager.plugins = with pkgs; [
-    networkmanager-openvpn
-  ];
+  networking.networkmanager = {
+    enable = true;
+    plugins = with pkgs; [
+      networkmanager-openvpn
+    ];
+  };
 
   services.resolved = {
     enable = true;
