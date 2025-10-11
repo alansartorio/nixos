@@ -11,6 +11,8 @@
     mitmproxy
     networkmanagerapplet
     wireguard-tools
+    tcpdump
+    traceroute
   ];
   programs.wireshark = {
     enable = true;
