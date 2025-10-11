@@ -44,8 +44,8 @@ let
     atftp
     tmux
     android-tools
+    lsof
     inputs.clockin.packages.${system}.default
-    inputs.rubik.packages.${system}.default
   ];
 
   gui-utils = with pkgs; [
@@ -58,6 +58,7 @@ let
     qbittorrent
     piper
     imhex
+    inputs.rubik.packages.${system}.default
   ];
 
   libs = with pkgs; [
@@ -89,6 +90,7 @@ let
 
   players = with pkgs; [
     mpv
+    vlc
     oculante
     spotify
   ];
