@@ -128,4 +128,12 @@ in
     '';
   };
 
+  networking.hosts = lib.mkIf system-config.options.mainPc {
+    "127.0.0.2" = [
+      "cups.home"
+      "immich.home"
+    ];
+  };
+
+  #services.avahi.enable = true;
 }
