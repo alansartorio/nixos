@@ -1,11 +1,9 @@
 {
   system-config,
   pkgs,
+  lib,
   ...
 }:
-let
-  lib = pkgs.lib;
-in
 {
   services.ollama = {
     enable = system-config.options.mainPc;
@@ -134,6 +132,8 @@ in
       "immich.home"
     ];
   };
+
+  powerManagement.cpuFreqGovernor = lib.mkIf system-config.options.mainPc "performance";
 
   #services.avahi.enable = true;
 }
