@@ -9,6 +9,8 @@
     hass-light-eww.inputs.nixpkgs.follows = "nixpkgs";
     pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio";
     pipewire-screenaudio.inputs.nixpkgs.follows = "nixpkgs";
+    clipper.url = "github:alansartorio/Clipper/all-merged";
+    clipper.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     system-config.url = "/home/alan/nixos/config";

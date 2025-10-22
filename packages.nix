@@ -46,6 +46,7 @@ let
     android-tools
     lsof
     inputs.clockin.packages.${system}.default
+    inputs.clipper.packages.${system}.default
   ];
 
   gui-utils = with pkgs; [
