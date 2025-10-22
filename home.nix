@@ -18,9 +18,11 @@
 
   programs.git = {
     enable = true;
-    userName = "Alan Sartorio";
-    userEmail = system-config.options.email;
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Alan Sartorio";
+        email = system-config.options.email;
+      };
       init.defaultBranch = "main";
       core.excludesFile = "~/.gitignore";
       commit.gpgsign = true;
