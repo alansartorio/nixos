@@ -14,6 +14,7 @@
       "wireshark"
       "immich"
       "audio"
+      "gamemode"
     ];
   };
   users.users.miri = {
