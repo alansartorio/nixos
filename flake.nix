@@ -28,21 +28,6 @@
             allowUnfree = true;
           };
           overlays = [
-            (
-              final: prev:
-              let
-                cmake3Nixpkgs = (
-                  import (builtins.fetchGit {
-                    name = "cmake3-nixpkgs";
-                    url = "https://github.com/NixOS/nixpkgs/";
-                    rev = "4b1164c3215f018c4442463a27689d973cffd750";
-                  }) { inherit system; }
-                );
-              in
-              {
-                oculante = cmake3Nixpkgs.oculante;
-              }
-            )
           ];
         };
         system = "x86_64-linux";
