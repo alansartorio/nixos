@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    prev-nixpkgs.url = "git+https://github.com/NixOS/nixpkgs?rev=5e2a59a5b1a82f89f2c7e598302a9cacebb72a67";
     clockin.url = "github:alansartorio/clockin";
     clockin.inputs.nixpkgs.follows = "nixpkgs";
     rubik.url = "github:alansartorio/rubik";
@@ -18,6 +19,7 @@
   outputs =
     {
       nixpkgs,
+      prev-nixpkgs,
       home-manager,
       system-config,
       ...
@@ -30,6 +32,9 @@
             allowUnfree = true;
           };
           overlays = [
+            (prev: final: {
+              wivrn = (import prev-nixpkgs { inherit system; }).wivrn;
+            })
           ];
         };
         system = "x86_64-linux";
