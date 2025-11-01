@@ -56,6 +56,7 @@ let
     polkit_gnome
     camset
     qpwgraph
+    helvum
     qbittorrent
     piper
     imhex
