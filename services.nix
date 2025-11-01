@@ -86,6 +86,11 @@
     openFirewall = true;
   };
 
+  services.jellyfin = {
+    enable = system-config.options.mainPc;
+    user = "alan";
+  };
+
   services.ratbagd = {
     enable = system-config.options.mainPc;
     package = pkgs.libratbag;
@@ -130,6 +135,7 @@
     "127.0.0.2" = [
       "cups.home"
       "immich.home"
+      "jellyfin.home"
     ];
   };
 
