@@ -61,6 +61,7 @@ let
     piper
     imhex
     inputs.rubik.packages.${system}.default
+    element-desktop
   ];
 
   libs = with pkgs; [
