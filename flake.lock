@@ -156,11 +156,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1761344779,
-        "narHash": "sha256-6LNSptFYhiAd0M/maJoixJw7V0Kp5BSoMRtIahcfu3M=",
+        "lastModified": 1761845621,
+        "narHash": "sha256-d+R4MHsGmdebvSMsYUFWONsZSlUbOo8Zq/wjMdMiIac=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "c644cb018f9fdec55f5ac2afb4713a8c7beb757c",
+        "rev": "97e3022a8d2c09313fa49847f6da4d76abcfc72d",
         "type": "github"
       },
       "original": {
@@ -171,11 +171,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1761114652,
-        "narHash": "sha256-f/QCJM/YhrV/lavyCVz8iU3rlZun6d+dAiC3H+CDle4=",
+        "lastModified": 1761672384,
+        "narHash": "sha256-o9KF3DJL7g7iYMZq9SWgfS1BFlNbsm6xplRjVlOCkXI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "01f116e4df6a15f4ccdffb1bcd41096869fb385c",
+        "rev": "08dacfca559e1d7da38f3cf05f1f45ee9bfd213c",
         "type": "github"
       },
       "original": {
@@ -207,30 +207,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1761345281,
-        "narHash": "sha256-nnHWxiBcyJtbFLVBtZi5IlWADcAfUy8xXyFhLXuE4DI=",
-        "path": "/home/alan/Documents/PipewireScreenaudio/pipewire-screenaudio",
-        "type": "path"
+        "lastModified": 1761605726,
+        "narHash": "sha256-zVA8lfgJ9yM586wrqxZpWbNXSxsoKp/IAPEtbObvpt0=",
+        "owner": "IceDBorn",
+        "repo": "pipewire-screenaudio",
+        "rev": "853a646cfe9a6cef6c044c19f7866aab42bf6cb1",
+        "type": "github"
       },
       "original": {
-        "path": "/home/alan/Documents/PipewireScreenaudio/pipewire-screenaudio",
-        "type": "path"
-      }
-    },
-    "prev-nixpkgs": {
-      "locked": {
-        "lastModified": 1760878510,
-        "narHash": "sha256-K5Osef2qexezUfs0alLvZ7nQFTGS9DL2oTVsIXsqLgs=",
-        "ref": "refs/heads/master",
-        "rev": "5e2a59a5b1a82f89f2c7e598302a9cacebb72a67",
-        "revCount": 880095,
-        "type": "git",
-        "url": "https://github.com/NixOS/nixpkgs"
-      },
-      "original": {
-        "rev": "5e2a59a5b1a82f89f2c7e598302a9cacebb72a67",
-        "type": "git",
-        "url": "https://github.com/NixOS/nixpkgs"
+        "owner": "IceDBorn",
+        "repo": "pipewire-screenaudio",
+        "type": "github"
       }
     },
     "root": {
@@ -241,7 +228,6 @@
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "pipewire-screenaudio": "pipewire-screenaudio",
-        "prev-nixpkgs": "prev-nixpkgs",
         "rubik": "rubik",
         "system-config": "system-config"
       }
