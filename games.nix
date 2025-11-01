@@ -22,6 +22,10 @@ let
   };
 in
 {
+  imports = [
+    ./games/beamng.nix
+  ];
+
   options.games = {
     enable = lib.mkEnableOption "games";
   };
