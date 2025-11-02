@@ -1,11 +1,11 @@
 {
   pkgs,
+  lib,
   system-config,
   inputs,
   ...
 }:
 let
-  lib = pkgs.lib;
   browsers = with pkgs; [
     firefoxpwa
     chromium

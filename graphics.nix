@@ -14,7 +14,7 @@ in
     extraPackages =
       with pkgs;
       lib.optionals (system-config.options.gpu == "intel") [
-        vaapiIntel
+        intel-vaapi-driver
         intel-media-driver
       ];
   };
