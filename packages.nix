@@ -47,6 +47,8 @@ let
     lsof
     inputs.clockin.packages.${system}.default
     inputs.clipper.packages.${system}.default
+    parallel
+    taskjuggler
   ];
 
   gui-utils = with pkgs; [
