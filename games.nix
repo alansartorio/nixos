@@ -32,7 +32,6 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      prismlauncher
       openjdk17
       mangohud
 
@@ -87,6 +86,9 @@ in
           ## Enable system notifications
           #"--dbus-user.talk=org.freedesktop.Notifications"
           #];
+        };
+        prismlauncher = {
+          executable = "${pkgs.prismlauncher}/bin/prismlauncher";
         };
       };
     };
