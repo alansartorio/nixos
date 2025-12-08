@@ -95,7 +95,11 @@ in
 
     environment.etc = {
       "firejail/steam.local".text = ''
+        ignore novideo
+
+        whitelist ''${HOME}/.config/openxr
         noblacklist /run/media/alan/Games
+
         ignore seccomp
       '';
     };
