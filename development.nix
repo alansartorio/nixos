@@ -35,6 +35,7 @@ in
       luajit
       jq
       terraform
+      biome
 
       # tools
       sqlite
