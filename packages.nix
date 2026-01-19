@@ -83,7 +83,7 @@ let
     soundfont-fluid
     orca-slicer
     freecad
-    (if (system-config.options.gpu == "amd") then blender-hip else blender)
+    blender
     libreoffice
     #unityhub
     #lmms

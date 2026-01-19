@@ -28,6 +28,7 @@
           inherit system;
           config = {
             allowUnfree = true;
+            rocmSupport = system-config.options.gpu == "amd";
           };
           overlays = [
           ];
