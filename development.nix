@@ -47,7 +47,7 @@ in
       rust-script
 
       # LSPs/formatters
-      nixfmt-rfc-style
+      nixfmt
       prettier
       ruff
       lua-language-server
