@@ -37,7 +37,7 @@
     nautilus
 
     chezmoi
-    inputs.hass-light-eww.packages.${system}.default
+    inputs.hass-light-eww.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   fonts.packages = with pkgs; [

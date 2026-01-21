@@ -45,8 +45,8 @@ let
     tmux
     android-tools
     lsof
-    inputs.clockin.packages.${system}.default
-    inputs.clipper.packages.${system}.default
+    inputs.clockin.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.clipper.packages.${pkgs.stdenv.hostPlatform.system}.default
     parallel
     taskjuggler
   ];
@@ -62,7 +62,7 @@ let
     qbittorrent
     piper
     imhex
-    inputs.rubik.packages.${system}.default
+    inputs.rubik.packages.${pkgs.stdenv.hostPlatform.system}.default
     element-desktop
   ];
 
@@ -130,7 +130,7 @@ in
     builtins.toJSON {
       name = "com.icedborn.pipewirescreenaudioconnector";
       description = "Connector to communicate with the browser";
-      path = "${inputs.pipewire-screenaudio.packages.${pkgs.system}.default}/bin/connector-rs";
+      path = "${inputs.pipewire-screenaudio.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/connector-rs";
       type = "stdio";
       allowed_origins = [
         "chrome-extension://gablikphdaflmahdnopphhpckhialbie/"
@@ -142,7 +142,7 @@ in
     package = pkgs.firefox;
     nativeMessagingHosts.packages = [
       pkgs.firefoxpwa
-      inputs.pipewire-screenaudio.packages.${pkgs.system}.default
+      inputs.pipewire-screenaudio.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
   };
 
