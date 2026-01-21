@@ -7,7 +7,7 @@
 {
   services.ollama = {
     enable = system-config.options.mainPc;
-    package = if (system-config.options.gpu == "amd") then pkgs.ollama-rocm else pkgs.ollama;
+    package = pkgs.ollama;
   };
   systemd.services.ollama = {
     wantedBy = lib.mkForce [ ];
