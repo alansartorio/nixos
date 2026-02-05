@@ -20,12 +20,24 @@
     enable = true;
     settings = {
       user = {
-        name = "Alan Sartorio";
+        name = system-config.options.fullName;
         email = system-config.options.email;
+        signingkey = system-config.options.signingKey;
       };
       init.defaultBranch = "main";
       core.excludesFile = "~/.gitignore";
-      commit.gpgsign = true;
+      commit.gpgsign = system-config.options.signingKey != null;
     };
+    includes = [
+      {
+        condition = "gitdir:${system-config.options.work.dir}";
+        contents = {
+          user = {
+            name = system-config.options.fullName;
+            email = system-config.options.work.email;
+          };
+        };
+      }
+    ];
   };
 }
