@@ -47,7 +47,6 @@
     enable = system-config.options.mainPc;
     openFirewall = false;
     settings = {
-      UseDns = true;
       PasswordAuthentication = true;
     };
   };
