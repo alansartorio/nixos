@@ -1,4 +1,10 @@
-{ pkgs, system-config, ... }:
+{
+  pkgs,
+  system-config,
+  ...
+}:
+let
+in
 {
   environment.systemPackages = with pkgs; [
     dig
@@ -13,6 +19,9 @@
     wireguard-tools
     tcpdump
     traceroute
+    #conntrack-tools
+    firewalld
+    firewalld-gui
   ];
   programs.wireshark = {
     enable = true;
@@ -39,9 +48,16 @@
 
   networking.wireguard.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
   networking.firewall.enable = false;
+  services.firewalld = {
+    enable = true;
+    zones.trusted.interfaces = [
+      "zt-personal"
+    ];
+    settings = {
+      DefaultZone = "drop";
+    };
+  };
+
+  networking.nftables.enable = true;
 }
