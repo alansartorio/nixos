@@ -5,49 +5,9 @@
   ...
 }:
 {
-  services.ollama = {
-    enable = system-config.options.mainPc;
-    package = pkgs.ollama;
-    host = "0.0.0.0";
-  };
-  systemd.services.ollama = {
-    wantedBy = lib.mkForce [ ];
-    stopIfChanged = lib.mkForce true;
-    serviceConfig = {
-      DynamicUser = lib.mkForce false;
-      User = "alan";
-    };
-  };
-
-  services.llama-cpp = {
-    enable = system-config.options.mainPc;
-    package = pkgs.llama-cpp;
-    model = "/huge-storage/llamacpp-models/Qwen3-Coder-30B-A3B-Instruct-UD-IQ2_M.gguf";
-    #model = "/huge-storage/llamacpp-models/gpt-oss-20b-mxfp4.gguf";
-    host = "0.0.0.0";
-    port = 11435;
-  };
-  systemd.services.llama-cpp = {
-    wantedBy = lib.mkForce [ ];
-    stopIfChanged = lib.mkForce true;
-    serviceConfig = {
-      DynamicUser = lib.mkForce false;
-      User = "alan";
-    };
-  };
-
-  services.open-webui = {
-    enable = system-config.options.mainPc;
-    package = pkgs.open-webui;
-    port = 5000;
-    environment = {
-      HOME = "/var/lib/open-webui";
-    };
-  };
-  systemd.services.open-webui = {
-    wantedBy = lib.mkForce [ ];
-    stopIfChanged = lib.mkForce true;
-  };
+  imports = [
+    ./services/llm.nix
+  ];
 
   services.immich = {
     enable = system-config.options.mainPc;
