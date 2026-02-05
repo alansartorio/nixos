@@ -1,6 +1,10 @@
-{ ... }:
+{ pkgs, ... }:
 {
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    extraPackages = with pkgs; [ nftables ];
+    extraOptions = "--firewall-backend=nftables";
+  };
   virtualisation.libvirtd = {
     enable = true;
   };
