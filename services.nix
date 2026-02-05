@@ -47,7 +47,7 @@
     enable = system-config.options.mainPc;
     openFirewall = false;
     settings = {
-      PasswordAuthentication = true;
+      PasswordAuthentication = false;
     };
   };
 
