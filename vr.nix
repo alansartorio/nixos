@@ -41,6 +41,7 @@ in
     users.groups.input.members = [ "alan" ];
     programs.envision = {
       enable = true;
+      openFirewall = false;
     };
   };
 }

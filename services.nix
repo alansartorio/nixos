@@ -45,6 +45,7 @@
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = system-config.options.mainPc;
+    openFirewall = false;
     settings = {
       UseDns = true;
       PasswordAuthentication = true;
@@ -53,7 +54,6 @@
 
   services.samba = {
     enable = system-config.options.mainPc;
-    openFirewall = true;
     settings = {
       global = {
         "workgroup" = "WORKGROUP";
@@ -83,7 +83,6 @@
 
   services.samba-wsdd = {
     enable = system-config.options.mainPc;
-    openFirewall = true;
   };
 
   services.jellyfin = {
