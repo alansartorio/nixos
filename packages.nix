@@ -68,7 +68,7 @@ let
 
   libs = with pkgs; [
     ntfs3g
-    xorg.libxcb
+    libxcb
     wayland
     qt6.qtwayland
     vulkan-tools
