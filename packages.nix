@@ -83,7 +83,6 @@ let
   creation = with pkgs; [
     gimp3
     inkscape
-    obs-studio
     vmpk
     fluidsynth
     soundfont-fluid
@@ -142,6 +141,11 @@ in
         "chrome-extension://gablikphdaflmahdnopphhpckhialbie/"
       ];
     };
+
+  programs.obs-studio = {
+    enable = true;
+    enableVirtualCamera = true;
+  };
 
   programs.firefox = {
     enable = true;
