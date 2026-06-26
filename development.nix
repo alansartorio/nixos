@@ -59,6 +59,7 @@ in
       nixfmt
       prettier
       ruff
+      black
       lua-language-server
       jdt-language-server
       roslyn-ls
