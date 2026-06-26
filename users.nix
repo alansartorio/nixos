@@ -15,6 +15,7 @@
       "immich"
       "audio"
       "gamemode"
+      "dialout"
       "uinput"
     ];
   };
