@@ -26,11 +26,8 @@ git clone https://github.com/alansartorio/nixos.git
 sudo ln -s ~/nixos/flake.nix /etc/nixos/flake.nix
 sudo rm /etc/nixos/configuration.nix
 
-# Update flake (not sure if necessary)
-
-nix flake update
-
 # Rebuild
 
-nixos-rebuild --use-remote-sudo switch --upgrade
+nix flake update
+nixos-rebuild --verbose --sudo switch --show-trace
 
