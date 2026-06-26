@@ -49,6 +49,7 @@ let
     inputs.clipper.packages.${pkgs.stdenv.hostPlatform.system}.default
     parallel
     taskjuggler
+    inputs.croptool.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   gui-utils = with pkgs; [
