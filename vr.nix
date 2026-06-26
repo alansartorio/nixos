@@ -39,9 +39,5 @@ in
     };
     hardware.uinput.enable = true;
     users.groups.input.members = [ "alan" ];
-    programs.envision = {
-      enable = true;
-      openFirewall = false;
-    };
   };
 }
