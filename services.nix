@@ -117,5 +117,15 @@
 
   powerManagement.cpuFreqGovernor = lib.mkIf system-config.options.mainPc "performance";
 
+
+  services.sunshine = {
+    enable = true;
+    autoStart = false;
+    capSysAdmin = true;
+    settings = {
+      sunshine_name = "alan-desktop-nixos";
+    };
+  };
+  hardware.uinput.enable = true;
   #services.avahi.enable = true;
 }

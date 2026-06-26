@@ -15,6 +15,7 @@
       "immich"
       "audio"
       "gamemode"
+      "uinput"
     ];
   };
   users.users.miri = {
