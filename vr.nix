@@ -28,7 +28,6 @@ in
     services.wivrn = {
       enable = true;
       package = pkgs.wivrn;
-      defaultRuntime = true;
       config.enable = true;
       config.json = {
         scale = 0.5;
