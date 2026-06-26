@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "nixpkgs/nixos-25.05";
     clockin.url = "github:alansartorio/clockin";
     clockin.inputs.nixpkgs.follows = "nixpkgs";
     rubik.url = "github:alansartorio/rubik";
@@ -20,6 +21,7 @@
   outputs =
     {
       nixpkgs,
+      nixpkgs-stable,
       home-manager,
       system-config,
       ...
@@ -33,6 +35,22 @@
             rocmSupport = system-config.options.gpu == "amd";
           };
           overlays = [
+            (
+              let
+                pkgs-stable = import nixpkgs-stable {
+                  inherit system;
+                  allowUnfree = true;
+                  rocmSupport = system-config.options.gpu == "amd";
+                };
+                pkgs-no-gpu = import nixpkgs {
+                  inherit system;
+                  allowUnfree = true;
+                  rocmSupport = false;
+                };
+              in
+              final: prev: {
+              }
+            )
           ];
         };
         system = "x86_64-linux";
