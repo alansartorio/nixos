@@ -25,10 +25,14 @@ in
 
     services.llama-cpp = {
       enable = true;
-      package = pkgs.llama-cpp;
-      model = cfg.llama-cpp.model;
-      host = "0.0.0.0";
-      port = 11435;
+      package = pkgs.llama-cpp-vulkan;
+      settings = {
+        model = cfg.llama-cpp.model;
+        host = "0.0.0.0";
+        port = 11435;
+        ctx-checkpoints = 0;
+        device = "Vulkan0";
+      };
     };
     systemd.services.llama-cpp = {
       wantedBy = lib.mkForce [ ];
