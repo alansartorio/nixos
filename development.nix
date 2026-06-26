@@ -15,7 +15,16 @@ in
   environment.systemPackages =
     (with pkgs; [
       # editors
-      neovim
+      (pkgs.symlinkJoin {
+        name = "neovim-custom";
+        paths = [ neovim-unwrapped ];
+
+        nativeBuildInputs = [ makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/nvim \
+            --prefix PATH : ${lib.makeBinPath [tree-sitter]}
+        '';
+      })
 
       # sdks/interpreters/compilers
       (dotnetCorePackages.combinePackages [
