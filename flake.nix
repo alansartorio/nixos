@@ -7,9 +7,9 @@
     #rubik.inputs.nixpkgs.follows = "nixpkgs";
     hass-light-eww.url = "github:alansartorio/hass-light-eww";
     hass-light-eww.inputs.nixpkgs.follows = "nixpkgs";
-    pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio/fix-missing-audiocallbackdriver";
     croptool.url = "github:alansartorio/croptool";
     croptool.inputs.nixpkgs.follows = "nixpkgs";
+    pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio";
     pipewire-screenaudio.inputs.nixpkgs.follows = "nixpkgs";
     clipper.url = "github:alansartorio/Clipper/all-merged";
     clipper.inputs.nixpkgs.follows = "nixpkgs";
