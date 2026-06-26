@@ -49,7 +49,12 @@ let
     inputs.clipper.packages.${pkgs.stdenv.hostPlatform.system}.default
     parallel
     taskjuggler
+    bat
     inputs.croptool.packages.${pkgs.stdenv.hostPlatform.system}.default
+    squashfsTools
+    gptfdisk
+    pv
+    wget
   ];
 
   gui-utils = with pkgs; [
