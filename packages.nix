@@ -110,9 +110,7 @@ in
     (with pkgs; [
       kdePackages.kdeconnect-kde
       kdePackages.ark
-      #kdePackages.kservice
-      libsForQt5.kservice
-
+      kdePackages.kservice
     ])
     ++ browsers
     ++ cli-utils
