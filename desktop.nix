@@ -5,6 +5,10 @@
   ...
 }:
 {
+  imports = [
+    ./dolphin
+  ];
+
   environment.systemPackages = with pkgs; [
     # Theming
     rose-pine-hyprcursor
@@ -16,12 +20,6 @@
     rofi
     pavucontrol
     alacritty
-
-    kdePackages.dolphin
-
-    # for video thumbnails in dolphin
-    kdePackages.kio-extras
-    kdePackages.ffmpegthumbs
 
     # Required for my eww config
     eww
