@@ -92,6 +92,17 @@
   services.locate.package = pkgs.mlocate;
   services.udisks2.enable = true;
 
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (subject.local && action.id == "org.freedesktop.udisks2.filesystem-mount-system") {
+        return polkit.Result.YES;
+      }
+      if (subject.local && action.id == "org.freedesktop.udisks2.filesystem-mount-other-seat") {
+        return polkit.Result.YES;
+      }
+    });
+  '';
+
   services.lact = {
     enable = system-config.options.mainPc;
     package = pkgs.lact;
