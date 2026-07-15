@@ -38,7 +38,7 @@ let
     #smartmontools
     distrobox
     pandoc
-    texlive.combined.scheme-medium
+    texliveMedium
     #steam-run
     nix-index
     atftp
