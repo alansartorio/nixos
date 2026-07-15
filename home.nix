@@ -5,6 +5,9 @@
   ...
 }:
 {
+  imports = [
+    ./vmpk.nix
+  ];
   home.packages = with pkgs; [
     chezmoi
     less

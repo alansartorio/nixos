@@ -83,7 +83,6 @@ let
   creation = with pkgs; [
     gimp3
     inkscape
-    vmpk
     fluidsynth
     soundfont-fluid
     orca-slicer
