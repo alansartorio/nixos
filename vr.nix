@@ -21,9 +21,7 @@ in
       stardust-xr-flatland
       stardust-xr-protostar
       stardust-xr-gravity
-      stardust-xr-magnetar
       stardust-xr-atmosphere
-      stardust-xr-sphereland
     ];
     services.wivrn = {
       enable = true;
