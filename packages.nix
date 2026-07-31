@@ -55,6 +55,7 @@ let
     gptfdisk
     pv
     wget
+    hydra-check
   ];
 
   gui-utils = with pkgs; [
