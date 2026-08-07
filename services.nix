@@ -150,5 +150,9 @@
     };
   };
   hardware.uinput.enable = true;
+
+  services.udev.packages = [
+  ];
+
   #services.avahi.enable = true;
 }
