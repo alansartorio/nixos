@@ -55,6 +55,10 @@
     enable = true;
   };
 
+  xdg.portal.extraPortals = with pkgs; [
+    #kdePackages.xdg-desktop-portal-kde
+  ];
+
   services.greetd = {
     enable = true;
 
