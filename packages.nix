@@ -86,7 +86,6 @@ let
     inkscape
     fluidsynth
     soundfont-fluid
-    orca-slicer
     freecad
     blender
     libreoffice
