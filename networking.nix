@@ -111,6 +111,11 @@ in
       "zt-personal"
     ];
 
+    zones.chyps = {
+      target = "DROP";
+      services = [ "samba" ];
+      interfaces = [ "chyps" ];
+    };
     zones.lan-protected = {
       target = "ACCEPT";
       services = [ ];
