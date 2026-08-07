@@ -22,5 +22,19 @@
       owner = config.users.users.alan.name;
       mode = "0400";
     };
+
+    # ~/.ssh/config used to be dot_ssh/encrypted_config.age in the chezmoi
+    # repo. Deliberately left commented out: enabling it before the real
+    # content is in secrets/common.yaml would overwrite a working ssh config
+    # with a placeholder. To turn it on:
+    #
+    #   sops secrets/common.yaml     # add an ssh_config: | block
+    #   then uncomment the following
+    #
+    # secrets.ssh_config = {
+    #   owner = config.users.users.alan.name;
+    #   mode = "0600";
+    #   path = "/home/alan/.ssh/config";
+    # };
   };
 }

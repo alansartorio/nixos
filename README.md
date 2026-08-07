@@ -15,14 +15,26 @@ with [sops-nix](https://github.com/Mic92/sops-nix) — see below.
 ```
 flake.nix              mkHost helper + nixosConfigurations
 modules/options.nix    every per-host knob, declared as typed NixOS options (my.*)
-modules/nixpkgs.nix    allowUnfree, rocmSupport, pkgs.stable overlay
+modules/identity.nix   name/email/signing key, same on every machine
+modules/nixpkgs.nix    allowUnfree, rocmSupport, own-packages + pkgs.stable overlays
 modules/secrets.nix    sops-nix wiring
 modules/hass.nix       launch-hass-server, reads its token from /run/secrets
 hosts/<host>/          hardware-configuration.nix, mounts.nix, and my.* values
+pkgs/desktop-scripts   four rust binaries (was rust-script under chezmoi)
+pkgs/eww-scripts       shell helpers for the bar and session
 *.nix                  shared system modules
-home.nix               home-manager config for alan
+home.nix               home-manager entry point
+home/                  shell, apps, niri, hyprland, eww
+home/files/            verbatim payloads (nvim, p10k, stylesheets, base configs)
 secrets/common.yaml    sops-encrypted, safe to publish
 ```
+
+Dotfiles used to live in a separate chezmoi repo. They are all here now; the
+templated ones (`home/niri.nix`, `home/hyprland.nix`, `home/eww.nix`) splice
+per-host values into a base file at `@MARKER@` sites via
+`builtins.replaceStrings`. Note that plain `substituteAll`/`replaceVars` is not
+usable on these files — they are full of unrelated `@…@` tokens such as
+`@DEFAULT_SINK@`.
 
 Per-host settings live in `hosts/<host>/default.nix` and are declared in
 `modules/options.nix`. Adding a machine means adding a directory there and one

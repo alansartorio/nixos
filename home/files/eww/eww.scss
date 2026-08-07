@@ -1,0 +1,178 @@
+* {
+  all: unset; //Unsets everything so you can style everything from scratch
+  font-family: "DejaVu Sans", "RobotoMono Nerd Font";
+}
+
+@import "nord.scss";
+
+//$dark-background: #2a2d34;
+//$primary-color: #de4d86;
+//$secondary-color: #f29ca3;
+//$secondary-text: #b0b4bc;
+//$light-background: #555;
+//$alt-text: #222;
+
+$dark-background: $nord1;
+$primary-color: $nord10;
+$secondary-color: $nord9;
+$secondary-text: $nord4;
+$light-background: $nord2;
+$alt-text: $nord0;
+
+//Global Styles
+.bar {
+  //background-color: $dark-background;
+  color: $secondary-text;
+}
+
+.label {
+  font-size: 18px;
+}
+
+// Styles on classes (see eww.yuck for more information)
+
+.sidestuff slider {
+  all: unset;
+  color: $primary-color;
+}
+
+.workspace-entry {
+  min-width: 20px;
+  min-height: 20px;
+  margin: 4px;
+  font-weight: 900;
+  border-radius: 1000px;
+  background: $dark-background;
+}
+
+.occupied {
+  background: $secondary-color;
+  color: $alt-text;
+}
+
+.empty:hover {
+  background: white;
+}
+
+.current {
+  background: $primary-color;
+  color: $alt-text;
+}
+
+.battery-container {
+  background: $primary-color;
+  border-radius: 1000px;
+  font-weight: bold;
+  margin: 4px;
+}
+
+.battery-container-inner {
+  background: $nord0;
+  border-radius: 1000px;
+  font-weight: bold;
+  margin: 3px;
+  padding: 2px 6px;
+}
+
+.clock {
+  margin: 4px;
+  padding: 2px;
+  background: $light-background;
+  border-radius: 1000px;
+}
+
+.clock .clock-time,
+.clock-date {
+  padding: 0 8px;
+}
+
+.clock-time {
+  font-weight: bold;
+  font-size: 20px;
+  color: $nord6;
+}
+
+.clock-date {
+  color: $nord4;
+  font-weight: bold;
+}
+
+.layout-separator {
+  background: $primary-color;
+}
+
+.clock-separator {
+  background: white;
+  border-radius: 1000px;
+  min-width: 6px;
+  min-height: 6px;
+}
+
+.circular-indicator {
+  color: $primary-color;
+  background: $alt-text;
+  border-radius: 10px;
+}
+
+.dark-text {
+  color: $alt-text;
+}
+
+// Calendar
+.cal-box {
+  background-color: $dark-background;
+  font-size: 1em;
+  font-weight: 500;
+  color: $secondary-text;
+
+  .cal-inner-box {
+    padding: 1rem 1rem 0.2rem;
+
+    .cal {
+      &.highlight {
+        padding: 10rem;
+        color: $secondary-text;
+        font-weight: bold;
+      }
+
+      &.header {
+        color: $primary-color;
+        font-weight: bold;
+      }
+
+      //&.view {
+      //background: black;
+      //}
+
+      &.button {
+        color: $primary-color;
+      }
+
+      &:selected {
+        color: $alt-text;
+        font-weight: bold;
+        border-radius: 100;
+        background: white;
+      }
+
+      &:indeterminate {
+        color: $light-background;
+      }
+    }
+  }
+}
+
+.expander {
+  background-color: $light-background;
+  border-radius: 0 10px 10px 0;
+  padding: 0 10px 0 20px;
+  margin: 0 0 0 20px;
+}
+
+.cpu-usage {
+  min-height: 25px;
+}
+
+.cpu-usage-bar {
+  background-color: $primary-color;
+}

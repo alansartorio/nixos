@@ -4,4 +4,8 @@ inputs: final: prev: {
   desktop-scripts = final.callPackage ./desktop-scripts {
     clockin = inputs.clockin.packages.${final.stdenv.hostPlatform.system}.default;
   };
+
+  eww-scripts = final.callPackage ./eww-scripts {
+    clockin = inputs.clockin.packages.${final.stdenv.hostPlatform.system}.default;
+  };
 }
