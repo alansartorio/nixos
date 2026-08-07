@@ -68,12 +68,15 @@ in
       terraform-ls
       bash-language-server
       clang-tools
+
       clang-manpages
       man-pages-posix
 
       pkg-config
       gitflow
       git-filter-repo
+
+      ghidra
     ])
     ++ docker
     ++ gui;
