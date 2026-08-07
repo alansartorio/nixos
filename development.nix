@@ -1,4 +1,4 @@
-{ pkgs, system-config, ... }:
+{ pkgs, ... }:
 let
   lib = pkgs.lib;
   docker = with pkgs; [

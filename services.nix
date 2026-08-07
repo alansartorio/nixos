@@ -1,5 +1,5 @@
 {
-  system-config,
+  config,
   pkgs,
   lib,
   ...
@@ -10,7 +10,7 @@
   ];
 
   services.immich = {
-    enable = system-config.options.mainPc;
+    enable = config.my.roles.mainPc;
     package = pkgs.immich;
     port = 2283;
     host = "0.0.0.0";
@@ -22,7 +22,7 @@
 
   # Enable the OpenSSH daemon.
   services.openssh = {
-    enable = system-config.options.mainPc;
+    enable = config.my.roles.mainPc;
     openFirewall = false;
     settings = {
       PasswordAuthentication = false;
@@ -30,12 +30,12 @@
   };
 
   services.samba = {
-    enable = system-config.options.mainPc;
+    enable = config.my.roles.mainPc;
     settings = {
       global = {
         "workgroup" = "WORKGROUP";
-        "server string" = system-config.options.hostname;
-        "netbios name" = system-config.options.hostname;
+        "server string" = config.my.hostname;
+        "netbios name" = config.my.hostname;
         "security" = "user";
         # note: localhost is the ipv6 localhost ::1
         "hosts allow" = "10.1.0. 192.168.0. 127.0.0.1 localhost";
@@ -68,19 +68,19 @@
     };
   };
 
-  services.peerflix.enable = system-config.options.mainPc;
+  services.peerflix.enable = config.my.roles.mainPc;
 
   services.samba-wsdd = {
-    enable = system-config.options.mainPc;
+    enable = config.my.roles.mainPc;
   };
 
   services.jellyfin = {
-    enable = system-config.options.mainPc;
+    enable = config.my.roles.mainPc;
     user = "alan";
   };
 
   services.ratbagd = {
-    enable = system-config.options.mainPc;
+    enable = config.my.roles.mainPc;
     package = pkgs.libratbag;
   };
 
@@ -116,12 +116,12 @@
   '';
 
   services.lact = {
-    enable = system-config.options.mainPc;
+    enable = config.my.roles.mainPc;
     package = pkgs.lact;
   };
 
   services.printing = {
-    enable = system-config.options.mainPc;
+    enable = config.my.roles.mainPc;
     drivers = with pkgs; [ epson-escpr ];
     listenAddresses = [ "*:631" ];
     allowFrom = [ "all" ];
@@ -130,7 +130,7 @@
     '';
   };
 
-  networking.hosts = lib.mkIf system-config.options.mainPc {
+  networking.hosts = lib.mkIf config.my.roles.mainPc {
     "127.0.0.2" = [
       "cups.home"
       "immich.home"
@@ -138,7 +138,7 @@
     ];
   };
 
-  powerManagement.cpuFreqGovernor = lib.mkIf system-config.options.mainPc "performance";
+  powerManagement.cpuFreqGovernor = lib.mkIf config.my.roles.mainPc "performance";
 
 
   services.sunshine = {

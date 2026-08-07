@@ -1,5 +1,5 @@
 {
-  system-config,
+  config,
   pkgs,
   ...
 }:
@@ -11,9 +11,6 @@
   ];
   environment.localBinInPath = true;
   imports = [
-    # Include the results of the hardware scan.
-    system-config.hardware
-    system-config.mounts
     ./graphics.nix
     ./services.nix
     ./packages.nix
@@ -27,8 +24,8 @@
     ./games.nix
   ];
 
-  games.enable = system-config.options.mainPc;
-  vr.enable = system-config.options.mainPc;
+  games.enable = config.my.roles.mainPc;
+  vr.enable = config.my.roles.mainPc;
 
   # Bootloader.
   boot.loader.timeout = 1;
@@ -67,5 +64,5 @@
 
   security.rtkit.enable = true;
 
-  system.stateVersion = system-config.options.stateVersion; # Did you read the comment?
+  system.stateVersion = config.my.stateVersion; # Did you read the comment?
 }
