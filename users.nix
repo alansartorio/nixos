@@ -23,6 +23,10 @@
     isNormalUser = true;
     createHome = false;
   };
+  users.users.chyps-alan = {
+    isNormalUser = true;
+    createHome = false;
+  };
 
   users.defaultUserShell = pkgs.zsh;
 }
