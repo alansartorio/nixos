@@ -129,11 +129,13 @@ in
   programs.chromium = {
     enable = true;
   };
+
   environment.etc."chromium/native-messaging-hosts/com.icedborn.pipewirescreenaudioconnector.json".text =
     builtins.toJSON {
       name = "com.icedborn.pipewirescreenaudioconnector";
       description = "Connector to communicate with the browser";
       path = "${inputs.pipewire-screenaudio.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/connector-rs";
+      #path = "/home/alan/Documents/PipewireScreenaudio/pipewire-screenaudio/native/connector-rs/target/debug/connector-rs";
       type = "stdio";
       allowed_origins = [
         "chrome-extension://gablikphdaflmahdnopphhpckhialbie/"
