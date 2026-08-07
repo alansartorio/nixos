@@ -1,11 +1,21 @@
 # Extra filesystems beyond the hardware scan.
-#
-# TODO: copy in the real entries from the old gitignored config/mounts.nix.
-# services.nix expects /huge-storage to exist for the samba "miri" share.
 { ... }:
 {
-  # fileSystems."/huge-storage" = {
-  #   device = "/dev/disk/by-label/HUGE";
-  #   fsType = "ext4";
-  # };
+  fileSystems."/huge-storage" = {
+    device = "/dev/disk/by-label/Huge\\x20Storage";
+    fsType = "ext4";
+  };
+
+  # Keep the bulky service state on the big disk instead of the root SSD.
+  fileSystems."/var/lib/ollama" = {
+    device = "/huge-storage/ollama/";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  fileSystems."/var/lib/immich" = {
+    device = "/huge-storage/Immich/";
+    fsType = "none";
+    options = [ "bind" ];
+  };
 }

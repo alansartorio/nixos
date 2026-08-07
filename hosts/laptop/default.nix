@@ -5,33 +5,29 @@
   ];
 
   my = {
-    # TODO: replace with the laptop's real hostname before the first switch.
-    hostname = "alan-laptop-nixos";
-    stateVersion = "25.05";
-    # TODO: confirm -- assumed Intel integrated graphics.
+    hostname = "alan-notebook";
+    # Older than the desktop's on purpose: this machine was installed earlier
+    # and stateVersion is never bumped after install.
+    stateVersion = "24.11";
     gpu = "intel";
 
     roles.mainPc = false;
 
-    identity = {
-      fullName = "Alan Sartorio";
-      email = "alan42ga@hotmail.com";
-      signingKey = null;
-      work = {
-        dir = "~/CHYPS/";
-        email = "asartorio@chyps.com.ar";
-      };
-    };
-
     hardware.battery = true;
 
     desktop = {
-      monitors.fixed = false;
-      monitors.autoScaling = true;
+      monitors = {
+        fixed = false;
+        autoScaling = false;
+      };
       kdeConnect.enable = false;
+      vpnConnection = "chyps";
+      clockinProject = "CHYPS";
     };
 
-    services.hass.enable = false;
-    services.llm.enable = false;
+    services = {
+      hass.enable = false;
+      llm.enable = false;
+    };
   };
 }

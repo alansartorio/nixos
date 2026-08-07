@@ -162,9 +162,13 @@ in
         };
 
         llamaCppModel = mkOption {
-          type = types.nullOr types.path;
+          type = types.nullOr types.str;
           default = null;
-          description = "Path to the .gguf served by llama-cpp.";
+          description = ''
+            Absolute path to the .gguf served by llama-cpp. A runtime path on
+            the machine, not a store path -- hence str rather than path, which
+            would try to copy the model into the nix store.
+          '';
         };
       };
     };

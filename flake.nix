@@ -48,6 +48,7 @@
           specialArgs = { inherit inputs; };
           modules = [
             ./modules/options.nix
+            ./modules/identity.nix
             ./modules/nixpkgs.nix
             ./modules/secrets.nix
             ./modules/hass.nix
