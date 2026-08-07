@@ -16,6 +16,7 @@
     croptool.inputs.nixpkgs.follows = "nixpkgs";
     croptool.inputs.flake-utils.follows = "flake-utils";
     pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio";
+    #pipewire-screenaudio.url = "path:/home/alan/Documents/PipewireScreenaudio/pipewire-screenaudio";
     pipewire-screenaudio.inputs.nixpkgs.follows = "nixpkgs";
     clipper.url = "github:alansartorio/Clipper/all-merged";
     clipper.inputs.nixpkgs.follows = "nixpkgs";
