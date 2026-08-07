@@ -47,7 +47,7 @@
 
   programs.hyprland = {
     package = pkgs.hyprland;
-    enable = true;
+    enable = false;
   };
 
   programs.niri = {
