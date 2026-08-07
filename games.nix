@@ -20,6 +20,44 @@ let
       gamescope --force-grab-cursor --steam -O DP-2 -- flatpak run com.valvesoftware.Steam -pipewire-dmabuf -tenfoot
     '';
   };
+  minecraft-notifier-script =
+    pkgs.writers.writePython3Bin "minecraft-notifier"
+      {
+        libraries = pypkgs: [
+          pypkgs.mcstatus
+          pypkgs.notify2
+        ];
+        doCheck = false;
+      }
+      ''
+        from mcstatus import JavaServer
+        import notify2
+        import sys
+        from time import sleep
+
+        host = sys.argv[1]
+        server = JavaServer.lookup(host)
+
+
+        def sendmessage(title, message):
+            notify2.init("Test")
+            notice = notify2.Notification(title, message)
+            notice.show()
+
+
+        last_count = None
+        while True:
+            try:
+                status = server.status()
+                count = status.players.online
+                print(f"player count: {count}")
+                if count != last_count:
+                    sendmessage("server count changed", f"{last_count} -> {count}")
+                last_count = count
+            except Exception as e:
+                print(e)
+            sleep(20)
+      '';
 in
 {
   imports = [
@@ -37,6 +75,7 @@ in
 
       steam-gamescope
       #gamescope
+      minecraft-notifier-script
     ];
 
     services.displayManager.sessionPackages = [
