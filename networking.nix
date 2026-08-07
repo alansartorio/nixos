@@ -83,6 +83,8 @@ in
     };
   };
 
+  #systemd.services."systemd-resolved".environment.SYSTEMD_LOG_LEVEL = "debug";
+
   networking.wireguard.enable = true;
 
   networking.firewall.enable = false;
