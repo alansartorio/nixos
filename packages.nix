@@ -88,7 +88,7 @@ let
     soundfont-fluid
     freecad
     blender
-    libreoffice
+    libreoffice-fresh
     #unityhub
     #lmms
   ];
