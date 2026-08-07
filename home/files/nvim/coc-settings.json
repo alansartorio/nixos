@@ -1,0 +1,45 @@
+{
+  "rust-analyzer.server.path": "/usr/lib/rustup/bin/rust-analyzer",
+  "rust-analyzer.procMacro.enable": true,
+  "flutter.sdk.path": "/usr/bin/flutter",
+  //"svelte.enable-ts-plugin": true,
+  //"coc.preferences.enableMessageDialog": true,
+  //"rust-analyzer.disableProgressNotifications": false,
+  //"notification.statusLineProgress": true,
+  "notification.disabledProgressSources": [],
+  "rust-analyzer.trace.server": "verbose",
+  "rust-analyzer.check.command": "clippy",
+  "inlayHint.enable": true,
+  "languageserver": {
+	"terraform": {
+	  "command": "terraform-lsp",
+	  "filetypes": ["terraform"],
+	  "initializationOptions": {}
+	}
+  },
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "snippets.textmateSnippetsRoots": ["~/.config/nvim/vscode-snippets"],
+  "snippets.ultisnips.directories": ["~/.config/nvim/ultisnips"],
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-1.8",
+      "path": "/lib/jvm/java-8-openjdk",
+      "default": true
+    },
+    {
+      "name": "JavaSE-17",
+      "path": "/lib/jvm/java-17-openjdk"
+    }
+  ],
+  "java.jdt.ls.java.home": "/lib/jvm/java-20-openjdk",
+  "svelte.enable-ts-plugin": true,
+  "workspace.rootPatterns": [
+    ".git",
+    ".hg",
+    ".projections.json",
+    "Cargo.toml"
+  ],
+  "clangd.fallbackFlags": ["-std=c++17"],
+  "Lua.diagnostics.globals": ["vim"]
+}

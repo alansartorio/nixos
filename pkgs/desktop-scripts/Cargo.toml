@@ -1,0 +1,17 @@
+# These four binaries used to be `#!/usr/bin/env rust-script` files applied by
+# chezmoi, which meant each one compiled on first run against a nightly rustup
+# toolchain and needed network access to resolve crates. They are one cargo
+# workspace now so nix builds them ahead of time from a single lockfile.
+[workspace]
+resolver = "2"
+members = [
+    "workspace-arranger",
+    "change-active-workspace",
+    "poll-vpn-status",
+    "clockin-integration",
+]
+
+[workspace.dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

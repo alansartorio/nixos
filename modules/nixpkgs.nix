@@ -13,6 +13,8 @@
   };
 
   nixpkgs.overlays = [
+    (import ../pkgs inputs)
+
     (final: prev: {
       # `pkgs.stable.foo` for the occasional package that is broken on
       # unstable. The old flake imported nixpkgs-stable but never used it.

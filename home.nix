@@ -14,11 +14,13 @@ let
 in
 {
   imports = [
-    ./vmpk.nix
+    ./home
   ];
   home.packages = with pkgs; [
     less
     age
+    # Was four `#!/usr/bin/env rust-script` files applied by chezmoi.
+    desktop-scripts
   ];
 
   home.stateVersion = osConfig.my.stateVersion;
