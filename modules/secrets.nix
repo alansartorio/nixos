@@ -31,10 +31,10 @@
     #   sops secrets/common.yaml     # add an ssh_config: | block
     #   then uncomment the following
     #
-    # secrets.ssh_config = {
-    #   owner = config.users.users.alan.name;
-    #   mode = "0600";
-    #   path = "/home/alan/.ssh/config";
-    # };
+    secrets.ssh_config = {
+      owner = config.users.users.alan.name;
+      mode = "0600";
+      path = "/home/alan/.ssh/config";
+    };
   };
 }
