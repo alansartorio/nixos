@@ -1,4 +1,5 @@
-//! Feeds the bar's kimai widget: one JSON line per tick on stdout, forever.
+//! Feeds the bar's kimai widget: a JSON line on stdout whenever the reading
+//! changes, forever.
 //!
 //!     kimai-integration https://kimai.intra.chyps.com.ar
 //!
@@ -13,6 +14,11 @@
 //! entry is counted forward locally every TICK_INTERVAL. A clock that only moved
 //! on the poll would sit still for a minute at a time, and polling at tick rate
 //! would be sixty requests a minute for a number we can add ourselves.
+//!
+//! A third rate falls out of those two: the rate anything actually changes. With
+//! a timer running that is the tick, but idle it is the poll, and with the
+//! server away it is never. Emitter drops a reading equal to the one before it,
+//! so the bar is only woken when there is something new to show.
 //!
 //! It never exits: eww's deflisten owns this process for the life of the bar, and
 //! an exit would freeze the variable at its last value with nothing to say why. A
@@ -42,7 +48,12 @@ const DAY_TARGET_SECONDS: i64 = 8 * 3600;
 /// What the bar reads. `failed` covers every reason there is no answer — server
 /// unreachable, token refused, response unreadable — with the detail in `error`,
 /// which the widget shows on hover.
-#[derive(Serialize)]
+///
+/// PartialEq is what lets the emitter drop a reading identical to the last one.
+/// Comparing the struct rather than its rendered line means the no-change path
+/// never serialises at all, and it compares what the widget actually reads
+/// rather than an encoding of it.
+#[derive(Serialize, PartialEq)]
 struct Output {
     configured: bool,
     ok: bool,
@@ -149,64 +160,92 @@ fn token_path() -> PathBuf {
     }
 }
 
-fn print_output(output: &Output) {
-    let line = serde_json::to_string(output).expect("output is always serialisable");
+/// Owns stdout and the last reading written to it.
+///
+/// The tick rate and the rate at which anything changes are two different
+/// things: a running entry really does read differently every second, but an
+/// idle one only moves when the poll lands a minute later, and a failure repeats
+/// its one error string for as long as the server stays away. Sending those
+/// unchanged is a variable update and a widget re-render sixty times a minute
+/// for nothing.
+///
+/// Suppressing them is safe because eww's deflisten keeps the last value it was
+/// given — there is no keepalive to maintain, and nothing to re-send after a
+/// quiet stretch.
+struct Emitter {
+    last: Option<Output>,
+}
 
-    // Rust's stdout is line buffered, so each line reaches the listening bar as
-    // it is written rather than waiting for a full buffer.
-    //
-    // The bar closing the pipe — a reload, an eww restart — is this process's
-    // job ending, not a crash to report. println! would panic and leave a
-    // backtrace in eww's log for something entirely expected.
-    if writeln!(io::stdout(), "{line}").is_err() {
-        std::process::exit(0);
+impl Emitter {
+    fn new() -> Self {
+        Self { last: None }
     }
-}
 
-fn print_failure(error: &str) {
-    print_output(&Output {
-        configured: true,
-        ok: false,
-        failed: true,
-        running: false,
-        running_time: format_duration(0),
-        today_time: format_duration(0),
-        day_percent: 0,
-        task: String::new(),
-        description: String::new(),
-        since: String::new(),
-        error: error.to_string(),
-    });
-}
+    fn send(&mut self, output: Output) {
+        if self.last.as_ref() == Some(&output) {
+            return;
+        }
 
-fn print_snapshot(snapshot: &Snapshot) {
-    let (running_secs, task, description, since) = match &snapshot.running {
-        Some(running) => (
-            (Local::now() - running.counts_from)
-                .num_seconds()
-                .max(0),
-            running.task.clone(),
-            running.description.clone(),
-            running.since.clone(),
-        ),
-        None => (0, String::new(), String::new(), String::new()),
-    };
+        let line = serde_json::to_string(&output).expect("output is always serialisable");
 
-    let today_secs = snapshot.finished_today + running_secs;
+        // Rust's stdout is line buffered, so each line reaches the listening bar
+        // as it is written rather than waiting for a full buffer.
+        //
+        // The bar closing the pipe — a reload, an eww restart — is this
+        // process's job ending, not a crash to report. println! would panic and
+        // leave a backtrace in eww's log for something entirely expected.
+        if writeln!(io::stdout(), "{line}").is_err() {
+            std::process::exit(0);
+        }
 
-    print_output(&Output {
-        configured: true,
-        ok: true,
-        failed: false,
-        running: snapshot.running.is_some(),
-        running_time: format_duration(running_secs),
-        today_time: format_duration(today_secs),
-        day_percent: (today_secs * 100 / DAY_TARGET_SECONDS).min(100),
-        task,
-        description,
-        since,
-        error: String::new(),
-    });
+        self.last = Some(output);
+    }
+
+    fn failure(&mut self, error: &str) {
+        self.send(Output {
+            configured: true,
+            ok: false,
+            failed: true,
+            running: false,
+            running_time: format_duration(0),
+            today_time: format_duration(0),
+            day_percent: 0,
+            task: String::new(),
+            description: String::new(),
+            since: String::new(),
+            error: error.to_string(),
+        });
+    }
+
+    fn snapshot(&mut self, snapshot: &Snapshot) {
+        let (running_secs, task, description, since) = match &snapshot.running {
+            Some(running) => (
+                (Local::now() - running.counts_from)
+                    .num_seconds()
+                    .max(0),
+                running.task.clone(),
+                running.description.clone(),
+                running.since.clone(),
+            ),
+            None => (0, String::new(), String::new(), String::new()),
+        };
+
+        let today_secs = snapshot.finished_today + running_secs;
+
+        self.send(Output {
+            configured: true,
+            ok: true,
+            failed: false,
+            running: snapshot.running.is_some(),
+            running_time: format_duration(running_secs),
+            today_time: format_duration(today_secs),
+            day_percent: (today_secs * 100 / DAY_TARGET_SECONDS).min(100),
+            task,
+            description,
+            since,
+            error: String::new(),
+        });
+    }
 }
 
 fn api_get(agent: &Agent, url: &str, token: &str, path: &str) -> Result<String> {
@@ -292,13 +331,15 @@ fn describe(error: &anyhow::Error) -> String {
 
 /// Not fatal, and not a one-shot message either: the file may be about to be
 /// written. Say so on the bar, and keep looking.
-fn wait_for_token() -> String {
+fn wait_for_token(emitter: &mut Emitter) -> String {
     let path = token_path();
     loop {
         match std::fs::read_to_string(&path) {
             Ok(token) => return token.trim().to_string(),
             Err(_) => {
-                print_failure(&format!("no token at {}", path.display()));
+                // Said once, however long the wait: the message is the same
+                // every time round, so the emitter drops the repeats.
+                emitter.failure(&format!("no token at {}", path.display()));
                 sleep(POLL_INTERVAL);
             }
         }
@@ -322,7 +363,9 @@ fn main() {
         }
     };
 
-    let token = wait_for_token();
+    let mut emitter = Emitter::new();
+
+    let token = wait_for_token(&mut emitter);
     let agent: Agent = Agent::config_builder()
         // Well under POLL_INTERVAL, so a hung request cannot stall the next one.
         .timeout_global(Some(REQUEST_TIMEOUT))
@@ -338,9 +381,12 @@ fn main() {
             last_poll = Instant::now();
         }
 
+        // Still every tick, because a running entry reads differently every
+        // tick. The emitter is what keeps an idle one, or a failure, from
+        // reaching the bar sixty times a minute unchanged.
         match &state {
-            Ok(snapshot) => print_snapshot(snapshot),
-            Err(error) => print_failure(&describe(error)),
+            Ok(snapshot) => emitter.snapshot(snapshot),
+            Err(error) => emitter.failure(&describe(error)),
         }
 
         sleep(TICK_INTERVAL);
