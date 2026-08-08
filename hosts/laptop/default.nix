@@ -28,6 +28,10 @@
     services = {
       hass.enable = false;
       llm.enable = false;
+      # Deliberate, not just the default: the daemon is a second poller with a
+      # state dir and a db of its own, and one machine already keeps that
+      # history. No pill on this bar is the price, and it is worth paying.
+      claudeUsage.enable = false;
     };
   };
 }
