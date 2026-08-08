@@ -67,6 +67,13 @@
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = { inherit inputs; };
               home-manager.users.alan.imports = [ ./home.nix ];
+
+              # Without this, activation aborts as soon as it finds a file it
+              # wants to manage that it did not write -- which on the first
+              # switch is every file chezmoi ever applied. Identical files are
+              # skipped silently; only genuinely differing ones get moved to
+              # <file>.backup.
+              home-manager.backupFileExtension = "backup";
             }
           ];
         };
