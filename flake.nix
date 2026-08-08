@@ -70,11 +70,21 @@
             }
           ];
         };
-    in
-    {
-      nixosConfigurations = {
+      hosts = {
         desktop = mkHost "desktop";
         laptop = mkHost "laptop";
       };
+
+      # Also expose each host under its own networking.hostName, so a bare
+      # `nixos-rebuild switch --flake /path/to/repo` works on the machine
+      # itself -- that is how the old flake behaved when it was keyed on
+      # system-config.options.hostname. Derived from the config rather than
+      # hardcoded, so it cannot drift from hosts/<host>/default.nix.
+      byHostname = nixpkgs.lib.mapAttrs' (
+        _: host: nixpkgs.lib.nameValuePair host.config.my.hostname host
+      ) hosts;
+    in
+    {
+      nixosConfigurations = hosts // byHostname;
     };
 }
