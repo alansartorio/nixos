@@ -62,6 +62,7 @@ in
       # Ordered most-specific first: ssh keeps the first value it obtains for
       # each keyword, so what is only true from this machine has to come before
       # what is true from all of them.
+      IdentitiesOnly yes
     ''
     + section "this machine" cfg.extraConfig
     + section "everywhere, private" (
