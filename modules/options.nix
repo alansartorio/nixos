@@ -137,6 +137,18 @@ in
         default = null;
         description = "clockin project shown in the eww bar. Null hides the widget.";
       };
+
+      kimaiUrl = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "https://kimai.intra.chyps.com.ar";
+        description = ''
+          Base URL of the Kimai instance the eww widget reads. Null hides the
+          widget and, with it, the `kimai_token` sops secret -- no reason to
+          decrypt the token onto a machine that never asks Kimai anything. Was
+          `kimai_url` in .chezmoidata.toml, where `false` meant this null.
+        '';
+      };
     };
 
     services = {

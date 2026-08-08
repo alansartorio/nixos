@@ -1,0 +1,61 @@
+
+;; Kimai took clockin's job, so this widget answers clockin's two questions: what
+;; is running, and how much of today is already booked. Read only — clicking
+;; hands off to Kimai's own page rather than pretending to start and stop timers
+;; from the bar.
+;;
+;; The script polls and ticks on its own schedule and never exits, so a server
+;; that cannot be reached — off the VPN, most often — is a line saying so rather
+;; than a variable frozen at whatever it last held. The initial value is that
+;; same failure shape: until the first line arrives the widget reads "kimai
+;; unreachable", which is true, instead of showing a confident 0s.
+;;
+;; KIMAI_TOKEN_FILE points at the sops secret rather than at a file in
+;; ~/.config: the token is decrypted into /run at activation and never lands in
+;; the home directory, which is what chezmoi's encrypted_private_ file did.
+(deflisten kimai
+  :initial '{"configured":true,"ok":false,"failed":true,"running":false,"running_time":"0s","today_time":"0s","day_percent":0,"task":"","description":"","since":"","error":"starting"}'
+  "KIMAI_TOKEN_FILE=@KIMAI_TOKEN_FILE@ kimai-integration @KIMAI_URL@")
+(defvar expand_kimai true)
+
+(defwidget kimai []
+  (box
+    :space-evenly false
+    ;; Safe access all the way down: a malformed line still leaves a widget on
+    ;; the bar saying something is wrong, rather than tearing it off.
+    :tooltip {(kimai?.failed ?: true)
+      ? "kimai: ${(kimai?.error ?: "") != "" ? kimai?.error : "no answer"}"
+      : (kimai?.running ?: false)
+      ? "${(kimai?.task ?: "") != "" ? kimai?.task : "sin proyecto"}${(kimai?.description ?: "") != "" ? " — ${kimai?.description}" : ""}\nrunning since ${kimai?.since ?: ""} · today ${kimai?.today_time ?: "0s"}"
+      : "nothing running · today ${kimai?.today_time ?: "0s"}"}
+    (expandable
+      ;; A broken poll has to stay readable: collapsed it would be a bare ring
+      ;; saying nothing. Right click folds it back down to that ring.
+      :expanded {expand_kimai || (kimai?.failed ?: true)}
+      :label "󰥔"
+      :icon-offset {-0.1}
+      :onretractedclick "xdg-open @KIMAI_URL@ &"
+      :onexpandedclick "xdg-open @KIMAI_URL@ &"
+      :onretractedrightclick "${EWW_CMD} update expand_kimai=${!expand_kimai}"
+      :onexpandedrightclick "${EWW_CMD} update expand_kimai=${!expand_kimai}"
+      ;; The ring fills over a working day, so the collapsed widget still says
+      ;; roughly how far along today is.
+      :value {kimai?.day_percent ?: 0}
+      (box
+        :vexpand true
+        :valign "center"
+        :height 25
+        :orientation "h"
+        :space-evenly false
+        :class "expander kimai ${(kimai?.failed ?: true) ? "failed" : (kimai?.running ?: false) ? "" : "idle"}"
+        ;; Running: elapsed on this entry, then the day. Idle: the day alone —
+        ;; a "0s /" in front of it would only ever mean "nothing running".
+        (label :visible {!(kimai?.failed ?: true) && (kimai?.running ?: false)}
+               :text "${kimai?.running_time ?: "0s"} / ${kimai?.today_time ?: "0s"}")
+        (label :visible {!(kimai?.failed ?: true) && !(kimai?.running ?: false)}
+               :text {kimai?.today_time ?: "0s"})
+        (label :visible {kimai?.failed ?: true} :text "kimai unreachable")
+      )
+    )
+  )
+)

@@ -29,6 +29,10 @@
     socat
     xwayland-satellite
     libnotify
+    # The kimai widget hands its click to the browser through xdg-open. Nothing
+    # else here puts it on PATH — the portal and mime modules do not — so
+    # without this the pill is simply a click that does nothing.
+    xdg-utils
     rose-pine-cursor
 
     # needed for gnome file picker

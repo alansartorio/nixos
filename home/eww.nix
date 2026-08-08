@@ -21,24 +21,33 @@ let
 
   clockinProject = desktop.clockinProject;
   vpnConnection = desktop.vpnConnection;
+  kimaiUrl = desktop.kimaiUrl;
+
+  hasClockin = clockinProject != null;
+  hasVpn = vpnConnection != null;
+  hasKimai = kimaiUrl != null;
+
+  # Only read where the widget exists: sops leaves the option undefined on a
+  # machine with no kimai, and `toString` of a missing attribute is an error
+  # rather than an empty string.
+  kimaiTokenFile = if hasKimai then osConfig.sops.secrets.kimai_token.path else "";
 
   # Fragments may refer to the project/connection names.
   part =
     name:
     builtins.replaceStrings
-      [ "@CLOCKIN_PROJECT@" "@VPN_CONNECTION@" ]
-      [ (toString clockinProject) (toString vpnConnection) ]
+      [ "@CLOCKIN_PROJECT@" "@VPN_CONNECTION@" "@KIMAI_URL@" "@KIMAI_TOKEN_FILE@" ]
+      [ (toString clockinProject) (toString vpnConnection) (toString kimaiUrl) kimaiTokenFile ]
       (builtins.readFile (./files/eww/parts + "/${name}.yuck"));
 
   optionalPart = cond: name: if cond then part name else "";
-
-  hasClockin = clockinProject != null;
-  hasVpn = vpnConnection != null;
 
   yuck = builtins.replaceStrings
     [
       "@CLOCKIN_WIDGET@"
       "@CLOCKIN_ENTRY@"
+      "@KIMAI_WIDGET@"
+      "@KIMAI_ENTRY@"
       "@VPN_ENTRY@"
       "@VPN_LISTEN@"
       "@HASS_ENTRY@"
@@ -48,6 +57,8 @@ let
     [
       (optionalPart hasClockin "clockin-widget")
       (optionalPart hasClockin "clockin-entry")
+      (optionalPart hasKimai "kimai-widget")
+      (optionalPart hasKimai "kimai-entry")
       (optionalPart hasVpn "vpn-entry")
       (optionalPart hasVpn "vpn-listen")
       (optionalPart hassEnabled "hass-entry")

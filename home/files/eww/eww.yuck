@@ -168,9 +168,12 @@
 
 @CLOCKIN_WIDGET@
 
+@KIMAI_WIDGET@
+
 (defwidget sidestuff []
   (box :class "sidestuff" :orientation "h" :space-evenly false :halign "end"
 @CLOCKIN_ENTRY@
+@KIMAI_ENTRY@
 @VPN_ENTRY@
     (metric :label {volume.mute ? "󰖁" : "󰕾"}
             :value {volume.volume}
