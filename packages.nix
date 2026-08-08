@@ -13,6 +13,7 @@ let
   cli-utils = with pkgs; [
     openssl
     age
+    sops
     alsa-utils
     brightnessctl
     zip
