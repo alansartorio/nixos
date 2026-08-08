@@ -23,14 +23,13 @@
       mode = "0400";
     };
 
-    # ~/.ssh/config used to be dot_ssh/encrypted_config.age in the chezmoi
-    # repo. Deliberately left commented out: enabling it before the real
-    # content is in secrets/common.yaml would overwrite a working ssh config
-    # with a placeholder. To turn it on:
+    # ~/.ssh/config, previously dot_ssh/encrypted_config.age under chezmoi.
     #
-    #   sops secrets/common.yaml     # add an ssh_config: | block
-    #   then uncomment the following
-    #
+    # Note this is not a regular file: a sops secret with a `path` outside
+    # /run/secrets is placed as a *symlink* into /run/secrets.d, and
+    # sops-install-secrets removes whatever is already at that path first --
+    # no backup. It also means the file only exists after activation and is
+    # recreated from tmpfs on every boot.
     secrets.ssh_config = {
       owner = config.users.users.alan.name;
       mode = "0600";
