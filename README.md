@@ -47,7 +47,8 @@ line in `flake.nix`.
 git clone https://github.com/alansartorio/nixos.git ~/nixos-config
 cd ~/nixos-config
 
-# 2. drop in this machine's hardware scan
+# 2. only for a machine that is not yet in hosts/ -- desktop and laptop
+#    already have their real scans committed
 nixos-generate-config --show-hardware-config > hosts/<host>/hardware-configuration.nix
 
 # 3. install the age identity so sops can decrypt (same key.txt chezmoi used)
