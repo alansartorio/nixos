@@ -11,6 +11,10 @@
 
     roles.mainPc = true;
 
+    # No extraConfig: the libvirt guests hang off this machine's own bridges,
+    # so the shared block already describes every host correctly from here.
+    ssh.privateHosts = true;
+
     hardware = {
       battery = false;
       keyboardModel = "by-tech-usb-gaming-keyboard";

@@ -15,6 +15,21 @@
 
     hardware.battery = true;
 
+    ssh = {
+      privateHosts = true;
+      extraConfig = ''
+        # Both of these are guests on the desktop's libvirt networks, which are
+        # only routable from the desktop itself. Their addresses, users and keys
+        # still come from the shared block -- the way in is the only thing that
+        # differs from here.
+        #
+        # `desktop` is its LAN address, so this works from the house. Away from
+        # it, swap in desktop-zt.
+        Host vibevm popos
+            ProxyJump desktop
+      '';
+    };
+
     desktop = {
       monitors = {
         fixed = false;

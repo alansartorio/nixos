@@ -79,6 +79,43 @@ in
       };
     };
 
+    ssh = {
+      extraConfig = mkOption {
+        type = types.lines;
+        default = "";
+        example = ''
+          Host vibevm popos
+              ProxyJump desktop
+        '';
+        description = ''
+          ssh_config spliced into ~/.ssh/config above the shared blocks, so it
+          wins: ssh keeps the first value it obtains for a keyword and merges
+          in what later blocks add. Use it for a host that is reached
+          differently from this machine -- a ProxyJump only needed here, an
+          address only routable from here -- and state only the difference;
+          the rest still comes from the shared block.
+
+          Public: this lands in the world-readable nix store, so it is for
+          hosts whose names are in files/ssh/hosts.conf anyway. The encrypted
+          list is not overridden per machine -- those hosts are reached the
+          same way from everywhere.
+        '';
+      };
+
+      privateHosts = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Include the shared encrypted host list -- work machines, VPSes --
+          from the `ssh_hosts` key of secrets/common.yaml.
+
+          Off by default because a declared sops secret whose key is missing
+          fails activation, and a new machine has no business claiming those
+          hosts before someone has decided it should have them.
+        '';
+      };
+    };
+
     hardware = {
       battery = mkOption {
         type = types.bool;

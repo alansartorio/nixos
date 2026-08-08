@@ -4,7 +4,10 @@
 # repo. Decryption uses the age identity in `sops.age.keyFile`, which is the
 # same key.txt that chezmoi used to decrypt with -- copy it onto a new machine
 # once and everything else works from a plain `git clone`, no auth required.
-{ config, ... }:
+{ config, lib, ... }:
+let
+  ssh = config.my.ssh;
+in
 {
   sops = {
     defaultSopsFile = ../secrets/common.yaml;
@@ -17,23 +20,26 @@
       generateKey = false;
     };
 
-    secrets.hass_token = {
-      # Read by launch-hass-server, which runs as the desktop user.
-      owner = config.users.users.alan.name;
-      mode = "0400";
-    };
-
-    # ~/.ssh/config, previously dot_ssh/encrypted_config.age under chezmoi.
+    secrets = {
+      hass_token = {
+        # Read by launch-hass-server, which runs as the desktop user.
+        owner = config.users.users.alan.name;
+        mode = "0400";
+      };
+    }
+    # The host list ssh reads through `Include`. Left at its default path under
+    # /run/secrets rather than given one inside ~/.ssh: a sops secret with a
+    # `path` elsewhere is placed as a *symlink*, and sops-install-secrets
+    # deletes whatever is already there first, with no backup. ~/.ssh/config is
+    # home-manager's now, and the two would be fighting over it.
     #
-    # Note this is not a regular file: a sops secret with a `path` outside
-    # /run/secrets is placed as a *symlink* into /run/secrets.d, and
-    # sops-install-secrets removes whatever is already at that path first --
-    # no backup. It also means the file only exists after activation and is
-    # recreated from tmpfs on every boot.
-    secrets.ssh_config = {
-      owner = config.users.users.alan.name;
-      mode = "0600";
-      path = "/home/alan/.ssh/config";
+    # Read by ssh running as alan, hence the ownership. 0400 because a config
+    # file ssh will read has to be unwritable by anyone else anyway.
+    // lib.optionalAttrs ssh.privateHosts {
+      ssh_hosts = {
+        owner = config.users.users.alan.name;
+        mode = "0400";
+      };
     };
   };
 }
