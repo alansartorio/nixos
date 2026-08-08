@@ -30,6 +30,11 @@
     clipper.url = "github:alansartorio/Clipper/all-merged";
     clipper.inputs.nixpkgs.follows = "nixpkgs";
     clipper.inputs.flake-utils.follows = "flake-utils";
+    # Not on any forge: fetched over ssh from the machine that hosts the bare
+    # repo, so a `nix flake update` needs that ssh to work.
+    claude-usage.url = "git+ssh://alan@vibevm/home/alan/git/personal/claude-usage.git";
+    claude-usage.inputs.nixpkgs.follows = "nixpkgs";
+    claude-usage.inputs.flake-utils.follows = "flake-utils";
   };
 
   outputs =

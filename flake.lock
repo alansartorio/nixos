@@ -1,5 +1,29 @@
 {
   "nodes": {
+    "claude-usage": {
+      "inputs": {
+        "crane": "crane",
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786139517,
+        "narHash": "sha256-axDXjVhIfAmaddQDIrO5EyF4/A4vE6a/N0CrwRvPqM4=",
+        "ref": "refs/heads/main",
+        "rev": "751cfb8af976ba12353a60d904fd2fa3f6deac92",
+        "revCount": 25,
+        "type": "git",
+        "url": "ssh://alan@vibevm/home/alan/git/personal/claude-usage.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://alan@vibevm/home/alan/git/personal/claude-usage.git"
+      }
+    },
     "clipper": {
       "inputs": {
         "flake-utils": [
@@ -44,6 +68,21 @@
       "original": {
         "owner": "alansartorio",
         "repo": "clockin",
+        "type": "github"
+      }
+    },
+    "crane": {
+      "locked": {
+        "lastModified": 1785782307,
+        "narHash": "sha256-MPaRdVkf6zZP5fCPxYCi8Dr4pZzgmXzg8T9nVEbp3Mw=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "2c71e194474d13de031d729b729c968ddbe3507f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
         "type": "github"
       }
     },
@@ -183,6 +222,7 @@
     },
     "root": {
       "inputs": {
+        "claude-usage": "claude-usage",
         "clipper": "clipper",
         "clockin": "clockin",
         "croptool": "croptool",

@@ -154,6 +154,32 @@ in
         };
       };
 
+      claudeUsage = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Run the claude-usage daemon and show its pill in the eww bar.
+            Replaces the old `system-config.options.claudeUsage` attrset: the
+            enable flag and the refresh command are two typed options now
+            rather than one nullable attrset.
+          '';
+        };
+
+        tokenRefreshCommand = mkOption {
+          type = types.str;
+          default = "";
+          example = "ssh -o BatchMode=yes -i /var/lib/claude-usage/.ssh/id_ed25519 vibevm.local cat .claude/.credentials.json";
+          description = ''
+            Shell command whose stdout is a credentials JSON, run by the daemon
+            when its token expires -- typically an ssh that cats a remote
+            machine's ~/.claude/.credentials.json. The key and known_hosts that
+            command needs are set up out of band; this only passes the string
+            through to the daemon.
+          '';
+        };
+      };
+
       llm = {
         enable = mkOption {
           type = types.bool;

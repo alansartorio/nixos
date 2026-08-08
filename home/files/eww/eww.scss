@@ -173,6 +173,43 @@ $alt-text: $nord0;
   min-height: 25px;
 }
 
+// Against the $light-background pill, $nord3 measures 1.2:1 and $nord11 2.1:1 —
+// both unreadable, which is why the cached and the at-the-limit states were the
+// ones that disappeared. Mixed from the same palette so they still read as
+// dimmed and as alarm, but at 4.8:1 and 4.7:1 respectively.
+//
+// Harmless on a machine with my.services.claudeUsage.enable off: the widget
+// these rules dress is simply not spliced into the yuck there.
+.claude-usage {
+  &.stale {
+    color: mix($secondary-text, $light-background, 80%);
+  }
+
+  &.high {
+    color: $nord13;
+  }
+
+  &.critical {
+    color: mix($nord11, $nord6, 40%);
+  }
+}
+
 .cpu-usage-bar {
   background-color: $primary-color;
+}
+
+// `all: unset` strips the theme's tooltip styling too, and the usage pill leans
+// on its tooltip for the reset times behind the two percentages.
+tooltip,
+tooltip.background {
+  background-color: $nord0;
+  color: $nord6;
+  border: 1px solid $nord3;
+  border-radius: 6px;
+}
+
+tooltip label {
+  color: $nord6;
+  font-size: 12px;
+  padding: 3px 6px;
 }
