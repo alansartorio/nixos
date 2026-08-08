@@ -22,12 +22,14 @@
 
   # Enable the OpenSSH daemon.
   services.openssh = {
-    enable = system-config.options.mainPc;
+    enable = true;
     openFirewall = false;
     settings = {
       PasswordAuthentication = false;
     };
   };
+
+  systemd.services.sshd.wantedBy = lib.mkIf (!system-config.options.mainPc) (lib.mkForce [ ]);
 
   services.samba = {
     enable = system-config.options.mainPc;
