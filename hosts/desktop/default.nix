@@ -34,7 +34,7 @@
         # Claude Code runs on vibevm, so the credentials to refresh from live
         # there. The key this reads and the known_hosts entry behind it are set
         # up out of band, under the daemon's state dir.
-        tokenRefreshCommand = "ssh -o BatchMode=yes -i /var/lib/claude-usage/.ssh/id_ed25519 vibevm cat .claude/.credentials.json";
+        tokenRefreshCommand = "ssh -o BatchMode=yes alan@vibevm.local";
       };
 
       llm = {
