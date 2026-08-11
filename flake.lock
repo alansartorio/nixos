@@ -303,11 +303,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786406324,
-        "narHash": "sha256-9xkGzmWBBw4TqwCAXqE+jyLePut8Z41wJ6BJHiwzWkQ=",
+        "lastModified": 1786417794,
+        "narHash": "sha256-akBdSfXo8L+1ihlsdWFUo1hA0GosS9L5NdOg94Em45Y=",
         "ref": "refs/heads/main",
-        "rev": "fa4fdc9d573021d95c209a27798ac318e97c7054",
-        "revCount": 1,
+        "rev": "3e468e31fb45da15147907b3512a3b89081937c9",
+        "revCount": 2,
         "type": "git",
         "url": "ssh://alan@vibevm/home/alan/git/personal/timers.git"
       },
