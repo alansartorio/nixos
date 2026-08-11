@@ -1,0 +1,62 @@
+
+;; The daemon owns the deadlines, so the bar listens rather than polling:
+;; `timers tail` subscribes to the daemon's socket and prints a line on every
+;; change and once a second while anything is on the clock. One process and one
+;; clock, instead of a defpoll racing the daemon's own timer and showing a
+;; countdown that skips or repeats a second.
+;;
+;; The fallback matters: if the CLI cannot reach the daemon it prints its own
+;; fallback JSON, every field below still reads safely, and the pill says so
+;; instead of vanishing. `tail` keeps retrying behind that line, so the widget
+;; heals itself once the daemon is back with no bar reload.
+;;
+;; Named timers_state, not timers: the widget below is already called `timers`,
+;; and so is the CLI it runs.
+(deflisten timers_state
+  :initial '{"ok":false,"failed":true,"count":0,"pending":0,"firing":0,"state":"failed","name":"","label":"timers daemon unreachable","remaining":0,"pct":0,"tooltip":"no answer from the timers daemon · see eww logs","at":0,"timers":[]}'
+  `timers tail`)
+
+(defwidget timers []
+  (box
+    :space-evenly false
+    ;; The whole list is one hover away; the pill itself only has room for the
+    ;; one timer that matters most.
+    :tooltip {timers_state?.tooltip ?: "no timers"}
+    (expandable
+      ;; Folded to a bare ring when there is nothing to show, and it opens
+      ;; itself the moment a timer exists. No defvar to toggle by hand: the
+      ;; contents decide, so a timer that has gone off can never be folded
+      ;; away, and neither can a daemon that is not answering.
+      :expanded {(timers_state?.count ?: 0) > 0 || (timers_state?.failed ?: true)}
+      :label "󰔛"
+      :icon-offset {-0.11}
+      ;; Left click opens the list, right click opens the add sheet. Both are
+      ;; GTK4 layer-shell windows that toggle themselves, so the click that
+      ;; finds one open is the click that dismisses it.
+      :onretractedclick "timers-gui &"
+      :onexpandedclick "timers-gui &"
+      :onretractedrightclick "timers-gui add &"
+      :onexpandedrightclick "timers-gui add &"
+      ;; Middle click acknowledges everything that has gone off — the
+      ;; one-gesture way to take the colour off the bar without opening a
+      ;; window. The daemon owns that state, so the answer comes back through
+      ;; the tail like any other update and this can fire and forget.
+      :onretractedmiddleclick "timers ack --all >/dev/null &"
+      :onexpandedmiddleclick "timers ack --all >/dev/null &"
+      :value {timers_state?.pct ?: 0}
+      (box
+        :vexpand true
+        :valign "center"
+        :height 25
+        :orientation "h"
+        :space-evenly false
+        ;; The daemon publishes `state` precisely so this does not have to
+        ;; reimplement the precedence between fired, counting down and idle.
+        :class "expander timers ${(timers_state?.failed ?: true) ? "failed" : timers_state?.state ?: ""}"
+        (label :text {(timers_state?.count ?: 0) > 1
+          ? "${timers_state?.name ?: ""} ${timers_state?.label ?: ""} +${(timers_state?.count ?: 1) - 1}"
+          : "${timers_state?.name ?: ""} ${timers_state?.label ?: ""}"})
+      )
+    )
+  )
+)

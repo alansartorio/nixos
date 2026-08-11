@@ -176,3 +176,47 @@ $alt-text: $nord0;
 .cpu-usage-bar {
   background-color: $primary-color;
 }
+
+// The timers pill. It has to shout when a timer has gone off and nobody has
+// acknowledged it -- that is the whole reason the widget exists -- but $nord11
+// as text on the $light-background pill measures about 2.1:1, which is not
+// readable. So the firing state repaints the pill itself and lifts the text
+// towards $nord6 to clear it.
+//
+// Harmless with my.services.timers.enable off: the widget these rules dress is
+// simply not spliced into the yuck there.
+.timers {
+  min-height: 25px;
+
+  &.running {
+    color: $secondary-text;
+  }
+
+  &.firing {
+    background-color: mix($nord11, $light-background, 55%);
+    color: $nord6;
+    font-weight: bold;
+  }
+
+  &.failed {
+    color: mix($secondary-text, $light-background, 80%);
+  }
+}
+
+// `all: unset` at the top of this file strips the theme's tooltip styling along
+// with everything else, which leaves tooltips as unreadable black-on-black. The
+// timers pill leans on its tooltip for the full list behind the one line it has
+// room for, so it needs them back.
+tooltip,
+tooltip.background {
+  background-color: $nord0;
+  color: $nord6;
+  border: 1px solid $nord3;
+  border-radius: 6px;
+}
+
+tooltip label {
+  color: $nord6;
+  font-size: 12px;
+  padding: 3px 6px;
+}

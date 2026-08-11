@@ -167,10 +167,12 @@
 )
 
 @CLOCKIN_WIDGET@
+@TIMERS_WIDGET@
 
 (defwidget sidestuff []
   (box :class "sidestuff" :orientation "h" :space-evenly false :halign "end"
 @CLOCKIN_ENTRY@
+@TIMERS_ENTRY@
 @VPN_ENTRY@
     (metric :label {volume.mute ? "󰖁" : "󰕾"}
             :value {volume.volume}

@@ -32,6 +32,7 @@
 
     services = {
       hass.enable = true;
+      timers.enable = true;
 
       llm = {
         enable = true;

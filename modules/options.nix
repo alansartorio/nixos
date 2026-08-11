@@ -191,6 +191,18 @@ in
         };
       };
 
+      timers = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Run the timers daemon and show its pill in the eww bar. A user
+            service rather than a system one: a timer going off means a desktop
+            notification, which needs the session bus.
+          '';
+        };
+      };
+
       llm = {
         enable = mkOption {
           type = types.bool;

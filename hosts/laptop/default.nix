@@ -42,6 +42,7 @@
 
     services = {
       hass.enable = false;
+      timers.enable = true;
       llm.enable = false;
     };
   };
