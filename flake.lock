@@ -279,11 +279,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786556183,
-        "narHash": "sha256-UZwlkMT1uxcnj2z762TnanJU3+Ohvl3TIkyoXwWkMAk=",
+        "lastModified": 1786557765,
+        "narHash": "sha256-xD4/vlHvT27eP+gm3Q1QF0QzhcKugYppCM7uRhw9sKg=",
         "ref": "refs/heads/main",
-        "rev": "84b75cd7d4136ea7eead4aabb79a0d5092526ed8",
-        "revCount": 18,
+        "rev": "65539fc4c89317a2b58374d9c82d6a223ce51d26",
+        "revCount": 19,
         "type": "git",
         "url": "ssh://alan@vibevm/home/alan/git/personal/widgets.git"
       },
