@@ -18,28 +18,30 @@ let
   desktop = osConfig.my.desktop;
   hassEnabled = osConfig.my.services.hass.enable;
   claudeUsageEnabled = osConfig.my.services.claudeUsage.enable;
+  kimaiEnabled = osConfig.my.services.kimai.enable;
   timersEnabled = osConfig.my.services.timers.enable;
   batteryEnabled = osConfig.my.hardware.battery;
 
   clockinProject = desktop.clockinProject;
   vpnConnection = desktop.vpnConnection;
-  kimaiUrl = desktop.kimaiUrl;
+
+  # Still spliced, but for the widget's middle click alone: the URL the CLI
+  # talks to comes from the config file home/widgets.nix writes, not from here.
+  # The token no longer appears in the yuck at all, which is what let the
+  # `if hasKimai then … else ""` guard go — it existed only because a bare
+  # `sops.secrets.kimai_token.path` is an eval error on a host without the
+  # secret.
+  kimaiUrl = osConfig.my.services.kimai.url;
 
   hasClockin = clockinProject != null;
   hasVpn = vpnConnection != null;
-  hasKimai = kimaiUrl != null;
-
-  # Only read where the widget exists: sops leaves the option undefined on a
-  # machine with no kimai, and `toString` of a missing attribute is an error
-  # rather than an empty string.
-  kimaiTokenFile = if hasKimai then osConfig.sops.secrets.kimai_token.path else "";
 
   # Fragments may refer to the project/connection names.
   part =
     name:
     builtins.replaceStrings
-      [ "@CLOCKIN_PROJECT@" "@VPN_CONNECTION@" "@KIMAI_URL@" "@KIMAI_TOKEN_FILE@" ]
-      [ (toString clockinProject) (toString vpnConnection) (toString kimaiUrl) kimaiTokenFile ]
+      [ "@CLOCKIN_PROJECT@" "@VPN_CONNECTION@" "@KIMAI_URL@" ]
+      [ (toString clockinProject) (toString vpnConnection) (toString kimaiUrl) ]
       (builtins.readFile (./files/eww/parts + "/${name}.yuck"));
 
   optionalPart = cond: name: if cond then part name else "";
@@ -63,8 +65,8 @@ let
     [
       (optionalPart hasClockin "clockin-widget")
       (optionalPart hasClockin "clockin-entry")
-      (optionalPart hasKimai "kimai-widget")
-      (optionalPart hasKimai "kimai-entry")
+      (optionalPart kimaiEnabled "kimai-widget")
+      (optionalPart kimaiEnabled "kimai-entry")
       (optionalPart claudeUsageEnabled "claude-widget")
       (optionalPart claudeUsageEnabled "claude-entry")
       (optionalPart timersEnabled "timers-widget")

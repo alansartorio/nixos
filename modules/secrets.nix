@@ -27,16 +27,18 @@ in
         mode = "0400";
       };
     }
-    # The Kimai API token, read by the bar's kimai-integration listener.
-    # Declared only where the widget exists, which is what .chezmoiignore's
-    # `if not .kimai_url` did for the old encrypted_private_kimai-token.age:
-    # a machine without the widget has no reason to hold the token, and
-    # sops-install-secrets would refuse to install a key the yaml has anyway.
+    # The Kimai API token. Declared only where the integration is enabled, which
+    # is what .chezmoiignore's `if not .kimai_url` did for the old
+    # encrypted_private_kimai-token.age: a machine without it has no reason to
+    # hold the token, and sops-install-secrets would refuse to install a key the
+    # yaml has anyway.
     #
     # optionalAttrs rather than mkIf, so the attribute is simply absent rather
     # than present with a submodule's defaults.
-    // lib.optionalAttrs (config.my.desktop.kimaiUrl != null) {
-      # eww runs as alan, so kimai-integration reads this as alan.
+    // lib.optionalAttrs config.my.services.kimai.enable {
+      # eww runs as alan and so does the `kimai` CLI it listens to. Note that
+      # what home/widgets.nix writes into the config file is this *path*, never
+      # the token -- the secret is read from /run/secrets at runtime.
       kimai_token = {
         owner = config.users.users.alan.name;
         mode = "0400";

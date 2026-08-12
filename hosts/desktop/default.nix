@@ -29,15 +29,19 @@
       };
       kdeConnect.enable = false;
       vpnConnection = "chyps";
-      # Behind the same VPN as the connection above, so the widget says
-      # "unreachable" whenever that is down -- which is the point of it saying
-      # anything at all.
-      kimaiUrl = "https://kimai.intra.chyps.com.ar";
     };
 
     services = {
       hass.enable = true;
       timers.enable = true;
+
+      kimai = {
+        enable = true;
+        # Behind the same VPN as desktop.vpnConnection above, so the pill says
+        # "unreachable" whenever that is down -- which is the point of it saying
+        # anything at all.
+        url = "https://kimai.intra.chyps.com.ar";
+      };
 
       claudeUsage = {
         enable = true;

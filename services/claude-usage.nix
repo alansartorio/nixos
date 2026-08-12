@@ -2,37 +2,32 @@
 # control socket, plus the CLI the eww bar listens to and the GTK4 popup its
 # click opens.
 #
-# The module itself lives in the claude-usage flake; everything this file does
-# is hand it the three binaries and translate my.services.claudeUsage into its
-# own options. Under the old layout that translation read
-# `system-config.options.claudeUsage`, an untyped attrset from a separate local
-# flake input; the values are host config like any other now.
+# The module itself lives in the widgets flake; everything this file does is
+# translate my.services.claudeUsage into its options. It used to hand over the
+# three binaries as well — that flake defaults them from itself now, which is
+# what one flake for all four tools buys.
+#
+# The one thing in widgets that is *not* a home-manager module, and the reason
+# is the token: the daemon holds an API credential, so it runs as its own system
+# user with /var/lib to itself and the desktop session cannot read it even by
+# accident. Its socket is 0660, and `socketGroupMembers` is what lets the bar
+# reach it.
 {
   config,
   lib,
-  pkgs,
   inputs,
   ...
 }:
 let
   cfg = config.my.services.claudeUsage;
-  claude-usage = inputs.claude-usage.packages.${pkgs.stdenv.hostPlatform.system};
 in
 {
-  imports = [ inputs.claude-usage.nixosModules.default ];
+  imports = [ inputs.widgets.nixosModules.claude-usage ];
 
   config = lib.mkIf cfg.enable {
     services.claude-usage = {
       enable = true;
-
-      # The upstream module takes the binaries rather than building them, so a
-      # host is never left compiling the workspace three times over.
-      packages = {
-        cli = claude-usage.claude-usage;
-        daemon = claude-usage.claude-usage-daemon;
-        gui = claude-usage.claude-usage-gui;
-      };
-
+      socketGroupMembers = [ config.users.users.alan.name ];
       tokenRefreshCommand = cfg.tokenRefreshCommand;
     };
   };

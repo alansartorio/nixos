@@ -9,7 +9,6 @@ members = [
     "change-active-workspace",
     "poll-vpn-status",
     "clockin-integration",
-    "kimai-integration",
 ]
 
 [workspace.dependencies]

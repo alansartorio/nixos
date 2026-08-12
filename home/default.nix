@@ -7,7 +7,7 @@
     ./niri.nix
     ./hyprland.nix
     ./eww.nix
-    ./timers.nix
+    ./widgets.nix
     ./vmpk.nix
   ];
 }

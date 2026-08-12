@@ -175,17 +175,6 @@ in
         description = "clockin project shown in the eww bar. Null hides the widget.";
       };
 
-      kimaiUrl = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        example = "https://kimai.intra.chyps.com.ar";
-        description = ''
-          Base URL of the Kimai instance the eww widget reads. Null hides the
-          widget and, with it, the `kimai_token` sops secret -- no reason to
-          decrypt the token onto a machine that never asks Kimai anything. Was
-          `kimai_url` in .chezmoidata.toml, where `false` meant this null.
-        '';
-      };
     };
 
     services = {
@@ -237,6 +226,36 @@ in
             Run the timers daemon and show its pill in the eww bar. A user
             service rather than a system one: a timer going off means a desktop
             notification, which needs the session bus.
+          '';
+        };
+      };
+
+      kimai = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Run the Kimai integration: the `kimai` CLI the bar listens to, the
+            `kimai-gui` popup its right click opens, and the config file both
+            read. Also gates the `kimai_token` sops secret -- no reason to
+            decrypt the token onto a machine that never asks Kimai anything.
+
+            Was `my.desktop.kimaiUrl != null`, back when the whole thing was one
+            in-repo binary the widget invoked with a URL argument. There is a
+            home-manager module's worth of moving parts now, so it sits with the
+            other services and gets an enable of its own.
+          '';
+        };
+
+        url = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          example = "https://kimai.intra.chyps.com.ar";
+          description = ''
+            Base URL of the Kimai instance: written into the config file the CLI
+            and the GUI read, and handed to xdg-open by the widget's middle
+            click. Null with `enable` on is an assertion failure rather than a
+            default -- there is no Kimai to guess at.
           '';
         };
       };

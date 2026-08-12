@@ -118,50 +118,6 @@ $alt-text: $nord0;
   color: $alt-text;
 }
 
-// Calendar
-.cal-box {
-  background-color: $dark-background;
-  font-size: 1em;
-  font-weight: 500;
-  color: $secondary-text;
-
-  .cal-inner-box {
-    padding: 1rem 1rem 0.2rem;
-
-    .cal {
-      &.highlight {
-        padding: 10rem;
-        color: $secondary-text;
-        font-weight: bold;
-      }
-
-      &.header {
-        color: $primary-color;
-        font-weight: bold;
-      }
-
-      //&.view {
-      //background: black;
-      //}
-
-      &.button {
-        color: $primary-color;
-      }
-
-      &:selected {
-        color: $alt-text;
-        font-weight: bold;
-        border-radius: 100;
-        background: white;
-      }
-
-      &:indeterminate {
-        color: $light-background;
-      }
-    }
-  }
-}
-
 .expander {
   background-color: $light-background;
   border-radius: 0 10px 10px 0;
@@ -198,7 +154,13 @@ $alt-text: $nord0;
 // as alarm, but at 4.8:1 and 4.7:1 respectively.
 //
 // Not conditional on the machine having the widget: these rules dress a widget
-// that is simply not spliced into the yuck where my.desktop.kimaiUrl is null.
+// that is simply not spliced into the yuck where my.services.kimai.enable is
+// off.
+//
+// These selectors deliberately do not name the box they sit on. The expanded
+// pill puts them on its .expander, and the *collapsed* one puts them on the
+// metric's .label through expandable's retracted-classes — which is what keeps
+// a broken reading visible now that a failure no longer forces the widget open.
 .kimai {
   // Nothing clocked in. Still legible — the day's total is worth reading when
   // no timer is running — but visibly not the state that is counting.
@@ -206,9 +168,20 @@ $alt-text: $nord0;
     color: mix($secondary-text, $light-background, 80%);
   }
 
+  // A feriado expects nothing, so the pill is a note rather than a progress
+  // report. $nord8 against the $light-background pill measures about 4.5:1 —
+  // readable, and unmistakably not the two states around it.
+  &.holiday {
+    color: $nord8;
+  }
+
   &.failed {
     color: mix($nord11, $nord6, 40%);
   }
+
+  // Nothing for ahead/behind. The sign in the text is the signal, and
+  // repainting the pill because you are twenty minutes down at 09:20 on a
+  // Monday would make the bar shout at you every week.
 }
 
 .cpu-usage-bar {
