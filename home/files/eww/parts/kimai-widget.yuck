@@ -19,6 +19,10 @@
 ;; freezing at whatever it last held. `tail` keeps retrying behind that line, so
 ;; the widget heals itself with no bar reload.
 ;;
+;; That literal is a copy, and copies drift. `kimai initial` prints the one it
+;; should be, so keeping the two in step is `kimai initial` and a diff rather
+;; than reading 37 field names off a struct.
+;;
 ;; `state`, `label` and `tooltip` arrive pre-rendered rather than being derived
 ;; here, the way the timers widget does it. The precedence between unreachable,
 ;; feriado, running and idle is the CLI's business -- a feriado expects zero
