@@ -23,7 +23,6 @@ clipboard {
 
 spawn-at-startup "mako"
 spawn-at-startup "eww-launcher"
-@HASS_SPAWN@
 
 
 xwayland-satellite {

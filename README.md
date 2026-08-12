@@ -18,7 +18,6 @@ modules/options.nix    every per-host knob, declared as typed NixOS options (my.
 modules/identity.nix   name/email/signing key, same on every machine
 modules/nixpkgs.nix    allowUnfree, rocmSupport, own-packages + pkgs.stable overlays
 modules/secrets.nix    sops-nix wiring
-modules/hass.nix       launch-hass-server, reads its token from /run/secrets
 hosts/<host>/          hardware-configuration.nix, mounts.nix, and my.* values
 pkgs/desktop-scripts   four rust binaries (was rust-script under chezmoi)
 pkgs/eww-scripts       shell helpers for the bar and session
@@ -30,7 +29,7 @@ secrets/common.yaml    sops-encrypted, safe to publish
 ```
 
 Dotfiles used to live in a separate chezmoi repo. They are all here now; the
-templated ones (`home/niri.nix`, `home/hyprland.nix`, `home/eww.nix`) splice
+templated ones (`home/hyprland.nix`, `home/eww.nix`) splice
 per-host values into a base file at `@MARKER@` sites via
 `builtins.replaceStrings`. Note that plain `substituteAll`/`replaceVars` is not
 usable on these files — they are full of unrelated `@…@` tokens such as
@@ -72,4 +71,4 @@ key add it there and run `sops updatekeys secrets/common.yaml`.
 Declare each secret in `modules/secrets.nix`; sops-nix decrypts it to
 `/run/secrets/<name>` at activation with the owner and mode you specify.
 Never interpolate a secret into a config file — read it at runtime from its
-`/run/secrets` path, the way `modules/hass.nix` does.
+`/run/secrets` path, the way `home/widgets.nix` hands `hass` and `kimai` theirs.

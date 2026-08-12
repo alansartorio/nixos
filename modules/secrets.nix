@@ -22,7 +22,8 @@ in
 
     secrets = {
       hass_token = {
-        # Read by launch-hass-server, which runs as the desktop user.
+        # Read by hass-daemon, which runs as the desktop user. The *path* is
+        # what home/widgets.nix puts in its config file, never the token.
         owner = config.users.users.alan.name;
         mode = "0400";
       };

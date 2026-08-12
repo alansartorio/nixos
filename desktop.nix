@@ -37,8 +37,6 @@
 
     # needed for gnome file picker
     nautilus
-
-    inputs.hass-light-eww.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   fonts.packages = with pkgs; [

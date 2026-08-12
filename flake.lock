@@ -103,29 +103,6 @@
         "type": "github"
       }
     },
-    "hass-light-eww": {
-      "inputs": {
-        "flake-utils": [
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1772412672,
-        "narHash": "sha256-60M9169hohhLC92ZeEV8iKMJZOBQ6p2Uj3sGamrm+uw=",
-        "owner": "alansartorio",
-        "repo": "hass-light-eww",
-        "rev": "cc2730d54b2f1b4ab3a8e373b6223f90fd08cb23",
-        "type": "github"
-      },
-      "original": {
-        "owner": "alansartorio",
-        "repo": "hass-light-eww",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -202,7 +179,6 @@
         "clockin": "clockin",
         "croptool": "croptool",
         "flake-utils": "flake-utils",
-        "hass-light-eww": "hass-light-eww",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nixpkgs-stable": "nixpkgs-stable",
@@ -303,11 +279,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786505747,
-        "narHash": "sha256-E52bhFW0FZXlSUmym82UYkow1TZDIhnY+EuBHWPnTZQ=",
+        "lastModified": 1786556183,
+        "narHash": "sha256-UZwlkMT1uxcnj2z762TnanJU3+Ohvl3TIkyoXwWkMAk=",
         "ref": "refs/heads/main",
-        "rev": "c0f3e119550e57a4b715a3f377d00328fadf7e54",
-        "revCount": 9,
+        "rev": "84b75cd7d4136ea7eead4aabb79a0d5092526ed8",
+        "revCount": 18,
         "type": "git",
         "url": "ssh://alan@vibevm/home/alan/git/personal/widgets.git"
       },

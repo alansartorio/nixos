@@ -182,13 +182,25 @@ in
         enable = mkOption {
           type = types.bool;
           default = false;
-          description = "Run hass-light-eww against a Home Assistant instance.";
+          description = "Show the light pill, driving a Home Assistant lamp.";
         };
 
         host = mkOption {
           type = types.str;
           default = "http://192.168.0.151:8123";
           description = "Home Assistant base URL.";
+        };
+
+        entity = mkOption {
+          type = types.str;
+          default = "light.bedroom_light";
+          description = ''
+            The light entity the pill drives.
+
+            A default here rather than in the widgets flake: which lamp is a fact
+            about this house, and the flake that ships `hass-daemon` requires the
+            option precisely so it does not have to guess.
+          '';
         };
       };
 

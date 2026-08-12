@@ -27,6 +27,7 @@
 let
   timers = osConfig.my.services.timers;
   kimai = osConfig.my.services.kimai;
+  hass = osConfig.my.services.hass;
 in
 {
   imports = [ inputs.widgets.homeManagerModules.default ];
@@ -45,6 +46,21 @@ in
       # host with kimai off, and home/eww.nix needed an explicit
       # `if hasKimai then … else ""` guard for exactly that reason.
       tokenFile = osConfig.sops.secrets.kimai_token.path;
+    };
+
+    # The light pill. What this replaces was modules/hass.nix: a
+    # writeShellApplication that killall'ed the previous copy, removed a stale
+    # socket, exported the token into the environment and piped socat into the
+    # daemon's stdin, plus a spawn-at-startup line in each compositor config.
+    # The daemon binds its own sockets and reads the token off disk now, so all
+    # of that is one user unit.
+    services.hass = lib.mkIf hass.enable {
+      enable = true;
+      url = hass.host;
+      entity = hass.entity;
+      # The path, not the token — same reasoning as kimai above, and the same
+      # reason this sits inside mkIf.
+      tokenFile = osConfig.sops.secrets.hass_token.path;
     };
 
     # No `my.*` option behind this one, deliberately: configuration.nix imports
