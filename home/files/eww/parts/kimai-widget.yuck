@@ -1,9 +1,10 @@
 
 ;; Kimai took clockin's job, so this widget answers clockin's two questions --
-;; what is running, and how much of today is booked -- plus the one a single day
-;; cannot answer: how the week stands against what it was supposed to be. That
-;; last number is the one that decides whether you stay late, which is why it
-;; earns the extra characters on a pill this narrow.
+;; what is running, and how much of today is booked. Both as totals: the pill is
+;; a reading, and a signed delta against a target it does not state is a number
+;; you end up re-deriving every time you look at it. How the week stands against
+;; what it was supposed to be is a hover away in the tooltip, and laid out in
+;; full in kimai-gui, which is the thing built for comparing.
 ;;
 ;; `kimai tail` is the same shape as `claude-usage tail` and `timers tail`: the
 ;; CLI owns the poll, the per-second tick, the arithmetic and the feriado
