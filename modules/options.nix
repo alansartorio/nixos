@@ -123,6 +123,20 @@ in
         description = "Machine has a battery: show the eww battery widget, idle-friendly defaults.";
       };
 
+      bluetooth = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Bring up the Bluetooth stack: bluetoothd, blueman for pairing, and
+            the OBEX agent a phone pushes files through.
+
+            Off by default rather than on: on a machine with no adapter this is
+            bluetoothd and an applet running for nothing.
+          '';
+        };
+      };
+
       keyboardModel = mkOption {
         type = types.str;
         default = "at-translated-set-2-keyboard";
