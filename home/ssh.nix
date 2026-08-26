@@ -66,7 +66,14 @@ in
     ''
     + section "this machine" cfg.extraConfig
     + section "everywhere, private" (
-      lib.optionalString cfg.privateHosts "Include ${secrets.ssh_hosts.path}"
+      lib.optionalString cfg.privateHosts ''
+        # `Host *` is load-bearing. Include is an ordinary keyword, not a
+        # section break, so on its own it lands inside whatever `Host` block
+        # the machine section left open and ssh reads the file without applying
+        # any of it. Reopening the match costs no precedence -- the machine
+        # section is still first in the file. Checked against OpenSSH 10.4.
+        Host *
+        Include ${secrets.ssh_hosts.path}''
     )
     + section "everywhere" (builtins.readFile ./files/ssh/hosts.conf);
 }
