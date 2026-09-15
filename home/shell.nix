@@ -37,9 +37,6 @@
       }
     ];
 
-    # No shellAliases here: clockin-sync is already defined system-wide in
-    # packages.nix, and duplicating it invites the two copies to drift.
-
     initContent = lib.mkMerge [
       # Must run before anything that could prompt, and before oh-my-zsh
       # (which injects at order 800).
@@ -56,6 +53,21 @@
 
       (lib.mkAfter ''
         [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+      '')
+
+      (lib.mkAfter ''
+        rrsync() {
+          if [ $# -lt 2 ]; then
+            printf 'rrsync: needs src and dest\n' >&2
+            return 2
+          fi
+          local opts=()
+          while [ $# -gt 2 ]; do
+            opts+=("$1")
+            shift
+          done
+          command rsync "''${opts[@]}" "$2" "$1"
+        }
       '')
     ];
   };
