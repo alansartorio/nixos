@@ -62,6 +62,7 @@ in
 {
   imports = [
     ./games/beamng.nix
+    ./games/shooterspool.nix
   ];
 
   options.games = {
