@@ -62,18 +62,6 @@
         elastic = {
           enable = true;
           url = "https://elasticsearch.metatron.intra.chyps.com.ar";
-          # Fronted by Caddy on 443, so no :9200 here.
-          #
-          # The API key needs monitor in BOTH places -- cluster AND the index
-          # block -- or list_indices and get_shards 403 while search and esql
-          # work fine. _cat/indices checks the cluster privilege and then the
-          # index privilege for every index it would return; read and
-          # view_index_metadata satisfy neither.
-          #
-          # Note also that an Elasticsearch API key freezes its privileges at
-          # creation: it holds the intersection of its role_descriptors and
-          # what the creator had at that moment. Widening the role afterwards
-          # does nothing for an existing key -- it has to be reissued.
         };
       };
     };

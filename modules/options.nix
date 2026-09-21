@@ -316,11 +316,25 @@ in
           url = mkOption {
             type = types.nullOr types.str;
             default = null;
-            example = "https://es.metatron.intra.chyps.com.ar:9200";
+            example = "https://elasticsearch.metatron.intra.chyps.com.ar";
             description = ""
-              + "Elasticsearch REST endpoint -- not Kibana. The API key behind\n"
-              + "it wants a role descriptor granting only read and\n"
-              + "view_index_metadata, on just the indices Claude should see.";
+              + "Elasticsearch REST endpoint -- not Kibana. No :9200 when a\n"
+              + "reverse proxy fronts it on 443.\n\n"
+              + "The API key behind it wants a role descriptor of:\n\n"
+              + "  cluster: [ monitor ]\n"
+              + "  indices: names [ <patterns> ],\n"
+              + "           privileges [ read view_index_metadata monitor ]\n\n"
+              + "monitor is needed in BOTH places. _cat/indices and _cat/shards\n"
+              + "check the cluster privilege and then the index privilege for\n"
+              + "every index they would return, and neither read nor\n"
+              + "view_index_metadata satisfies the second check -- so with\n"
+              + "cluster monitor alone, list_indices and get_shards 403 while\n"
+              + "search and esql work, which reads like a cluster problem and\n"
+              + "is not one. Everything here is read-only.\n\n"
+              + "Reissue the key after any change: an Elasticsearch API key\n"
+              + "freezes its privileges at creation, holding the intersection\n"
+              + "of its role_descriptors and what its creator held at that\n"
+              + "moment, so widening the role does nothing for an existing key.";
           };
         };
       };
