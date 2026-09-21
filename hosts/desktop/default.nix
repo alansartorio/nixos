@@ -60,16 +60,20 @@
         };
 
         elastic = {
-          # Off only for want of the Elasticsearch URL. Nothing else is
-          # missing: the tool set is fixed and wholly read-only, so there is
-          # no allowlist to enumerate.
+          enable = true;
+          url = "https://elasticsearch.metatron.intra.chyps.com.ar";
+          # Fronted by Caddy on 443, so no :9200 here.
           #
-          # Not Kibana's Agent Builder endpoint, which is where this started:
-          # that needs an Enterprise subscription, and customising per-feature
-          # privileges to grant it needs Gold. Elasticsearch's own API keys
-          # cost nothing beyond Basic and enforce read-only at the source.
-          enable = false;
-          # url = "https://<elasticsearch>:9200";
+          # The API key needs monitor in BOTH places -- cluster AND the index
+          # block -- or list_indices and get_shards 403 while search and esql
+          # work fine. _cat/indices checks the cluster privilege and then the
+          # index privilege for every index it would return; read and
+          # view_index_metadata satisfy neither.
+          #
+          # Note also that an Elasticsearch API key freezes its privileges at
+          # creation: it holds the intersection of its role_descriptors and
+          # what the creator had at that moment. Widening the role afterwards
+          # does nothing for an existing key -- it has to be reissued.
         };
       };
     };

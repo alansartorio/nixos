@@ -190,6 +190,11 @@ let
   # security -- API keys, role descriptors -- is Basic-tier and needs none of
   # that, and read + view_index_metadata on the indices is the layer-1
   # enforcement here.
+  # get_mappings is kept despite being broken against this cluster: it returns
+  # "error decoding response body" on both a data stream and a single backing
+  # index, while the same key reads documents fine, so it is a client bug in
+  # 0.4.6 rather than a privilege problem. Left in so a version bump fixes it
+  # silently; drop it if the dead tool is more annoying than the dead comment.
   elasticTools = [
     "esql"
     "get_mappings"
