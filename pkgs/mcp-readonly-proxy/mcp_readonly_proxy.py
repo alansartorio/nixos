@@ -74,6 +74,20 @@ STRIP_FROM_CLIENT = frozenset(
     }
 )
 
+# Backends invent their own credential headers, so an explicit list is a game
+# of whack-a-mole: mcp-outline honours a per-request `x-outline-api-key` under
+# the HTTP transport, which `authorization` above would not have caught. The
+# rule is simply that the client never supplies a credential of any shape --
+# the route's own is attached instead. None of the headers MCP actually needs
+# (accept, content-type, mcp-session-id, mcp-protocol-version, last-event-id)
+# matches any of these substrings.
+CREDENTIAL_HEADER_MARKERS = ("api-key", "apikey", "token", "secret", "password", "auth")
+
+
+def is_credential_header(name: str) -> bool:
+    lowered = name.lower()
+    return any(marker in lowered for marker in CREDENTIAL_HEADER_MARKERS)
+
 # JSON-RPC verbs allowed through at all, before any tool-level check. Anything
 # absent is refused: the MCP surface is small enough to enumerate, and a method
 # this proxy has not heard of is a method whose semantics it cannot vouch for.
@@ -171,11 +185,15 @@ def rewrite_sse(body: str, route: Route) -> str:
 
 
 def upstream_headers(request: web.Request, route: Route) -> dict[str, str]:
-    headers = {
-        k: v
-        for k, v in request.headers.items()
-        if k.lower() not in STRIP_FROM_CLIENT and k.lower() not in HOP_BY_HOP
-    }
+    headers = {}
+    for k, v in request.headers.items():
+        lowered = k.lower()
+        if lowered in STRIP_FROM_CLIENT or lowered in HOP_BY_HOP:
+            continue
+        if is_credential_header(lowered):
+            log.warning("%s: dropped client credential header %r", route.name, k)
+            continue
+        headers[k] = v
     if route.auth:
         headers["Authorization"] = route.auth
     return headers

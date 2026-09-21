@@ -38,6 +38,12 @@
 let
   cfg = config.my.services.claudeMcp;
 
+  # Not just != null. Every backend silently falls back to a PUBLIC cloud
+  # instance when its host is empty -- gitea.com, app.getoutline.com,
+  # api.taiga.io -- so an empty string would ship a corporate credential
+  # off-site rather than merely fail to work.
+  isSet = s: s != null && s != "";
+
   # Loopback ports for the backends. Arbitrary, but fixed so the proxy config
   # and the units cannot drift apart.
   giteaPort = 18190;
@@ -240,19 +246,33 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.gitea.enable -> cfg.gitea.host != null;
-        message = "my.services.claudeMcp.gitea.enable requires gitea.host.";
+        assertion = cfg.gitea.enable -> isSet cfg.gitea.host;
+        message = ''
+          my.services.claudeMcp.gitea.enable requires a non-empty gitea.host.
+          Empty is not merely useless: cmd.go:107 falls back to the public
+          https://gitea.com, which would send the corporate PAT there.
+        '';
       }
       {
-        assertion = cfg.outline.enable -> cfg.outline.url != null;
-        message = "my.services.claudeMcp.outline.enable requires outline.url.";
+        assertion = cfg.outline.enable -> isSet cfg.outline.url;
+        message = ''
+          my.services.claudeMcp.outline.enable requires a non-empty
+          outline.url. Empty is worse than unset: server.py deletes OUTLINE_*
+          vars whose value is "", and outline_client.py:146 then falls back to
+          https://app.getoutline.com -- the API key for the company wiki would
+          go to Outline's cloud.
+        '';
       }
       {
-        assertion = cfg.taiga.enable -> cfg.taiga.url != null;
-        message = "my.services.claudeMcp.taiga.enable requires taiga.url.";
+        assertion = cfg.taiga.enable -> isSet cfg.taiga.url;
+        message = ''
+          my.services.claudeMcp.taiga.enable requires a non-empty taiga.url.
+          taigaAuth.js:7 otherwise defaults to https://api.taiga.io, and this
+          route authenticates with a real password.
+        '';
       }
       {
-        assertion = cfg.elastic.enable -> (cfg.elastic.url != null && cfg.elastic.tools != [ ]);
+        assertion = cfg.elastic.enable -> (isSet cfg.elastic.url && cfg.elastic.tools != [ ]);
         message = ''
           my.services.claudeMcp.elastic.enable requires elastic.url and a
           non-empty elastic.tools. Agent Builder's tools are whatever that
