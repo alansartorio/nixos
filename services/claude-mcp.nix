@@ -13,9 +13,9 @@
 # Three layers, deliberately independent:
 #
 #   1. The credential itself. A Gitea PAT with only read:* scopes, an Outline
-#      API key with read endpoint scopes, a Kibana API key carrying
-#      feature_agentBuilder.read. Nothing above this can be talked into a
-#      write the token cannot perform.
+#      API key with read endpoint scopes, an Elasticsearch API key whose role
+#      descriptor grants only read + view_index_metadata. Nothing above this
+#      can be talked into a write the token cannot perform.
 #
 #      Taiga is the exception, deliberately: it logs in as a real user with
 #      full write rights, so it has no layer 1 at all. Everything there rests
@@ -49,6 +49,7 @@ let
   giteaPort = 18190;
   outlinePort = 18191;
   taigaPort = 18192;
+  elasticPort = 18193;
 
   # Tools each route will forward. Every name here was read off a live
   # tools/list, not off a README -- the two disagree more often than not.
@@ -178,6 +179,25 @@ let
     "validateQuery"
   ];
 
+  # Elastic's own server, and the only one of the four whose entire tool set is
+  # already read-only -- there is no write tool to exclude, so this list is the
+  # whole of what it offers rather than a filtered half.
+  #
+  # This talks to Elasticsearch directly rather than to Kibana's Agent Builder
+  # MCP endpoint, which upstream now prefers: Agent Builder needs an Enterprise
+  # subscription, and its tools are whatever that Kibana defines, so neither
+  # the licence nor a fixed allowlist was available. Elasticsearch's own
+  # security -- API keys, role descriptors -- is Basic-tier and needs none of
+  # that, and read + view_index_metadata on the indices is the layer-1
+  # enforcement here.
+  elasticTools = [
+    "esql"
+    "get_mappings"
+    "get_shards"
+    "list_indices"
+    "search"
+  ];
+
   routes =
     lib.optionalAttrs cfg.gitea.enable {
       gitea = {
@@ -198,13 +218,9 @@ let
       };
     }
     // lib.optionalAttrs cfg.elastic.enable {
-      # No local backend: on Elastic 9.2+ Kibana serves Agent Builder's own MCP
-      # endpoint, so there is nothing to package or run. The API key goes on in
-      # the proxy rather than in a server, hence authHeaderFile.
       elastic = {
-        url = cfg.elastic.url;
-        tools = cfg.elastic.tools;
-        authHeaderFile = "$CREDENTIALS_DIRECTORY/elastic-auth";
+        url = "http://127.0.0.1:${toString elasticPort}/mcp";
+        tools = elasticTools;
       };
     };
 
@@ -272,13 +288,11 @@ in
         '';
       }
       {
-        assertion = cfg.elastic.enable -> (isSet cfg.elastic.url && cfg.elastic.tools != [ ]);
-        message = ''
-          my.services.claudeMcp.elastic.enable requires elastic.url and a
-          non-empty elastic.tools. Agent Builder's tools are whatever that
-          Kibana defines, so there is no honest default to guess -- list them
-          from the Tools UI, or from a tools/list against the endpoint.
-        '';
+        assertion = cfg.elastic.enable -> isSet cfg.elastic.url;
+        message = ""
+          + "my.services.claudeMcp.elastic.enable requires a non-empty elastic.url:\n"
+          + "the Elasticsearch REST endpoint, e.g. https://es.example:9200. Its tool\n"
+          + "set is fixed and wholly read-only, so no allowlist is asked for here.";
       }
     ];
 
@@ -302,7 +316,7 @@ in
         claude_mcp_taiga_password = { };
       }
       // lib.optionalAttrs cfg.elastic.enable {
-        claude_mcp_kibana_api_key = { };
+        claude_mcp_elastic_api_key = { };
       };
 
     sops.templates =
@@ -318,9 +332,8 @@ in
         '';
       }
       // lib.optionalAttrs cfg.elastic.enable {
-        # The whole header value, so the proxy never has to know the scheme.
-        "claude-mcp-elastic-auth".content =
-          "ApiKey ${config.sops.placeholder.claude_mcp_kibana_api_key}";
+        "claude-mcp-elastic.env".content = ""
+          + "ES_API_KEY=${config.sops.placeholder.claude_mcp_elastic_api_key}\n";
       };
 
     systemd.services.gitea-mcp = lib.mkIf cfg.gitea.enable {
@@ -385,14 +398,26 @@ in
       };
     };
 
+    systemd.services.elasticsearch-mcp = lib.mkIf cfg.elastic.enable {
+      description = "Elasticsearch MCP server (read-only) for Claude on VibeVM";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
+      serviceConfig = noJit // {
+        EnvironmentFile = config.sops.templates."claude-mcp-elastic.env".path;
+        Environment = [ "ES_URL=${cfg.elastic.url}" ];
+        # A Rust binary, so unlike the other three this is one static-ish
+        # executable: no node, no python, no container runtime.
+        ExecStart = "${lib.getExe pkgs.elasticsearch-mcp-server} http --address 127.0.0.1:${toString elasticPort}";
+      };
+    };
+
     systemd.services.mcp-readonly-proxy = {
       description = "Read-only MCP proxy exposed to VibeVM";
       wantedBy = [ "multi-user.target" ];
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
       serviceConfig = noJit // {
-        LoadCredential = lib.optional cfg.elastic.enable
-          "elastic-auth:${config.sops.templates."claude-mcp-elastic-auth".path}";
         ExecStart = lib.concatStringsSep " " [
           (lib.getExe pkgs.mcp-readonly-proxy)
           "--config ${proxyConfig}"

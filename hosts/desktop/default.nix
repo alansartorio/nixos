@@ -60,17 +60,16 @@
         };
 
         elastic = {
-          # Still off, and only for want of `tools`: Agent Builder exposes
-          # whatever tools this Kibana defines, so the list has to be read off
-          # the instance rather than guessed, and an empty allowlist would
-          # forward nothing anyway. The url is recorded now so that is the
-          # only thing left to fill in.
+          # Off only for want of the Elasticsearch URL. Nothing else is
+          # missing: the tool set is fixed and wholly read-only, so there is
+          # no allowlist to enumerate.
+          #
+          # Not Kibana's Agent Builder endpoint, which is where this started:
+          # that needs an Enterprise subscription, and customising per-feature
+          # privileges to grant it needs Gold. Elasticsearch's own API keys
+          # cost nothing beyond Basic and enforce read-only at the source.
           enable = false;
-          url = "https://kibana.metatron.intra.chyps.com.ar/s/smartmachine/api/agent_builder/mcp";
-          # /s/smartmachine because the API key grants feature_agentBuilder.read
-          # on "space:smartmachine" only. Kibana checks the privilege in the
-          # space the path names, so the default-space URL 403s with a message
-          # that reads as though the privilege were missing entirely.
+          # url = "https://<elasticsearch>:9200";
         };
       };
     };

@@ -304,35 +304,23 @@ in
           enable = mkOption {
             type = types.bool;
             default = false;
-            description = ''
-              Expose Kibana's built-in Agent Builder MCP endpoint. Nothing is
-              packaged or run for this one: on Elastic 9.2+ Kibana serves it
-              itself, and the standalone elastic/mcp-server-elasticsearch is
-              deprecated. The proxy adds the API key and filters tools/call.
-            '';
+            description = ""
+              + "Expose Elasticsearch through Elastic's own MCP server.\n\n"
+              + "Talks to Elasticsearch directly rather than to Kibana's Agent\n"
+              + "Builder MCP endpoint that upstream now prefers: Agent Builder\n"
+              + "needs an Enterprise subscription. Elasticsearch's own API keys\n"
+              + "and role descriptors are Basic-tier and enforce read-only at\n"
+              + "the source, which is the stronger layer anyway.";
           };
 
           url = mkOption {
             type = types.nullOr types.str;
             default = null;
-            example = "https://kibana.metatron.intra.chyps.com.ar/api/agent_builder/mcp";
-            description = ''
-              The Agent Builder MCP endpoint. Add /s/<space> before /api for a
-              non-default Kibana space.
-            '';
-          };
-
-          tools = mkOption {
-            type = types.listOf types.str;
-            default = [ ];
-            example = [ "platform.core.search" ];
-            description = ''
-              Tool names the proxy will forward. Agent Builder exposes whatever
-              tools that Kibana defines, so this cannot be defaulted honestly;
-              read them off the Tools UI, or off a tools/list against the
-              endpoint. The API key's feature_agentBuilder.read privilege is
-              the layer that actually enforces read-only.
-            '';
+            example = "https://es.metatron.intra.chyps.com.ar:9200";
+            description = ""
+              + "Elasticsearch REST endpoint -- not Kibana. The API key behind\n"
+              + "it wants a role descriptor granting only read and\n"
+              + "view_index_metadata, on just the indices Claude should see.";
           };
         };
       };

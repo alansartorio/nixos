@@ -14,4 +14,5 @@ inputs: final: prev: {
   taiga-mcp-server = final.callPackage ./taiga-mcp-server { };
   mcp-outline = final.callPackage ./mcp-outline { };
   mcp-readonly-proxy = final.callPackage ./mcp-readonly-proxy { };
+  elasticsearch-mcp-server = final.callPackage ./elasticsearch-mcp-server { };
 }
