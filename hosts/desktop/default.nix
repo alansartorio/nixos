@@ -46,7 +46,7 @@
 
         gitea = {
           enable = true;
-          host = "https://git.intra.chyps.com.ar";
+          host = "https://repo.intra.chyps.com.ar";
         };
 
         outline = {
@@ -56,7 +56,7 @@
 
         taiga = {
           enable = true;
-          url = "https://taiga.intra.chyps.com.ar/api/v1";
+          url = "https://proj.intra.chyps.com.ar/api/v1";
         };
 
         # Left off until the Agent Builder tool names are read off Kibana:

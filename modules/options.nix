@@ -252,7 +252,7 @@ in
           host = mkOption {
             type = types.nullOr types.str;
             default = null;
-            example = "https://git.intra.chyps.com.ar";
+            example = "https://repo.intra.chyps.com.ar";
             description = ''
               Base URL of the Gitea instance. The token behind it wants only
               the read:* scopes -- that, not the --read-only flag, is what
@@ -295,7 +295,7 @@ in
           url = mkOption {
             type = types.nullOr types.str;
             default = null;
-            example = "https://taiga.intra.chyps.com.ar/api/v1";
+            example = "https://proj.intra.chyps.com.ar/api/v1";
             description = "Taiga's API base URL, including /api/v1.";
           };
         };
@@ -315,7 +315,7 @@ in
           url = mkOption {
             type = types.nullOr types.str;
             default = null;
-            example = "https://kibana.intra.chyps.com.ar/api/agent_builder/mcp";
+            example = "https://kibana.example.com/api/agent_builder/mcp";
             description = ''
               The Agent Builder MCP endpoint. Add /s/<space> before /api for a
               non-default Kibana space.
