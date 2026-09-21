@@ -37,6 +37,33 @@
         enable = true;
         llamaCppModel = "/huge-storage/llamacpp-models/gemma-4-12B-it-q6_k_m.gguf";
       };
+
+      # Claude Code runs on VibeVM, which has no VPN of its own. This host
+      # does, so it holds the intranet credentials and hands the guest one
+      # unauthenticated port that speaks MCP and refuses to write.
+      claudeMcp = {
+        enable = true;
+
+        gitea = {
+          enable = true;
+          host = "https://git.intra.chyps.com.ar";
+        };
+
+        outline = {
+          enable = true;
+          url = "https://docs.intra.chyps.com.ar/api";
+        };
+
+        taiga = {
+          enable = true;
+          url = "https://taiga.intra.chyps.com.ar/api/v1";
+        };
+
+        # Left off until the Agent Builder tool names are read off Kibana:
+        # there is no honest default for `tools`, and an empty allowlist would
+        # forward nothing anyway.
+        elastic.enable = false;
+      };
     };
   };
 }

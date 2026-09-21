@@ -8,4 +8,10 @@ inputs: final: prev: {
   eww-scripts = final.callPackage ./eww-scripts {
     clockin = inputs.clockin.packages.${final.stdenv.hostPlatform.system}.default;
   };
+
+  # Read-only MCP servers for the intranet, fronted by mcp-readonly-proxy.
+  gitea-mcp = final.callPackage ./gitea-mcp { };
+  taiga-mcp-server = final.callPackage ./taiga-mcp-server { };
+  mcp-outline = final.callPackage ./mcp-outline { };
+  mcp-readonly-proxy = final.callPackage ./mcp-readonly-proxy { };
 }

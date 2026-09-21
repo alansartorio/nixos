@@ -208,6 +208,132 @@ in
           '';
         };
       };
+
+      # Read-only MCP servers for Claude Code on VibeVM, behind a filtering
+      # proxy. See services/claude-mcp.nix for why the enforcement lives on
+      # this machine rather than in Claude Code's own config.
+      claudeMcp = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Run the read-only MCP stack and expose it to the libvirt guest.
+            Only meaningful on a host that holds the CHYPS VPN, since every
+            backend reaches the intranet through it.
+          '';
+        };
+
+        listenAddress = mkOption {
+          type = types.str;
+          default = "192.168.100.1";
+          description = ''
+            Address the filtering proxy binds. Defaults to this host's address
+            on the libvirt network -- the one interface the guest can reach,
+            and deliberately not 0.0.0.0: the LAN has no business here.
+          '';
+        };
+
+        port = mkOption {
+          type = types.port;
+          default = 18100;
+          description = ''
+            Port for the filtering proxy. Must match the accept rule in
+            networking.nix, which is the only hole punched for the guest.
+          '';
+        };
+
+        gitea = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Expose Gitea, via upstream's own MCP server in --read-only mode.";
+          };
+
+          host = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "https://git.intra.chyps.com.ar";
+            description = ''
+              Base URL of the Gitea instance. The token behind it wants only
+              the read:* scopes -- that, not the --read-only flag, is what
+              makes a write impossible.
+            '';
+          };
+        };
+
+        outline = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Expose Outline, with OUTLINE_READ_ONLY set.";
+          };
+
+          url = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "https://docs.intra.chyps.com.ar/api";
+            description = ''
+              Outline's API base URL, including /api. The API key behind it
+              wants read-only endpoint scopes.
+            '';
+          };
+        };
+
+        taiga = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = ''
+              Expose Taiga. Its MCP server has no read-only mode, so the proxy
+              allowlist carries the whole weight here -- give the account
+              behind it view-only project roles.
+            '';
+          };
+
+          url = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "https://taiga.intra.chyps.com.ar/api/v1";
+            description = "Taiga's API base URL, including /api/v1.";
+          };
+        };
+
+        elastic = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = ''
+              Expose Kibana's built-in Agent Builder MCP endpoint. Nothing is
+              packaged or run for this one: on Elastic 9.2+ Kibana serves it
+              itself, and the standalone elastic/mcp-server-elasticsearch is
+              deprecated. The proxy adds the API key and filters tools/call.
+            '';
+          };
+
+          url = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "https://kibana.intra.chyps.com.ar/api/agent_builder/mcp";
+            description = ''
+              The Agent Builder MCP endpoint. Add /s/<space> before /api for a
+              non-default Kibana space.
+            '';
+          };
+
+          tools = mkOption {
+            type = types.listOf types.str;
+            default = [ ];
+            example = [ "platform.core.search" ];
+            description = ''
+              Tool names the proxy will forward. Agent Builder exposes whatever
+              tools that Kibana defines, so this cannot be defaulted honestly;
+              read them off the Tools UI, or off a tools/list against the
+              endpoint. The API key's feature_agentBuilder.read privilege is
+              the layer that actually enforces read-only.
+            '';
+          };
+        };
+      };
     };
   };
 }
