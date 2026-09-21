@@ -59,10 +59,15 @@
           url = "https://proj.intra.chyps.com.ar/api/v1";
         };
 
-        # Left off until the Agent Builder tool names are read off Kibana:
-        # there is no honest default for `tools`, and an empty allowlist would
-        # forward nothing anyway.
-        elastic.enable = false;
+        elastic = {
+          # Still off, and only for want of `tools`: Agent Builder exposes
+          # whatever tools this Kibana defines, so the list has to be read off
+          # the instance rather than guessed, and an empty allowlist would
+          # forward nothing anyway. The url is recorded now so that is the
+          # only thing left to fill in.
+          enable = false;
+          url = "https://kibana.intra.chyps.com.ar/api/agent_builder/mcp";
+        };
       };
     };
   };
