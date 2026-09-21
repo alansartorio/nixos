@@ -56,7 +56,7 @@
 
         taiga = {
           enable = true;
-          url = "https://proj.intra.chyps.com.ar/api/v1";
+          url = "https://proj.intra.chyps.com.ar";
         };
 
         elastic = {

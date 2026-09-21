@@ -295,8 +295,15 @@ in
           url = mkOption {
             type = types.nullOr types.str;
             default = null;
-            example = "https://proj.intra.chyps.com.ar/api/v1";
-            description = "Taiga's API base URL, including /api/v1.";
+            example = "https://proj.intra.chyps.com.ar";
+            description = ""
+              + "Taiga's base URL, WITHOUT /api/v1. pytaigaclient appends the\n"
+              + "version itself (client.py: urljoin(host, \"api/v1/\")), so a\n"
+              + "value ending in /api/v1 yields /api/api/v1/auth, which 404s.\n"
+              + "The failure is quiet: auto-authentication logs the error at\n"
+              + "startup, the unit stays running, and every tool then reports\n"
+              + "\"no default session available\" as though the credentials were\n"
+              + "missing rather than the URL being wrong.";
           };
         };
 
