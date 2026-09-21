@@ -121,7 +121,9 @@ let
   # lands on a real write tool name permits that write. Remove freely; add
   # only after redoing the audit below.
   #
-  # Audited against v1.9.20 by source, not by name. Only two files in that
+  # Audited against v1.9.20 by source, not by name -- and by a subagent review
+  # of the whole package, which found no malicious code but did find the
+  # downloadAttachment defects noted above. Only two files in that
   # tree issue a mutating verb: taigaAuth.js (the login POST) and
   # taigaService.js, whose 19 mutating methods are addComment, create{Epic,
   # Issue,Milestone,Task,UserStory,WikiPage}, delete{Attachment,Comment,
@@ -138,10 +140,18 @@ let
   #
   # `authenticate` is in: it logs in (the one POST reachable from this list),
   # writes no data, and the server expects to refresh its own session.
+  # downloadAttachment is deliberately absent despite being a "read". It takes
+  # a caller-controlled downloadPath (tools/attachmentTools.js:153) and pipes
+  # into createWriteStream (taigaService.js:979) with no sanitisation, so it is
+  # an arbitrary file write on this host, not a read. It also GETs the
+  # server-supplied attachment.url with the authenticated client
+  # (taigaService.js:970), handing the Taiga bearer token to whatever host the
+  # Taiga instance names. And it returns only {filename, savedPath, size} -- no
+  # content -- so the file lands here while Claude is on the VM and cannot read
+  # it. Useless to us, and a write primitive; there is nothing to weigh.
   taigaTools = [
     "advancedSearch"
     "authenticate"
-    "downloadAttachment"
     "getEpic"
     "getIssue"
     "getIssuesByMilestone"
