@@ -118,65 +118,80 @@ let
     "search_documents"
   ];
 
-  # Taiga's server has no read-only mode at all: it registers 46 tools and
+  # talhaorak/pytaiga-mcp has no read-only mode: it registers 94 tools and
   # means them, and it authenticates as an ordinary user with full write
-  # rights. There is no scoped token to fall back on -- Taiga's application
-  # tokens would be one, but this server only knows username/password.
+  # rights. As with the server it replaced, this list is the only enforcement
+  # on the route -- a typo landing on a real write tool name permits that
+  # write.
   #
-  # So unlike every other route, this list is not defence in depth. It is the
-  # single thing standing between Claude and deleteWikiPage, and a typo that
-  # lands on a real write tool name permits that write. Remove freely; add
-  # only after redoing the audit below.
+  # Derived from v2.0.1 by AST, not by name: every @mcp.tool function was
+  # checked for a mutating call (api.*.{post,put,patch,delete,create,update,
+  # edit,remove}) AND for calls to other module functions that mutate, to a
+  # fixpoint. The transitive step is load-bearing -- assign_issue_to_user and
+  # its siblings perform no mutating call of their own, they delegate to
+  # update_issue, so a direct-call check marks four assign and four unassign
+  # tools as reads. Validate any re-run against an indirect writer such as
+  # assign_issue_to_user, not only against delete_project.
   #
-  # Audited against v1.9.20 by source, not by name -- and by a subagent review
-  # of the whole package, which found no malicious code but did find the
-  # downloadAttachment defects noted above. Only two files in that
-  # tree issue a mutating verb: taigaAuth.js (the login POST) and
-  # taigaService.js, whose 19 mutating methods are addComment, create{Epic,
-  # Issue,Milestone,Task,UserStory,WikiPage}, delete{Attachment,Comment,
-  # WikiPage}, editComment, {link,unlink}StoryToEpic, update{Epic,Issue,
-  # UserStory,WikiPage}, watchWikiPage and uploadAttachment. Every tool below
-  # was traced to the taigaService.* methods its handler calls; none reaches
-  # any of those. advancedSearch/queryHelp/validateQuery go through
-  # src/query/, which contains no mutating verb at all.
+  # That leaves 46 reads of 94. Two further exclusions beyond the write set:
   #
-  # To redo it after a version bump: list each `export const <x>Tool` block
-  # with the taigaService.* calls inside it, and check that against the
-  # mutating-method set. Verify the check itself on a known write tool first
-  # -- an extraction bug looks exactly like a clean pass.
+  #   login   takes an arbitrary `host`, so it would let a caller point this
+  #           process at any URL -- an SSRF primitive on a machine that holds
+  #           the VPN. The env credentials establish a default session at
+  #           startup, so nothing needs it.
+  #   logout  destroys that default session, leaving every other tool broken
+  #           until the unit restarts. A denial of service on ourselves.
   #
-  # `authenticate` is in: it logs in (the one POST reachable from this list),
-  # writes no data, and the server expects to refresh its own session.
-  # downloadAttachment is deliberately absent despite being a "read". It takes
-  # a caller-controlled downloadPath (tools/attachmentTools.js:153) and pipes
-  # into createWriteStream (taigaService.js:979) with no sanitisation, so it is
-  # an arbitrary file write on this host, not a read. It also GETs the
-  # server-supplied attachment.url with the authenticated client
-  # (taigaService.js:970), handing the Taiga bearer token to whatever host the
-  # Taiga instance names. And it returns only {filename, savedPath, size} -- no
-  # content -- so the file lands here while Claude is on the VM and cannot read
-  # it. Useless to us, and a write primitive; there is nothing to weigh.
+  # Unlike the previous server this one writes nothing to disk at all -- no
+  # open(), no download-to-path -- so it has no equivalent of the arbitrary
+  # file write that kept downloadAttachment off the old list.
   taigaTools = [
-    "advancedSearch"
-    "authenticate"
-    "getEpic"
-    "getIssue"
-    "getIssuesByMilestone"
-    "getMilestone"
-    "getMilestoneStats"
-    "getProject"
-    "getUserStory"
-    "getWikiPage"
-    "listAttachments"
-    "listComments"
-    "listEpics"
-    "listIssues"
-    "listMilestones"
-    "listProjects"
-    "listUserStories"
-    "listWikiPages"
-    "queryHelp"
-    "validateQuery"
+    "get_custom_attribute_values"
+    "get_default_session"
+    "get_epic"
+    "get_epic_by_ref"
+    "get_filters_data"
+    "get_history"
+    "get_issue"
+    "get_issue_by_ref"
+    "get_issue_priorities"
+    "get_issue_severities"
+    "get_issue_statuses"
+    "get_issue_types"
+    "get_milestone"
+    "get_milestone_stats"
+    "get_project"
+    "get_project_by_slug"
+    "get_project_issue_stats"
+    "get_project_members"
+    "get_project_stats"
+    "get_project_tags"
+    "get_project_timeline"
+    "get_task"
+    "get_task_by_ref"
+    "get_task_statuses"
+    "get_user_story"
+    "get_user_story_by_ref"
+    "get_user_story_statuses"
+    "get_user_timeline"
+    "get_wiki_page"
+    "list_all_projects"
+    "list_attachments"
+    "list_comments"
+    "list_custom_attributes"
+    "list_epics"
+    "list_issues"
+    "list_milestones"
+    "list_points"
+    "list_projects"
+    "list_roles"
+    "list_tasks"
+    "list_user_stories"
+    "list_wiki_links"
+    "list_wiki_pages"
+    "resolve"
+    "search"
+    "session_status"
   ];
 
   # Elastic's own server, and the only one of the four whose entire tool set is
@@ -406,7 +421,7 @@ in
           "--port ${toString taigaPort}"
           "--stateless"
           "--pass-environment"
-          (lib.getExe pkgs.taiga-mcp-server)
+          (lib.getExe pkgs.pytaiga-mcp)
         ];
       };
     };
