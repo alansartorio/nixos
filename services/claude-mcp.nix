@@ -304,9 +304,14 @@ in
     # modules/secrets.nix gates kimai_token: a machine that does not expose
     # Taiga has no business decrypting a Taiga password, and
     # sops-install-secrets fails loudly on a key the yaml lacks.
+    # restartUnits throughout: rotating a credential re-renders the file at
+    # activation, but NixOS only restarts a unit whose *definition* changed,
+    # and swapping a token changes none of these units. Without this, a
+    # rotated key leaves the service happily holding the revoked one -- which
+    # presents as 401 rather than as anything that points at staleness.
     sops.secrets =
       lib.optionalAttrs cfg.gitea.enable {
-        claude_mcp_gitea_token = { };
+        claude_mcp_gitea_token.restartUnits = [ "gitea-mcp.service" ];
       }
       // lib.optionalAttrs cfg.outline.enable {
         claude_mcp_outline_api_key = { };
@@ -321,17 +326,20 @@ in
 
     sops.templates =
       lib.optionalAttrs cfg.outline.enable {
+        "claude-mcp-outline.env".restartUnits = [ "mcp-outline.service" ];
         "claude-mcp-outline.env".content = ''
           OUTLINE_API_KEY=${config.sops.placeholder.claude_mcp_outline_api_key}
         '';
       }
       // lib.optionalAttrs cfg.taiga.enable {
+        "claude-mcp-taiga.env".restartUnits = [ "taiga-mcp.service" ];
         "claude-mcp-taiga.env".content = ''
           TAIGA_USERNAME=${config.sops.placeholder.claude_mcp_taiga_username}
           TAIGA_PASSWORD=${config.sops.placeholder.claude_mcp_taiga_password}
         '';
       }
       // lib.optionalAttrs cfg.elastic.enable {
+        "claude-mcp-elastic.env".restartUnits = [ "elasticsearch-mcp.service" ];
         "claude-mcp-elastic.env".content = ""
           + "ES_API_KEY=${config.sops.placeholder.claude_mcp_elastic_api_key}\n";
       };
