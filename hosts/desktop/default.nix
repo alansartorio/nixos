@@ -66,7 +66,11 @@
           # forward nothing anyway. The url is recorded now so that is the
           # only thing left to fill in.
           enable = false;
-          url = "https://kibana.metatron.intra.chyps.com.ar/api/agent_builder/mcp";
+          url = "https://kibana.metatron.intra.chyps.com.ar/s/smartmachine/api/agent_builder/mcp";
+          # /s/smartmachine because the API key grants feature_agentBuilder.read
+          # on "space:smartmachine" only. Kibana checks the privilege in the
+          # space the path names, so the default-space URL 403s with a message
+          # that reads as though the privilege were missing entirely.
         };
       };
     };
