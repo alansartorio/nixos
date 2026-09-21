@@ -315,7 +315,7 @@ in
           url = mkOption {
             type = types.nullOr types.str;
             default = null;
-            example = "https://kibana.intra.chyps.com.ar/api/agent_builder/mcp";
+            example = "https://kibana.metatron.intra.chyps.com.ar/api/agent_builder/mcp";
             description = ''
               The Agent Builder MCP endpoint. Add /s/<space> before /api for a
               non-default Kibana space.

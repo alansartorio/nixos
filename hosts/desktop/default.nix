@@ -66,7 +66,7 @@
           # forward nothing anyway. The url is recorded now so that is the
           # only thing left to fill in.
           enable = false;
-          url = "https://kibana.intra.chyps.com.ar/api/agent_builder/mcp";
+          url = "https://kibana.metatron.intra.chyps.com.ar/api/agent_builder/mcp";
         };
       };
     };
