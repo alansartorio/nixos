@@ -284,9 +284,11 @@ in
             type = types.bool;
             default = false;
             description = ''
-              Expose Taiga. Its MCP server has no read-only mode, so the proxy
-              allowlist carries the whole weight here -- give the account
-              behind it view-only project roles.
+              Expose Taiga. The one route with no second layer: its MCP server
+              has no read-only mode and authenticates as an ordinary user with
+              full write rights, so the proxy's tools/call allowlist is the
+              whole of the enforcement. Note that this puts a real Taiga
+              password, not a scoped token, in sops.
             '';
           };
 

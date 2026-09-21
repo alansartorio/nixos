@@ -2,8 +2,10 @@
 # over the alternatives because it is the only one that enumerates its whole
 # tool list in its docs, which is what the proxy's allowlist is built from.
 #
-# It has no read-only mode of its own, so both other layers matter here: the
-# proxy allowlist below it and the view-only Taiga account above it.
+# It has no read-only mode of its own, and it logs in as an ordinary user with
+# full write rights, so the proxy's allowlist is the only thing restricting it.
+# Unlike the other backends this one has no second layer -- see taigaTools in
+# services/claude-mcp.nix.
 {
   lib,
   buildNpmPackage,

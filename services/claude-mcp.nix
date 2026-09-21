@@ -13,9 +13,13 @@
 # Three layers, deliberately independent:
 #
 #   1. The credential itself. A Gitea PAT with only read:* scopes, an Outline
-#      API key with read endpoint scopes, a Taiga account whose project roles
-#      are view-only, a Kibana API key carrying feature_agentBuilder.read.
-#      Nothing above this can be talked into a write the token cannot perform.
+#      API key with read endpoint scopes, a Kibana API key carrying
+#      feature_agentBuilder.read. Nothing above this can be talked into a
+#      write the token cannot perform.
+#
+#      Taiga is the exception, deliberately: it logs in as a real user with
+#      full write rights, so it has no layer 1 at all. Everything there rests
+#      on layer 2 -- see taigaTools.
 #   2. mcp-readonly-proxy's per-route tools/call allowlist. This is the layer
 #      Claude cannot edit, because it is on the far side of the firewall.
 #   3. Each server's own read-only switch, where it has one. Convenience, and
@@ -108,12 +112,32 @@ let
   ];
 
   # Taiga's server has no read-only mode at all: it registers 46 tools and
-  # means them. This list is the hand-picked read half, and it is the only
-  # thing between Claude and deleteWikiPage -- which is why the account behind
-  # it wants view-only roles too.
+  # means them, and it authenticates as an ordinary user with full write
+  # rights. There is no scoped token to fall back on -- Taiga's application
+  # tokens would be one, but this server only knows username/password.
   #
-  # `authenticate` is in: it logs in, it writes nothing, and the server expects
-  # to be able to refresh its own session.
+  # So unlike every other route, this list is not defence in depth. It is the
+  # single thing standing between Claude and deleteWikiPage, and a typo that
+  # lands on a real write tool name permits that write. Remove freely; add
+  # only after redoing the audit below.
+  #
+  # Audited against v1.9.20 by source, not by name. Only two files in that
+  # tree issue a mutating verb: taigaAuth.js (the login POST) and
+  # taigaService.js, whose 19 mutating methods are addComment, create{Epic,
+  # Issue,Milestone,Task,UserStory,WikiPage}, delete{Attachment,Comment,
+  # WikiPage}, editComment, {link,unlink}StoryToEpic, update{Epic,Issue,
+  # UserStory,WikiPage}, watchWikiPage and uploadAttachment. Every tool below
+  # was traced to the taigaService.* methods its handler calls; none reaches
+  # any of those. advancedSearch/queryHelp/validateQuery go through
+  # src/query/, which contains no mutating verb at all.
+  #
+  # To redo it after a version bump: list each `export const <x>Tool` block
+  # with the taigaService.* calls inside it, and check that against the
+  # mutating-method set. Verify the check itself on a known write tool first
+  # -- an extraction bug looks exactly like a clean pass.
+  #
+  # `authenticate` is in: it logs in (the one POST reachable from this list),
+  # writes no data, and the server expects to refresh its own session.
   taigaTools = [
     "advancedSearch"
     "authenticate"
