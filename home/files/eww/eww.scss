@@ -173,6 +173,24 @@ $alt-text: $nord0;
   min-height: 25px;
 }
 
+// Against the $light-background pill, $nord3 measures 1.2:1 and $nord11 2.1:1 —
+// both unreadable. Mixed from the same palette so they still read as dimmed and
+// as alarm, but at 4.8:1 and 4.7:1 respectively.
+//
+// Not conditional on the machine having the widget: these rules dress a widget
+// that is simply not spliced into the yuck where my.desktop.kimaiUrl is null.
+.kimai {
+  // Nothing clocked in. Still legible — the day's total is worth reading when
+  // no timer is running — but visibly not the state that is counting.
+  &.idle {
+    color: mix($secondary-text, $light-background, 80%);
+  }
+
+  &.failed {
+    color: mix($nord11, $nord6, 40%);
+  }
+}
+
 .cpu-usage-bar {
   background-color: $primary-color;
 }

@@ -27,6 +27,21 @@ in
         mode = "0400";
       };
     }
+    # The Kimai API token, read by the bar's kimai-integration listener.
+    # Declared only where the widget exists, which is what .chezmoiignore's
+    # `if not .kimai_url` did for the old encrypted_private_kimai-token.age:
+    # a machine without the widget has no reason to hold the token, and
+    # sops-install-secrets would refuse to install a key the yaml has anyway.
+    #
+    # optionalAttrs rather than mkIf, so the attribute is simply absent rather
+    # than present with a submodule's defaults.
+    // lib.optionalAttrs (config.my.desktop.kimaiUrl != null) {
+      # eww runs as alan, so kimai-integration reads this as alan.
+      kimai_token = {
+        owner = config.users.users.alan.name;
+        mode = "0400";
+      };
+    }
     # The host list ssh reads through `Include`. Left at its default path under
     # /run/secrets rather than given one inside ~/.ssh: a sops secret with a
     # `path` elsewhere is placed as a *symlink*, and sops-install-secrets
