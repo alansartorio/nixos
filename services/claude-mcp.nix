@@ -309,7 +309,8 @@ in
       }
       {
         assertion = cfg.elastic.enable -> isSet cfg.elastic.url;
-        message = ""
+        message =
+          ""
           + "my.services.claudeMcp.elastic.enable requires a non-empty elastic.url:\n"
           + "the Elasticsearch REST endpoint, e.g. https://es.example:9200. Its tool\n"
           + "set is fixed and wholly read-only, so no allowlist is asked for here.";
@@ -360,8 +361,8 @@ in
       }
       // lib.optionalAttrs cfg.elastic.enable {
         "claude-mcp-elastic.env".restartUnits = [ "elasticsearch-mcp.service" ];
-        "claude-mcp-elastic.env".content = ""
-          + "ES_API_KEY=${config.sops.placeholder.claude_mcp_elastic_api_key}\n";
+        "claude-mcp-elastic.env".content =
+          "" + "ES_API_KEY=${config.sops.placeholder.claude_mcp_elastic_api_key}\n";
       };
 
     systemd.services.gitea-mcp = lib.mkIf cfg.gitea.enable {

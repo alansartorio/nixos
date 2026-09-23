@@ -22,8 +22,8 @@ let
     tag = "mcp";
   };
 
-  libvirtIsolationRules = (map
-    (allowed: {
+  libvirtIsolationRules =
+    (map (allowed: {
       "@family" = "ipv4";
       "@priority" = "100";
       destination = {
@@ -38,28 +38,26 @@ let
         "@level" = "info";
       };
       accept = "";
-    })
-    guestAllowedHostPorts
-  )
-  ++ (map
-    (prefix: {
-      "@family" = "ipv4";
-      "@priority" = "1000";
-      destination = {
-        "@address" = prefix;
-      };
-      log = {
-        "@prefix" = "GUEST -> LAN blocked ";
-        "@level" = "warning";
-      };
-      drop = "";
-    })
-    [
-      "10.0.0.0/8"
-      "172.16.0.0/12"
-      "192.168.0.0/16"
-    ]
-  );
+    }) guestAllowedHostPorts)
+    ++ (map
+      (prefix: {
+        "@family" = "ipv4";
+        "@priority" = "1000";
+        destination = {
+          "@address" = prefix;
+        };
+        log = {
+          "@prefix" = "GUEST -> LAN blocked ";
+          "@level" = "warning";
+        };
+        drop = "";
+      })
+      [
+        "10.0.0.0/8"
+        "172.16.0.0/12"
+        "192.168.0.0/16"
+      ]
+    );
 in
 {
   environment.systemPackages = with pkgs; [

@@ -296,7 +296,8 @@ in
             type = types.nullOr types.str;
             default = null;
             example = "https://proj.intra.chyps.com.ar";
-            description = ""
+            description =
+              ""
               + "Taiga's base URL, WITHOUT /api/v1. pytaigaclient appends the\n"
               + "version itself (client.py: urljoin(host, \"api/v1/\")), so a\n"
               + "value ending in /api/v1 yields /api/api/v1/auth, which 404s.\n"
@@ -311,7 +312,8 @@ in
           enable = mkOption {
             type = types.bool;
             default = false;
-            description = ""
+            description =
+              ""
               + "Expose Elasticsearch through Elastic's own MCP server.\n\n"
               + "Talks to Elasticsearch directly rather than to Kibana's Agent\n"
               + "Builder MCP endpoint that upstream now prefers: Agent Builder\n"
@@ -324,7 +326,8 @@ in
             type = types.nullOr types.str;
             default = null;
             example = "https://elasticsearch.metatron.intra.chyps.com.ar";
-            description = ""
+            description =
+              ""
               + "Elasticsearch REST endpoint -- not Kibana. No :9200 when a\n"
               + "reverse proxy fronts it on 443.\n\n"
               + "The API key behind it wants a role descriptor of:\n\n"
