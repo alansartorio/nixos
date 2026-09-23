@@ -46,38 +46,39 @@ let
 
   optionalPart = cond: name: if cond then part name else "";
 
-  yuck = builtins.replaceStrings
-    [
-      "@CLOCKIN_WIDGET@"
-      "@CLOCKIN_ENTRY@"
-      "@KIMAI_WIDGET@"
-      "@KIMAI_ENTRY@"
-      "@CLAUDE_WIDGET@"
-      "@CLAUDE_ENTRY@"
-      "@TIMERS_WIDGET@"
-      "@TIMERS_ENTRY@"
-      "@VPN_ENTRY@"
-      "@VPN_LISTEN@"
-      "@HASS_ENTRY@"
-      "@HASS_LISTEN@"
-      "@BATTERY_ENTRY@"
-    ]
-    [
-      (optionalPart hasClockin "clockin-widget")
-      (optionalPart hasClockin "clockin-entry")
-      (optionalPart kimaiEnabled "kimai-widget")
-      (optionalPart kimaiEnabled "kimai-entry")
-      (optionalPart claudeUsageEnabled "claude-widget")
-      (optionalPart claudeUsageEnabled "claude-entry")
-      (optionalPart timersEnabled "timers-widget")
-      (optionalPart timersEnabled "timers-entry")
-      (optionalPart hasVpn "vpn-entry")
-      (optionalPart hasVpn "vpn-listen")
-      (optionalPart hassEnabled "hass-entry")
-      (optionalPart hassEnabled "hass-listen")
-      (optionalPart batteryEnabled "battery-entry")
-    ]
-    (builtins.readFile ./files/eww/eww.yuck);
+  yuck =
+    builtins.replaceStrings
+      [
+        "@CLOCKIN_WIDGET@"
+        "@CLOCKIN_ENTRY@"
+        "@KIMAI_WIDGET@"
+        "@KIMAI_ENTRY@"
+        "@CLAUDE_WIDGET@"
+        "@CLAUDE_ENTRY@"
+        "@TIMERS_WIDGET@"
+        "@TIMERS_ENTRY@"
+        "@VPN_ENTRY@"
+        "@VPN_LISTEN@"
+        "@HASS_ENTRY@"
+        "@HASS_LISTEN@"
+        "@BATTERY_ENTRY@"
+      ]
+      [
+        (optionalPart hasClockin "clockin-widget")
+        (optionalPart hasClockin "clockin-entry")
+        (optionalPart kimaiEnabled "kimai-widget")
+        (optionalPart kimaiEnabled "kimai-entry")
+        (optionalPart claudeUsageEnabled "claude-widget")
+        (optionalPart claudeUsageEnabled "claude-entry")
+        (optionalPart timersEnabled "timers-widget")
+        (optionalPart timersEnabled "timers-entry")
+        (optionalPart hasVpn "vpn-entry")
+        (optionalPart hasVpn "vpn-listen")
+        (optionalPart hassEnabled "hass-entry")
+        (optionalPart hassEnabled "hass-listen")
+        (optionalPart batteryEnabled "battery-entry")
+      ]
+      (builtins.readFile ./files/eww/eww.yuck);
 in
 {
   xdg.configFile = {

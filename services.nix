@@ -143,7 +143,6 @@
 
   powerManagement.cpuFreqGovernor = lib.mkIf config.my.roles.mainPc "performance";
 
-
   services.sunshine = {
     enable = true;
     autoStart = false;
