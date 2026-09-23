@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -37,6 +38,14 @@
     services = {
       hass.enable = true;
       timers.enable = true;
+
+      claudeUsage = {
+        enable = true;
+        # Claude Code runs on vibevm, so the credentials to refresh from live
+        # there. The key this reads and the known_hosts entry behind it are set
+        # up out of band, under the daemon's state dir.
+        tokenRefreshCommand = "${pkgs.openssh}/bin/ssh -o BatchMode=yes alan@vibevm.local";
+      };
 
       llm = {
         enable = true;

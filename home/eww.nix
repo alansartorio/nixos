@@ -17,6 +17,7 @@
 let
   desktop = osConfig.my.desktop;
   hassEnabled = osConfig.my.services.hass.enable;
+  claudeUsageEnabled = osConfig.my.services.claudeUsage.enable;
   timersEnabled = osConfig.my.services.timers.enable;
   batteryEnabled = osConfig.my.hardware.battery;
 
@@ -47,10 +48,12 @@ let
     [
       "@CLOCKIN_WIDGET@"
       "@CLOCKIN_ENTRY@"
-      "@TIMERS_WIDGET@"
-      "@TIMERS_ENTRY@"
       "@KIMAI_WIDGET@"
       "@KIMAI_ENTRY@"
+      "@CLAUDE_WIDGET@"
+      "@CLAUDE_ENTRY@"
+      "@TIMERS_WIDGET@"
+      "@TIMERS_ENTRY@"
       "@VPN_ENTRY@"
       "@VPN_LISTEN@"
       "@HASS_ENTRY@"
@@ -60,10 +63,12 @@ let
     [
       (optionalPart hasClockin "clockin-widget")
       (optionalPart hasClockin "clockin-entry")
-      (optionalPart timersEnabled "timers-widget")
-      (optionalPart timersEnabled "timers-entry")
       (optionalPart hasKimai "kimai-widget")
       (optionalPart hasKimai "kimai-entry")
+      (optionalPart claudeUsageEnabled "claude-widget")
+      (optionalPart claudeUsageEnabled "claude-entry")
+      (optionalPart timersEnabled "timers-widget")
+      (optionalPart timersEnabled "timers-entry")
       (optionalPart hasVpn "vpn-entry")
       (optionalPart hasVpn "vpn-listen")
       (optionalPart hassEnabled "hass-entry")

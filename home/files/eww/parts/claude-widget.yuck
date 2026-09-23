@@ -1,0 +1,73 @@
+
+;; The daemon owns the poll, so the bar listens rather than asking: `claude-usage
+;; tail` subscribes to the daemon's socket and prints a line the moment each
+;; poll lands. No second timer to drift against the daemon's, and no process
+;; spawned every five minutes just to be told nothing changed.
+;;
+;; The fallback matters: if the CLI cannot reach the daemon — service not
+;; started, binary missing — it prints the fallback JSON itself, every field
+;; reads safely, and the widget says "usage script failed". `tail` keeps
+;; retrying behind that line, so the pill recovers on its own once the daemon
+;; is back and no bar reload is needed.
+(deflisten claude_usage
+  :initial '{"ok":false,"stale":false,"expired":false,"failed":false,"configured":true,"fetched_at":"","status":0,"session":0,"weekly":0,"session_reset":"","weekly_reset":""}'
+  `claude-usage tail`)
+(defvar expand_claude true)
+
+(defwidget claude []
+  (box
+    ;; Hidden only on a machine with no credentials at all. Every other state,
+    ;; including an endpoint that will not answer, is something to say rather
+    ;; than a reason to disappear. Safe access throughout, so a variable that is
+    ;; empty or a field that is missing still leaves a widget on the bar saying
+    ;; something is wrong.
+    :visible {(claude_usage?.configured ?: true) || (claude_usage?.failed ?: true)}
+    :space-evenly false
+    :tooltip {(claude_usage?.failed ?: true)
+      ? "no answer from the daemon · see eww logs"
+      : (claude_usage?.expired ?: false)
+      ? "token expired · the daemon's refresh command could not renew it"
+      : !(claude_usage?.ok ?: false)
+      ? "no answer · middle click to retry"
+      : "5h ${claude_usage?.session ?: 0}% → ${claude_usage?.session_reset ?: ""} · 7d ${claude_usage?.weekly ?: 0}% → ${claude_usage?.weekly_reset ?: ""}${(claude_usage?.stale ?: false) ? " · cached, endpoint said ${claude_usage?.status ?: 0}" : ""}"}
+    (expandable
+      ;; An expired token, or a broken script, has to stay readable: collapsed
+      ;; it would be a bare ring saying nothing.
+      :expanded {expand_claude || (claude_usage?.expired ?: false) || (claude_usage?.failed ?: true) || !(claude_usage?.ok ?: false)}
+      :label "󰚩"
+      :icon-offset {-0.11}
+      ;; Click opens the GUI popup window (claude-usage-gui, a GTK4
+      ;; layer-shell window). Right click folds the widget down to its ring.
+      :onretractedclick "claude-usage-gui &"
+      :onexpandedclick "claude-usage-gui &"
+      :onretractedrightclick "${EWW_CMD} update expand_claude=${!expand_claude}"
+      :onexpandedrightclick "${EWW_CMD} update expand_claude=${!expand_claude}"
+      ;; The daemon polls every 5 min; middle click asks it to poll now. The
+      ;; answer arrives through the tail like any other update, so this fires
+      ;; and forgets — `eww poll` would do nothing to a listened variable.
+      :onretractedmiddleclick "claude-usage refresh >/dev/null &"
+      :onexpandedmiddleclick "claude-usage refresh >/dev/null &"
+      :value {claude_usage?.session ?: 0}
+      (box
+        :vexpand true
+        :valign "center"
+        :height 25
+        :orientation "h"
+        :space-evenly false
+        :class "expander claude-usage ${(claude_usage?.stale ?: false) ? "stale" : ""} ${(claude_usage?.failed ?: true) || (claude_usage?.expired ?: false) || !(claude_usage?.ok ?: false) || (claude_usage?.session ?: 0) >= 95 || (claude_usage?.weekly ?: 0) >= 95 ? "critical" : (claude_usage?.session ?: 0) >= 80 || (claude_usage?.weekly ?: 0) >= 80 ? "high" : ""}"
+        ;; Session, weekly, and when these numbers were fetched. Which window is
+        ;; which, and when each resets, is a hover away.
+        (label :visible {(claude_usage?.ok ?: false) && !(claude_usage?.failed ?: true)}
+               :text "${claude_usage?.session ?: 0}% · ${claude_usage?.weekly ?: 0}% · ${claude_usage?.fetched_at ?: ""}")
+        (label :visible {(claude_usage?.expired ?: false) && !(claude_usage?.ok ?: false) && !(claude_usage?.failed ?: true)}
+               :text "token expired")
+        (label :visible {claude_usage?.failed ?: true} :text "usage daemon unreachable")
+        ;; Credentials present, token fine, and still nothing back: the endpoint
+        ;; refused or could not be reached. Rate limiting looks like this, and
+        ;; used to leave no widget at all.
+        (label :visible {!(claude_usage?.ok ?: false) && !(claude_usage?.expired ?: false) && !(claude_usage?.failed ?: true)}
+               :text "no answer")
+      )
+    )
+  )
+)

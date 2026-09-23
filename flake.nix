@@ -32,6 +32,9 @@
     clipper.inputs.flake-utils.follows = "flake-utils";
     # Not on any forge: fetched over ssh from the machine that hosts the bare
     # repo, so a `nix flake update` needs that ssh to work.
+    claude-usage.url = "git+ssh://alan@vibevm/home/alan/git/personal/claude-usage.git";
+    claude-usage.inputs.nixpkgs.follows = "nixpkgs";
+    claude-usage.inputs.flake-utils.follows = "flake-utils";
     timers.url = "git+ssh://alan@vibevm/home/alan/git/personal/timers.git";
     timers.inputs.nixpkgs.follows = "nixpkgs";
     timers.inputs.flake-utils.follows = "flake-utils";
