@@ -12,11 +12,6 @@ let
       pkgs.udisks2
       pkgs.flatpak
     ];
-    # This is the Steam session's entry point, run straight from the display
-    # manager, so whatever Steam needs mounted has to be mounted here first.
-    # The games volume no longer is: it's a system mount at /games now (see
-    # hosts/desktop/mounts.nix). Data still isn't declared anywhere, so it
-    # keeps the on-demand udisks mount.
     text = ''
       udisksctl mount -b /dev/disk/by-partlabel/Data || true
 
@@ -141,11 +136,6 @@ in
         ignore novideo
 
         whitelist ''${HOME}/.config/openxr
-
-        # The Steam library (hosts/desktop/mounts.nix). Nothing in the stock
-        # profile blacklists /games today -- its whitelists only fence in
-        # $HOME -- so this is insurance against a future include that does,
-        # which would otherwise show up as every game on it vanishing.
         noblacklist /games
 
         ignore seccomp
