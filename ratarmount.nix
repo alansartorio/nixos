@@ -34,8 +34,16 @@ in
           ratarmountcore = pyPrev.ratarmountcore.overrideAttrs (old: {
             postPatch = (old.postPatch or "") + fixPyproject;
           });
-          ratarmount = pyPrev.ratarmount.overrideAttrs (old: {
+          ratarmount = pyPrev.ratarmount.overridePythonAttrs (old: {
             postPatch = (old.postPatch or "") + fixPyproject;
+            # nixpkgs leaves out upstream's `squashfs` extra, so .squashfs
+            # files fail with "unrecognized format".
+            dependencies = old.dependencies ++ [
+              pyFinal.pysquashfsimage
+              pyFinal.lz4
+              pyFinal.python-lzo
+              pyFinal.zstandard
+            ];
           });
         })
       ];
