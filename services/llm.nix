@@ -51,7 +51,7 @@ in
     };
 
     services.open-webui = {
-      enable = true;
+      enable = false;
       package = pkgs.open-webui;
       port = 5000;
       environment = {
