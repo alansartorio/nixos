@@ -22,6 +22,7 @@
     ./users.nix
     ./vr.nix
     ./games.nix
+    ./ratarmount.nix
   ];
 
   games.enable = config.my.roles.mainPc;
