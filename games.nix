@@ -13,7 +13,6 @@ let
       pkgs.flatpak
     ];
     text = ''
-      udisksctl mount -b /dev/disk/by-partlabel/Data || true
 
       # assume gamescope is installed via security wrapper
       gamescope --force-grab-cursor --steam -O DP-2 -- flatpak run com.valvesoftware.Steam -pipewire-dmabuf -tenfoot
