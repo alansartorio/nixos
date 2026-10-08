@@ -51,7 +51,7 @@
 
         outline = {
           enable = true;
-          url = "https://docs.intra.chyps.com.ar/api";
+          url = "https://docs.intra.chyps.com.ar";
         };
 
         taiga = {

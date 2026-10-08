@@ -226,10 +226,22 @@ let
       };
     }
     // lib.optionalAttrs cfg.outline.enable {
-      outline = {
-        url = "http://127.0.0.1:${toString outlinePort}/mcp";
-        tools = outlineTools;
-      };
+      # Outline ships its own MCP server at <instance>/mcp, enabled per
+      # workspace under Settings -> AI. With it there is nothing to package or
+      # run: the proxy talks to Outline directly and attaches the API key
+      # itself, the way the Kibana route was originally going to work.
+      outline =
+        if cfg.outline.builtin then
+          {
+            url = "${cfg.outline.url}/mcp";
+            tools = cfg.outline.tools;
+            authHeaderFile = "$CREDENTIALS_DIRECTORY/outline-auth";
+          }
+        else
+          {
+            url = "http://127.0.0.1:${toString outlinePort}/mcp";
+            tools = outlineTools;
+          };
     }
     // lib.optionalAttrs cfg.taiga.enable {
       taiga = {
@@ -293,10 +305,19 @@ in
         assertion = cfg.outline.enable -> isSet cfg.outline.url;
         message = ''
           my.services.claudeMcp.outline.enable requires a non-empty
-          outline.url. Empty is worse than unset: server.py deletes OUTLINE_*
-          vars whose value is "", and outline_client.py:146 then falls back to
-          https://app.getoutline.com -- the API key for the company wiki would
-          go to Outline's cloud.
+          outline.url, the base URL with no path. Empty is worse than unset:
+          mcp-outline deletes OUTLINE_* vars whose value is "" and then falls
+          back to https://app.getoutline.com -- the API key for the company
+          wiki would go to Outline's cloud.
+        '';
+      }
+      {
+        assertion = (cfg.outline.enable && cfg.outline.builtin) -> cfg.outline.tools != [ ];
+        message = ''
+          my.services.claudeMcp.outline.builtin requires a non-empty
+          outline.tools. Outline's own MCP endpoint exposes whatever that
+          instance defines, so there is no honest default to guess -- read the
+          names off a tools/list against <outline.url>/mcp.
         '';
       }
       {
@@ -346,11 +367,18 @@ in
       };
 
     sops.templates =
-      lib.optionalAttrs cfg.outline.enable {
+      lib.optionalAttrs (cfg.outline.enable && !cfg.outline.builtin) {
         "claude-mcp-outline.env".restartUnits = [ "mcp-outline.service" ];
         "claude-mcp-outline.env".content = ''
           OUTLINE_API_KEY=${config.sops.placeholder.claude_mcp_outline_api_key}
         '';
+      }
+      // lib.optionalAttrs (cfg.outline.enable && cfg.outline.builtin) {
+        # Outline authenticates its API with a bearer token.
+        "claude-mcp-outline-auth" = {
+          restartUnits = [ "mcp-readonly-proxy.service" ];
+          content = "Bearer ${config.sops.placeholder.claude_mcp_outline_api_key}";
+        };
       }
       // lib.optionalAttrs cfg.taiga.enable {
         "claude-mcp-taiga.env".restartUnits = [ "taiga-mcp.service" ];
@@ -387,7 +415,7 @@ in
       };
     };
 
-    systemd.services.mcp-outline = lib.mkIf cfg.outline.enable {
+    systemd.services.mcp-outline = lib.mkIf (cfg.outline.enable && !cfg.outline.builtin) {
       description = "Outline MCP server (read-only) for Claude on VibeVM";
       wantedBy = [ "multi-user.target" ];
       after = [ "network-online.target" ];
@@ -395,7 +423,7 @@ in
       serviceConfig = noJit // {
         EnvironmentFile = config.sops.templates."claude-mcp-outline.env".path;
         Environment = [
-          "OUTLINE_API_URL=${cfg.outline.url}"
+          "OUTLINE_API_URL=${cfg.outline.url}/api"
           "OUTLINE_READ_ONLY=true"
           "MCP_TRANSPORT=streamable-http"
           "MCP_HOST=127.0.0.1"
@@ -447,6 +475,8 @@ in
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
       serviceConfig = noJit // {
+        LoadCredential = lib.optional (cfg.outline.enable && cfg.outline.builtin)
+          "outline-auth:${config.sops.templates."claude-mcp-outline-auth".path}";
         ExecStart = lib.concatStringsSep " " [
           (lib.getExe pkgs.mcp-readonly-proxy)
           "--config ${proxyConfig}"
