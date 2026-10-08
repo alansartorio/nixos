@@ -92,6 +92,23 @@ let
     "wiki_read"
   ];
 
+  # Outline's own endpoint, and the second route whose entire tool set is
+  # already read-only: every tool it advertises carries readOnlyHint and
+  # idempotentHint, and it exposes no create, update or delete at all. This
+  # list is the whole of what it offers rather than a filtered half.
+  #
+  # Five tools where the third-party package had nineteen. fetch returns a
+  # document's full content and list_collection_documents the hierarchy, so
+  # the loss is the conveniences -- per-section reads, a table of contents,
+  # attachments, backlinks, export -- not reach.
+  outlineTools = [
+    "fetch"
+    "list_collection_documents"
+    "list_collections"
+    "list_comments"
+    "list_documents"
+  ];
+
   # talhaorak/pytaiga-mcp has no read-only mode: it registers 94 tools and
   # means them, and it authenticates as an ordinary user with full write
   # rights. As with the server it replaced, this list is the only enforcement
@@ -205,7 +222,7 @@ let
       # route: the proxy talks to Outline directly and attaches the key.
       outline = {
         url = "${cfg.outline.url}/mcp";
-        tools = cfg.outline.tools;
+        tools = outlineTools;
         authHeaderFile = "$CREDENTIALS_DIRECTORY/outline-auth";
       };
     }
@@ -270,15 +287,6 @@ in
       {
         assertion = cfg.outline.enable -> isSet cfg.outline.url;
         message = "my.services.claudeMcp.outline.enable requires outline.url.";
-      }
-      {
-        assertion = cfg.outline.enable -> cfg.outline.tools != [ ];
-        message = ''
-          my.services.claudeMcp.outline.enable requires a non-empty
-          outline.tools. Outline's MCP endpoint exposes whatever that instance
-          defines, so there is no honest default -- read the names off a
-          tools/list against <outline.url>/mcp.
-        '';
       }
       {
         assertion = cfg.taiga.enable -> isSet cfg.taiga.url;

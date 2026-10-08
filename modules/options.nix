@@ -280,15 +280,6 @@ in
             description = "Outline's base URL, with no path. /mcp is appended.";
           };
 
-          tools = mkOption {
-            type = types.listOf types.str;
-            default = [ ];
-            description = ""
-              + "Tool names the proxy will forward. Read them off a tools/list\n"
-              + "against <url>/mcp -- the endpoint exposes whatever that\n"
-              + "instance defines, and an empty list would forward nothing.\n\n"
-              + "Audit them before adding: official does not mean read-only.";
-          };
         };
 
         taiga = {
