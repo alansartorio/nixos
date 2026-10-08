@@ -47,7 +47,6 @@ let
   # Loopback ports for the backends. Arbitrary, but fixed so the proxy config
   # and the units cannot drift apart.
   giteaPort = 18190;
-  outlinePort = 18191;
   taigaPort = 18192;
   elasticPort = 18193;
 
@@ -91,31 +90,6 @@ let
     "search_users"
     "timetracking_read"
     "wiki_read"
-  ];
-
-  # What OUTLINE_READ_ONLY=true leaves registered: features/documents/__init__
-  # skips the content, editing, lifecycle, organization and batch modules, and
-  # collection_tools gates its own writers internally.
-  outlineTools = [
-    "ask_ai_about_documents"
-    "export_all_collections"
-    "export_collection"
-    "export_document"
-    "fetch_attachment"
-    "get_attachment_url"
-    "get_collection_structure"
-    "get_comment"
-    "get_document_backlinks"
-    "get_document_id_from_title"
-    "get_document_toc"
-    "list_collections"
-    "list_document_attachments"
-    "list_document_comments"
-    "list_recently_updated_documents"
-    "read_document"
-    "read_document_section"
-    "search_document_content"
-    "search_documents"
   ];
 
   # talhaorak/pytaiga-mcp has no read-only mode: it registers 94 tools and
@@ -227,21 +201,13 @@ let
     }
     // lib.optionalAttrs cfg.outline.enable {
       # Outline ships its own MCP server at <instance>/mcp, enabled per
-      # workspace under Settings -> AI. With it there is nothing to package or
-      # run: the proxy talks to Outline directly and attaches the API key
-      # itself, the way the Kibana route was originally going to work.
-      outline =
-        if cfg.outline.builtin then
-          {
-            url = "${cfg.outline.url}/mcp";
-            tools = cfg.outline.tools;
-            authHeaderFile = "$CREDENTIALS_DIRECTORY/outline-auth";
-          }
-        else
-          {
-            url = "http://127.0.0.1:${toString outlinePort}/mcp";
-            tools = outlineTools;
-          };
+      # workspace under Settings -> AI, so nothing is packaged or run for this
+      # route: the proxy talks to Outline directly and attaches the key.
+      outline = {
+        url = "${cfg.outline.url}/mcp";
+        tools = cfg.outline.tools;
+        authHeaderFile = "$CREDENTIALS_DIRECTORY/outline-auth";
+      };
     }
     // lib.optionalAttrs cfg.taiga.enable {
       taiga = {
@@ -303,21 +269,15 @@ in
       }
       {
         assertion = cfg.outline.enable -> isSet cfg.outline.url;
-        message = ''
-          my.services.claudeMcp.outline.enable requires a non-empty
-          outline.url, the base URL with no path. Empty is worse than unset:
-          mcp-outline deletes OUTLINE_* vars whose value is "" and then falls
-          back to https://app.getoutline.com -- the API key for the company
-          wiki would go to Outline's cloud.
-        '';
+        message = "my.services.claudeMcp.outline.enable requires outline.url.";
       }
       {
-        assertion = (cfg.outline.enable && cfg.outline.builtin) -> cfg.outline.tools != [ ];
+        assertion = cfg.outline.enable -> cfg.outline.tools != [ ];
         message = ''
-          my.services.claudeMcp.outline.builtin requires a non-empty
-          outline.tools. Outline's own MCP endpoint exposes whatever that
-          instance defines, so there is no honest default to guess -- read the
-          names off a tools/list against <outline.url>/mcp.
+          my.services.claudeMcp.outline.enable requires a non-empty
+          outline.tools. Outline's MCP endpoint exposes whatever that instance
+          defines, so there is no honest default -- read the names off a
+          tools/list against <outline.url>/mcp.
         '';
       }
       {
@@ -367,13 +327,7 @@ in
       };
 
     sops.templates =
-      lib.optionalAttrs (cfg.outline.enable && !cfg.outline.builtin) {
-        "claude-mcp-outline.env".restartUnits = [ "mcp-outline.service" ];
-        "claude-mcp-outline.env".content = ''
-          OUTLINE_API_KEY=${config.sops.placeholder.claude_mcp_outline_api_key}
-        '';
-      }
-      // lib.optionalAttrs (cfg.outline.enable && cfg.outline.builtin) {
+      lib.optionalAttrs cfg.outline.enable {
         # Outline authenticates its API with a bearer token.
         "claude-mcp-outline-auth" = {
           restartUnits = [ "mcp-readonly-proxy.service" ];
@@ -412,24 +366,6 @@ in
           "-host ${cfg.gitea.host}"
           "-read-only"
         ];
-      };
-    };
-
-    systemd.services.mcp-outline = lib.mkIf (cfg.outline.enable && !cfg.outline.builtin) {
-      description = "Outline MCP server (read-only) for Claude on VibeVM";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" ];
-      wants = [ "network-online.target" ];
-      serviceConfig = noJit // {
-        EnvironmentFile = config.sops.templates."claude-mcp-outline.env".path;
-        Environment = [
-          "OUTLINE_API_URL=${cfg.outline.url}/api"
-          "OUTLINE_READ_ONLY=true"
-          "MCP_TRANSPORT=streamable-http"
-          "MCP_HOST=127.0.0.1"
-          "MCP_PORT=${toString outlinePort}"
-        ];
-        ExecStart = lib.getExe pkgs.mcp-outline;
       };
     };
 
@@ -475,7 +411,7 @@ in
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
       serviceConfig = noJit // {
-        LoadCredential = lib.optional (cfg.outline.enable && cfg.outline.builtin)
+        LoadCredential = lib.optional cfg.outline.enable
           "outline-auth:${config.sops.templates."claude-mcp-outline-auth".path}";
         ExecStart = lib.concatStringsSep " " [
           (lib.getExe pkgs.mcp-readonly-proxy)

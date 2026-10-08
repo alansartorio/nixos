@@ -50,7 +50,9 @@
         };
 
         outline = {
-          enable = true;
+          # Off until a tools/list against docs.intra.chyps.com.ar/mcp names
+          # the tools; the assertion refuses an empty allowlist.
+          enable = false;
           url = "https://docs.intra.chyps.com.ar";
         };
 

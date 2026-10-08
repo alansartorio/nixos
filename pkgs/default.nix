@@ -12,7 +12,6 @@ inputs: final: prev: {
   # Read-only MCP servers for the intranet, fronted by mcp-readonly-proxy.
   gitea-mcp = final.callPackage ./gitea-mcp { };
   pytaiga-mcp = final.callPackage ./pytaiga-mcp { };
-  mcp-outline = final.callPackage ./mcp-outline { };
   mcp-readonly-proxy = final.callPackage ./mcp-readonly-proxy { };
   elasticsearch-mcp-server = final.callPackage ./elasticsearch-mcp-server { };
 }

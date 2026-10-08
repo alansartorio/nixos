@@ -265,48 +265,29 @@ in
           enable = mkOption {
             type = types.bool;
             default = false;
-            description = "Expose the Outline wiki.";
-          };
-
-          builtin = mkOption {
-            type = types.bool;
-            default = false;
             description = ""
-              + "Use Outline's own MCP server at <url>/mcp instead of running\n"
-              + "the third-party mcp-outline package locally.\n\n"
-              + "Outline ships one in every workspace, speaking Streamable\n"
-              + "HTTP, switched on by an admin under Settings -> AI. With it\n"
-              + "there is nothing to package or run: the proxy talks to Outline\n"
-              + "directly and attaches the API key itself.\n\n"
-              + "Requires `tools`, since the endpoint's tool names are not\n"
-              + "knowable from here. Off until a tools/list against the\n"
-              + "instance confirms the feature is enabled and names them -- a\n"
-              + "404 means the version lacks it or the toggle is off, a 401\n"
-              + "means it wants OAuth rather than the API key.";
+              + "Expose the Outline wiki through Outline's own MCP server at\n"
+              + "<url>/mcp, which every workspace ships and an admin enables\n"
+              + "under Settings -> AI. Nothing is packaged or run: the proxy\n"
+              + "talks to Outline directly and attaches the API key.\n\n"
+              + "Requires `tools`.";
           };
 
           url = mkOption {
             type = types.nullOr types.str;
             default = null;
             example = "https://docs.intra.chyps.com.ar";
-            description = ""
-              + "Outline's base URL, with no path. The module appends what\n"
-              + "each backend wants: /api for the mcp-outline package, /mcp for\n"
-              + "Outline's own endpoint.\n\n"
-              + "Must be non-empty. mcp-outline deletes OUTLINE_* variables\n"
-              + "whose value is \"\" and then falls back to\n"
-              + "https://app.getoutline.com, which would send the company\n"
-              + "wiki's API key to Outline's cloud.";
+            description = "Outline's base URL, with no path. /mcp is appended.";
           };
 
           tools = mkOption {
             type = types.listOf types.str;
             default = [ ];
             description = ""
-              + "Tool names the proxy will forward when `builtin` is set. The\n"
-              + "local package has a known tool set, so this is ignored\n"
-              + "otherwise. Read them off a tools/list against <url>/mcp; there\n"
-              + "is no honest default, and an empty list would forward nothing.";
+              + "Tool names the proxy will forward. Read them off a tools/list\n"
+              + "against <url>/mcp -- the endpoint exposes whatever that\n"
+              + "instance defines, and an empty list would forward nothing.\n\n"
+              + "Audit them before adding: official does not mean read-only.";
           };
         };
 
