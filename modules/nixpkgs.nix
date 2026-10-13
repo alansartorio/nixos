@@ -38,6 +38,21 @@
             hash = "sha256-s1gl9eR6Mt2QLrhfcowstPFjzwE/lz4PJhJzWYHoIHg=";
           };
         });
+
+        # Wrong pnpm hash in nixos-unstable 7fd4004, fixed upstream in
+        # NixOS/nixpkgs@ac7b1aaed03d. No-op once that reaches the channel.
+        typescript-language-server =
+          if
+            prev.typescript-language-server.pnpmDeps.outputHash
+            == "sha256-MUSxDMlbG21KSesGdEvqa2kEpuVfLlXRUX1qV/FGsSo="
+          then
+            prev.typescript-language-server.overrideAttrs (old: {
+              pnpmDeps = old.pnpmDeps.overrideAttrs {
+                outputHash = "sha256-xR/EF60lVBsITKgH7wCM2wHM46PFQevD51KfCENSUH4=";
+              };
+            })
+          else
+            prev.typescript-language-server;
       }
     )
   ];
