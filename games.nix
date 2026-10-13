@@ -76,6 +76,8 @@ in
       steam-gamescope
       #gamescope
       minecraft-notifier-script
+
+      depotdownloader
     ];
 
     services.displayManager.sessionPackages = [
