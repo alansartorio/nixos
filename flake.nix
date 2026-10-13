@@ -35,7 +35,7 @@
     # their GTK chrome; they now sit in one workspace alongside the kimai
     # integration and the calendar, which is what let them share a holiday
     # calendar, a popup shell and one HTTP client.
-    widgets.url = "git+ssh://alan@vibevm/home/alan/git/personal/widgets.git";
+    widgets.url = "git+ssh://alan@vibevm/home/alan/git/personal/widgets.git?ref=hass-retry";
     widgets.inputs.nixpkgs.follows = "nixpkgs";
     widgets.inputs.flake-utils.follows = "flake-utils";
   };
