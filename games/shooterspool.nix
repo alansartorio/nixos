@@ -88,7 +88,9 @@ let
     name = "shooterspool";
 
     runtimeInputs = [
-      pkgs.wineWow64Packages.waylandFull
+      # winewayland draws a Windows titlebar into the window itself; the X11
+      # driver (via xwayland-satellite) leaves the frame to the compositor
+      pkgs.wineWow64Packages.full
       pkgs.bubblewrap
       pkgs.rsync
       pkgs.util-linux
