@@ -11,6 +11,11 @@ let
 
   gamedir = "drive_c/Program Files (x86)/ShootersPool";
 
+  # winewayland draws a Windows titlebar into the window itself; the X11
+  # driver (via xwayland-satellite) leaves the frame to the compositor. The
+  # prefix needs it too, or winex11.drv never lands in system32.
+  wine = pkgs.wineWow64Packages.full;
+
   # Bumped when the layout of the local state below changes, so that a stale
   # writable layer from an older revision of this file gets thrown away rather
   # than shadowing the new prefix.
@@ -35,7 +40,7 @@ let
     pkgs.runCommand "shooterspool-prefix-${version}"
       {
         nativeBuildInputs = [
-          pkgs.wineWow64Packages.waylandFull
+          wine
           pkgs.xvfb-run
         ];
 
@@ -88,9 +93,7 @@ let
     name = "shooterspool";
 
     runtimeInputs = [
-      # winewayland draws a Windows titlebar into the window itself; the X11
-      # driver (via xwayland-satellite) leaves the frame to the compositor
-      pkgs.wineWow64Packages.full
+      wine
       pkgs.bubblewrap
       pkgs.rsync
       pkgs.util-linux
