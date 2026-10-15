@@ -11,9 +11,7 @@ let
 
   gamedir = "drive_c/Program Files (x86)/ShootersPool";
 
-  # winewayland draws a Windows titlebar into the window itself; the X11
-  # driver (via xwayland-satellite) leaves the frame to the compositor. The
-  # prefix needs it too, or winex11.drv never lands in system32.
+  # X11 support is kept so the driver can be switched back; see DISPLAY below
   wine = pkgs.wineWow64Packages.full;
 
   # Bumped when the layout of the local state below changes, so that a stale
@@ -126,10 +124,13 @@ let
         --include='*/' --include='*.ini' --include='*.json' --exclude='*' \
         ${shooterspool-prefix}/ "$root/upper/"
 
+      # winex11 would hide the Windows titlebar, but through xwayland-satellite
+      # its cursor warps stutter the cue mid-stroke; winewayland locks the pointer
       exec bwrap \
         --dev-bind / / \
         --overlay-src ${shooterspool-prefix} \
         --overlay "$root/upper" "$root/.work" "$prefix" \
+        --unsetenv DISPLAY \
         --setenv WINEPREFIX "$prefix" \
         --setenv WINEARCH win64 \
         --setenv WINEDLLOVERRIDES "mscoree,mshtml=" \
