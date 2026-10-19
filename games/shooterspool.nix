@@ -87,6 +87,18 @@ let
         wineserver -w
       '';
 
+  # Same font set as the prefix build. Wine also loads the host fonts at
+  # runtime, and a variable font among them CHECK-crashes the webview (wine
+  # stubs IDWriteFontFace5::HasVariations).
+  fonts-conf = pkgs.writeText "shooterspool-fonts.conf" ''
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+    <fontconfig>
+      <dir>${pkgs.corefonts}/share/fonts</dir>
+      <cachedir prefix="xdg">fontconfig</cachedir>
+    </fontconfig>
+  '';
+
   shooterspool = pkgs.writeShellApplication {
     name = "shooterspool";
 
@@ -132,6 +144,7 @@ let
         --overlay "$root/upper" "$root/.work" "$prefix" \
         --unsetenv DISPLAY \
         --setenv WINEPREFIX "$prefix" \
+        --setenv FONTCONFIG_FILE ${fonts-conf} \
         --setenv WINEARCH win64 \
         --setenv WINEDLLOVERRIDES "mscoree,mshtml=" \
         --chdir "$prefix/${gamedir}/bin" \
