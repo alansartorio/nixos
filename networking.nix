@@ -50,6 +50,7 @@ in
     curl
     socat
     nmap
+    proxychains-ng
     ethtool
     mitmproxy
     networkmanagerapplet
