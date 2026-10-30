@@ -60,7 +60,8 @@ python3Packages.buildPythonApplication rec {
   ];
 
   dependencies = with python3Packages; [
-    mcp
+    # Uses FastMCP, which mcp 2.x renamed.
+    mcp_1
     python-dotenv
     pydantic
     pydantic-settings
