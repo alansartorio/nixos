@@ -198,14 +198,9 @@ in
           description = "Run the local ollama + llama-cpp + open-webui stack.";
         };
 
-        llamaCppModel = mkOption {
+        llamaCppModelsDir = mkOption {
           type = types.nullOr types.str;
           default = null;
-          description = ''
-            Absolute path to the .gguf served by llama-cpp. A runtime path on
-            the machine, not a store path -- hence str rather than path, which
-            would try to copy the model into the nix store.
-          '';
         };
       };
     };
