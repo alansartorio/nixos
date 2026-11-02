@@ -174,6 +174,7 @@ in
         default = null;
         description = "clockin project shown in the eww bar. Null hides the widget.";
       };
+
     };
 
     services = {
@@ -181,13 +182,93 @@ in
         enable = mkOption {
           type = types.bool;
           default = false;
-          description = "Run hass-light-eww against a Home Assistant instance.";
+          description = "Show the light pill, driving a Home Assistant lamp.";
         };
 
         host = mkOption {
           type = types.str;
           default = "http://192.168.0.151:8123";
           description = "Home Assistant base URL.";
+        };
+
+        entity = mkOption {
+          type = types.str;
+          default = "light.bedroom_light";
+          description = ''
+            The light entity the pill drives.
+
+            A default here rather than in the widgets flake: which lamp is a fact
+            about this house, and the flake that ships `hass-daemon` requires the
+            option precisely so it does not have to guess.
+          '';
+        };
+      };
+
+      claudeUsage = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Run the claude-usage daemon and show its pill in the eww bar.
+            Replaces the old `system-config.options.claudeUsage` attrset: the
+            enable flag and the refresh command are two typed options now
+            rather than one nullable attrset.
+          '';
+        };
+
+        tokenRefreshCommand = mkOption {
+          type = types.str;
+          default = "";
+          example = "ssh -o BatchMode=yes -i /var/lib/claude-usage/.ssh/id_ed25519 vibevm.local cat .claude/.credentials.json";
+          description = ''
+            Shell command whose stdout is a credentials JSON, run by the daemon
+            when its token expires -- typically an ssh that cats a remote
+            machine's ~/.claude/.credentials.json. The key and known_hosts that
+            command needs are set up out of band; this only passes the string
+            through to the daemon.
+          '';
+        };
+      };
+
+      timers = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Run the timers daemon and show its pill in the eww bar. A user
+            service rather than a system one: a timer going off means a desktop
+            notification, which needs the session bus.
+          '';
+        };
+      };
+
+      kimai = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Run the Kimai integration: the `kimai` CLI the bar listens to, the
+            `kimai-gui` popup its right click opens, and the config file both
+            read. Also gates the `kimai_token` sops secret -- no reason to
+            decrypt the token onto a machine that never asks Kimai anything.
+
+            Was `my.desktop.kimaiUrl != null`, back when the whole thing was one
+            in-repo binary the widget invoked with a URL argument. There is a
+            home-manager module's worth of moving parts now, so it sits with the
+            other services and gets an enable of its own.
+          '';
+        };
+
+        url = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          example = "https://kimai.intra.chyps.com.ar";
+          description = ''
+            Base URL of the Kimai instance: written into the config file the CLI
+            and the GUI read, and handed to xdg-open by the widget's middle
+            click. Null with `enable` on is an assertion failure rather than a
+            default -- there is no Kimai to guess at.
+          '';
         };
       };
 

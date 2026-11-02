@@ -4,7 +4,9 @@
 #
 # The chezmoi template branched on desktop_monitors, vertical_monitor,
 # auto_scaling, nvidia, battery, kde_connect, hass and keyboard_model. All of
-# those are my.* options now. The artix branch is gone with artix.
+# those are my.* options now, except hass: the light pill is a systemd user unit
+# bound to graphical-session.target, so no session config spawns it any more.
+# The artix branch is gone with artix.
 {
   lib,
   osConfig,
@@ -15,7 +17,6 @@ let
   monitors = desktop.monitors;
   nvidia = osConfig.my.gpu == "nvidia";
   battery = osConfig.my.hardware.battery;
-  hassEnabled = osConfig.my.services.hass.enable;
 
   scale = if monitors.autoScaling then "auto" else "1";
 
@@ -37,7 +38,6 @@ in
       [
         "@MONITORS@"
         "@EXEC_KDECONNECT@"
-        "@EXEC_HASS@"
         "@ENV_NVIDIA@"
         "@CURSOR_NVIDIA@"
         "@BLUR_ENABLED@"
@@ -47,15 +47,14 @@ in
       [
         monitorLines
         (lib.optionalString desktop.kdeConnect.enable "exec-once = kdeconnectd")
-        (lib.optionalString hassEnabled "exec = launch-hass-server")
         (lib.optionalString nvidia ''
           env = LIBVA_DRIVER_NAME,nvidia
           env = GBM_BACKEND,nvidia-drm
           env = __GLX_VENDOR_LIBRARY_NAME,nvidia'')
         (lib.optionalString nvidia ''
-              no_hardware_cursors = true
-              #no_break_fs_vrr = true
-              min_refresh_rate = 48'')
+          no_hardware_cursors = true
+          #no_break_fs_vrr = true
+          min_refresh_rate = 48'')
         # Blur is the expensive effect; skip it on the machine running on a battery.
         (if battery then "false" else "true")
         (lib.optionalString nvidia ''

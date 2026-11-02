@@ -7,6 +7,7 @@
 {
   imports = [
     ./services/llm.nix
+    ./services/claude-usage.nix
   ];
 
   services.immich = {
@@ -141,7 +142,6 @@
   };
 
   powerManagement.cpuFreqGovernor = lib.mkIf config.my.roles.mainPc "performance";
-
 
   services.sunshine = {
     enable = true;

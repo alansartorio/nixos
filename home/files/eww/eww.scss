@@ -118,50 +118,6 @@ $alt-text: $nord0;
   color: $alt-text;
 }
 
-// Calendar
-.cal-box {
-  background-color: $dark-background;
-  font-size: 1em;
-  font-weight: 500;
-  color: $secondary-text;
-
-  .cal-inner-box {
-    padding: 1rem 1rem 0.2rem;
-
-    .cal {
-      &.highlight {
-        padding: 10rem;
-        color: $secondary-text;
-        font-weight: bold;
-      }
-
-      &.header {
-        color: $primary-color;
-        font-weight: bold;
-      }
-
-      //&.view {
-      //background: black;
-      //}
-
-      &.button {
-        color: $primary-color;
-      }
-
-      &:selected {
-        color: $alt-text;
-        font-weight: bold;
-        border-radius: 100;
-        background: white;
-      }
-
-      &:indeterminate {
-        color: $light-background;
-      }
-    }
-  }
-}
-
 .expander {
   background-color: $light-background;
   border-radius: 0 10px 10px 0;
@@ -173,6 +129,104 @@ $alt-text: $nord0;
   min-height: 25px;
 }
 
+// Against the $light-background pill, $nord3 measures 1.2:1 and $nord11 2.1:1 —
+// both unreadable, which is why the cached and the at-the-limit states were the
+// ones that disappeared. Mixed from the same palette so they still read as
+// dimmed and as alarm, but at 4.8:1 and 4.7:1 respectively.
+//
+// Harmless on a machine with my.services.claudeUsage.enable off: the widget
+// these rules dress is simply not spliced into the yuck there.
+.claude-usage {
+  &.stale {
+    color: mix($secondary-text, $light-background, 80%);
+  }
+
+  &.high {
+    color: $nord13;
+  }
+
+  &.critical {
+    color: mix($nord11, $nord6, 40%);
+  }
+}
+// Against the $light-background pill, $nord3 measures 1.2:1 and $nord11 2.1:1 —
+// both unreadable. Mixed from the same palette so they still read as dimmed and
+// as alarm, but at 4.8:1 and 4.7:1 respectively.
+//
+// Not conditional on the machine having the widget: these rules dress a widget
+// that is simply not spliced into the yuck where my.services.kimai.enable is
+// off.
+//
+// These selectors deliberately do not name the box they sit on. The expanded
+// pill puts them on its .expander, and the *collapsed* one puts them on the
+// metric's .label through expandable's retracted-classes — which is what keeps
+// a broken reading visible now that a failure no longer forces the widget open.
+.kimai {
+  // Nothing clocked in. Still legible — the day's total is worth reading when
+  // no timer is running — but visibly not the state that is counting.
+  &.idle {
+    color: mix($secondary-text, $light-background, 80%);
+  }
+
+  // A feriado expects nothing, so the pill is a note rather than a progress
+  // report. $nord8 against the $light-background pill measures about 4.5:1 —
+  // readable, and unmistakably not the two states around it.
+  &.holiday {
+    color: $nord8;
+  }
+
+  &.failed {
+    color: mix($nord11, $nord6, 40%);
+  }
+
+  // Nothing for ahead/behind. The sign in the text is the signal, and
+  // repainting the pill because you are twenty minutes down at 09:20 on a
+  // Monday would make the bar shout at you every week.
+}
+
 .cpu-usage-bar {
   background-color: $primary-color;
+}
+
+// The timers pill. It has to shout when a timer has gone off and nobody has
+// acknowledged it -- that is the whole reason the widget exists -- but $nord11
+// as text on the $light-background pill measures about 2.1:1, which is not
+// readable. So the firing state repaints the pill itself and lifts the text
+// towards $nord6 to clear it.
+//
+// Harmless with my.services.timers.enable off: the widget these rules dress is
+// simply not spliced into the yuck there.
+.timers {
+  min-height: 25px;
+
+  &.running {
+    color: $secondary-text;
+  }
+
+  &.firing {
+    background-color: mix($nord11, $light-background, 55%);
+    color: $nord6;
+    font-weight: bold;
+  }
+
+  &.failed {
+    color: mix($secondary-text, $light-background, 80%);
+  }
+}
+
+// `all: unset` strips the theme's tooltip styling too, and the usage and timers
+// pills both lean on their tooltips -- the reset times behind the two
+// percentages, and the full timer list behind the one line the bar has room for.
+tooltip,
+tooltip.background {
+  background-color: $nord0;
+  color: $nord6;
+  border: 1px solid $nord3;
+  border-radius: 6px;
+}
+
+tooltip label {
+  color: $nord6;
+  font-size: 12px;
+  padding: 3px 6px;
 }

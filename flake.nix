@@ -18,9 +18,6 @@
     rubik.url = "github:alansartorio/rubik";
     rubik.inputs.nixpkgs.follows = "nixpkgs";
     rubik.inputs.flake-utils.follows = "flake-utils";
-    hass-light-eww.url = "github:alansartorio/hass-light-eww";
-    hass-light-eww.inputs.nixpkgs.follows = "nixpkgs";
-    hass-light-eww.inputs.flake-utils.follows = "flake-utils";
     croptool.url = "github:alansartorio/croptool";
     croptool.inputs.nixpkgs.follows = "nixpkgs";
     croptool.inputs.flake-utils.follows = "flake-utils";
@@ -30,6 +27,17 @@
     clipper.url = "github:alansartorio/Clipper/all-merged";
     clipper.inputs.nixpkgs.follows = "nixpkgs";
     clipper.inputs.flake-utils.follows = "flake-utils";
+    # Not on any forge: fetched over ssh from the machine that hosts the bare
+    # repo, so a `nix flake update` needs that ssh to work.
+    #
+    # One input where there used to be three. claude-usage, timers and
+    # hass-light-eww were a repo each, duplicating their socket framing and
+    # their GTK chrome; they now sit in one workspace alongside the kimai
+    # integration and the calendar, which is what let them share a holiday
+    # calendar, a popup shell and one HTTP client.
+    widgets.url = "git+ssh://alan@vibevm/home/alan/git/personal/widgets.git?ref=hass-retry";
+    widgets.inputs.nixpkgs.follows = "nixpkgs";
+    widgets.inputs.flake-utils.follows = "flake-utils";
   };
 
   outputs =
@@ -51,7 +59,6 @@
             ./modules/identity.nix
             ./modules/nixpkgs.nix
             ./modules/secrets.nix
-            ./modules/hass.nix
             sops-nix.nixosModules.sops
 
             (./hosts + "/${name}")

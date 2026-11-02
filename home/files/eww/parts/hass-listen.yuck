@@ -1,1 +1,11 @@
-(deflisten hass-lamp :initial '{"state":"loading"}' "sleep 5; socat -u UNIX-CLIENT:/tmp/hass-light-eww-output.sock -")
+;; The pill's state, one JSON object per line, straight off the daemon's socket.
+;;
+;; A loop rather than the `sleep 5` this used to open with. That delay was there
+;; because the launcher was spawned by the compositor at login and the socket did
+;; not exist yet; the daemon is a user unit now and binds both sockets before its
+;; first request, so what is left to handle is the daemon restarting -- after
+;; which socat exits and this reconnects a second later. The other pills get the
+;; same behaviour from their CLI's own retry loop; this one has no CLI, so it is
+;; here.
+(deflisten hass-lamp :initial '{"state":"loading"}'
+  "while true; do socat -u UNIX-CLIENT:$XDG_RUNTIME_DIR/hass/state.sock -; sleep 1; done")

@@ -1,0 +1,85 @@
+
+;; Kimai took clockin's job, so this widget answers clockin's two questions --
+;; what is running, and how much of today is booked. Both as totals: the pill is
+;; a reading, and a signed delta against a target it does not state is a number
+;; you end up re-deriving every time you look at it. How the week stands against
+;; what it was supposed to be is a hover away in the tooltip, and laid out in
+;; full in kimai-gui, which is the thing built for comparing.
+;;
+;; `kimai tail` is the same shape as `claude-usage tail` and `timers tail`: the
+;; CLI owns the poll, the per-second tick, the arithmetic and the feriado
+;; calendar, and prints a line only when the reading actually changes. Neither a
+;; URL nor a token appears on this line any more -- both come from
+;; ~/.config/kimai/config.toml, which home/widgets.nix writes, and the token
+;; itself never leaves /run/secrets: the config file holds its path.
+;;
+;; The initial value matters: until the first line arrives the widget reads
+;; "kimai unreachable", which is true, instead of a confident 0s. The CLI prints
+;; the same shape itself when it cannot reach the server -- off the VPN, most
+;; often -- so every field below stays readable and the pill says so rather than
+;; freezing at whatever it last held. `tail` keeps retrying behind that line, so
+;; the widget heals itself with no bar reload.
+;;
+;; That literal is a copy, and copies drift. `kimai initial` prints the one it
+;; should be, so keeping the two in step is `kimai initial` and a diff rather
+;; than reading 37 field names off a struct.
+;;
+;; `state`, `label` and `tooltip` arrive pre-rendered rather than being derived
+;; here, the way the timers widget does it. The precedence between unreachable,
+;; feriado, running and idle is the CLI's business -- a feriado expects zero
+;; hours, which changes what "behind" even means -- and reimplementing that in
+;; yuck is how the pill and the popup end up disagreeing.
+(deflisten kimai
+  :initial '{"configured":true,"ok":false,"failed":true,"state":"failed","running":false,"task":"","description":"","since":"","running_time":"0s","today_time":"0s","week_time":"0s","month_time":"0s","today_seconds":0,"week_seconds":0,"month_seconds":0,"expected_today":"0s","expected_week":"0s","expected_month":"0s","today_delta":"+0s","week_delta":"+0s","month_delta":"+0s","today_delta_seconds":0,"week_delta_seconds":0,"month_delta_seconds":0,"day_percent":0,"week_percent":0,"month_percent":0,"holiday":false,"holiday_name":"","day_kind":"working","holidays_degraded":true,"week_start":"","week_end":"","month_label":"","label":"kimai unreachable","tooltip":"kimai: starting","error":"starting"}'
+  "kimai tail")
+(defvar expand_kimai true)
+
+(defwidget kimai []
+  (box
+    :space-evenly false
+    ;; Safe access all the way down: a malformed line still leaves a widget on
+    ;; the bar saying something is wrong, rather than tearing it off.
+    :tooltip {kimai?.tooltip ?: "kimai: no answer"}
+    (expandable
+      ;; Plain, with no `|| failed` behind it any more. Left click is the fold
+      ;; now, and a force-open would make that click do nothing on exactly the
+      ;; machine state where you most want the bar to shut up -- a click that
+      ;; lies. The failure stays legible folded instead: retracted-classes puts
+      ;; the same .kimai.failed colour on the collapsed ring.
+      :expanded {expand_kimai}
+      :label "󰥔"
+      :icon-offset {-0.1}
+      ;; Inverted from the first version of this widget, and from the order the
+      ;; other pills use, on purpose: folding this away is the click you make
+      ;; most often, so it is the cheapest one. Right click opens kimai-gui, a
+      ;; GTK4 layer-shell popup that toggles itself on relaunch -- the click
+      ;; that finds it open is the click that dismisses it, same as
+      ;; claude-usage-gui and timers-gui. Middle click is the rare one: the
+      ;; browser, through xdg-utils (see desktop.nix).
+      ;;
+      ;; All six handlers are set because `expandable` keeps the retracted and
+      ;; the expanded halves as separate widgets; a missing one is a click that
+      ;; silently does nothing in one of the two states.
+      :onretractedclick "${EWW_CMD} update expand_kimai=${!expand_kimai}"
+      :onexpandedclick "${EWW_CMD} update expand_kimai=${!expand_kimai}"
+      :onretractedrightclick "kimai-gui &"
+      :onexpandedrightclick "kimai-gui &"
+      :onretractedmiddleclick "xdg-open @KIMAI_URL@ &"
+      :onexpandedmiddleclick "xdg-open @KIMAI_URL@ &"
+      :retracted-classes "kimai ${(kimai?.failed ?: true) ? "failed" : kimai?.state ?: ""}"
+      ;; The ring fills over what today was *supposed* to be, which is zero on a
+      ;; feriado. The CLI reports 100 there once anything is booked and 0 while
+      ;; nothing is, so this stays a plain percentage and never divides by zero.
+      :value {kimai?.day_percent ?: 0}
+      (box
+        :vexpand true
+        :valign "center"
+        :height 25
+        :orientation "h"
+        :space-evenly false
+        :class "expander kimai ${(kimai?.failed ?: true) ? "failed" : kimai?.state ?: ""}"
+        (label :text {kimai?.label ?: "kimai unreachable"})
+      )
+    )
+  )
+)
