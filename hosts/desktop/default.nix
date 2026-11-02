@@ -35,7 +35,7 @@
 
       llm = {
         enable = true;
-        llamaCppModel = "/huge-storage/llamacpp-models/gemma-4-12B-it-q6_k_m.gguf";
+        llamaCppModelsDir = "/huge-storage/llamacpp-models";
       };
 
       # Claude Code runs on VibeVM, which has no VPN of its own. This host

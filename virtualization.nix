@@ -7,6 +7,7 @@
   };
   virtualisation.libvirtd = {
     enable = true;
+    onShutdown = "shutdown";
   };
   virtualisation.spiceUSBRedirection.enable = true;
 
