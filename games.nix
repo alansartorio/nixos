@@ -77,6 +77,8 @@ in
       steam-gamescope
       #gamescope
       minecraft-notifier-script
+
+      depotdownloader
     ];
 
     services.displayManager.sessionPackages = [
@@ -88,9 +90,9 @@ in
           Exec=${steam-gamescope}/bin/steam-gamescope
           Type=Application
         '').overrideAttrs
-        (_: {
-          passthru.providedSessions = [ "steam" ];
-        })
+          (_: {
+            passthru.providedSessions = [ "steam" ];
+          })
       )
     ];
 

@@ -22,7 +22,7 @@ in
         nativeBuildInputs = [ makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/nvim \
-            --prefix PATH : ${lib.makeBinPath [tree-sitter]}
+            --prefix PATH : ${lib.makeBinPath [ tree-sitter ]}
         '';
       })
 

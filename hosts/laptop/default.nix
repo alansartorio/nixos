@@ -13,7 +13,10 @@
 
     roles.mainPc = false;
 
-    hardware.battery = true;
+    hardware = {
+      battery = true;
+      bluetooth.enable = true;
+    };
 
     ssh = {
       privateHosts = true;

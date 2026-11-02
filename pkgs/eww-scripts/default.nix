@@ -71,7 +71,7 @@ let
       }
 
       reload-bars() {
-          eww close-all -c ~/.config/eww/bar
+          eww close-all -c ~/.config/eww/bar || true
           get-monitors | while read -r monitor_id; do
               open-bar "$monitor_id"
           done
@@ -105,7 +105,7 @@ let
       reload-bars-niri() {
         monitors=$1
         echo "closing all"
-        eww close-all -c ~/.config/eww/bar
+        eww close-all -c ~/.config/eww/bar || true
         echo "$monitors" | while read -r output; do
             echo opening "$output"
             open-bar-niri "$output"
