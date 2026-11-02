@@ -1,0 +1,145 @@
+input {
+    keyboard {
+        xkb {
+            layout "us,latam"
+            options "compose:ralt"
+        }
+        repeat-delay 225
+        repeat-rate 25
+        numlock
+    }
+    touchpad {
+        tap
+        natural-scroll
+    }
+    focus-follows-mouse max-scroll-amount="20%"
+    mod-key "Super"
+    mod-key-nested "Alt"
+}
+
+clipboard {
+    disable-primary
+}
+
+spawn-at-startup "mako"
+spawn-at-startup "eww-launcher"
+@HASS_SPAWN@
+
+
+xwayland-satellite {
+}
+
+environment {
+    DISPLAY ":0"
+    QT_QPA_PLATFORM "wayland"
+}
+
+cursor {
+    xcursor-theme "BreezeX-RosePine-Linux"
+    xcursor-size 28
+}
+
+prefer-no-csd
+
+layout {
+    background-color "#121319"
+}
+
+output "LG Electronics 2D FHD LG TV 0x01010101" {
+    mode "1920x1080@60"
+    scale 1.0
+    //transform "90"
+    position x=0 y=0
+    variable-refresh-rate // on-demand=true
+    backdrop-color "#001100"
+}
+
+
+output "LG Electronics 24GL600F 0x000731FE" {
+    mode "1920x1080@144"
+    scale 1.0
+    position x=1920 y=0
+    variable-refresh-rate // on-demand=true
+    focus-at-startup
+    backdrop-color "#001100"
+}
+
+output "AU Optronics 0x21ED Unknown" {
+    mode "1920x1080@60"
+    scale 1.0
+    position x=0 y=0
+    variable-refresh-rate // on-demand=true
+    focus-at-startup
+    backdrop-color "#001100"
+}
+
+binds {
+    Mod+Shift+Slash { show-hotkey-overlay; }
+
+    // Example volume keys mappings for PipeWire & WirePlumber.
+    // The allow-when-locked=true property makes them work even when the session is locked.
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
+    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    
+    // Example brightness key mappings for brightnessctl.
+    XF86MonBrightnessUp allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+10%"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "10%-"; }
+
+    // movement
+    Mod+K { focus-window-or-workspace-up; }
+    Mod+J { focus-window-or-workspace-down; }
+    Mod+L { focus-column-right; }
+    Mod+H { focus-column-left; }
+
+    Mod+Shift+K { move-window-up; }
+    Mod+Shift+J { move-window-down; }
+    //Mod+Shift+L { move-column-right; }
+    //Mod+Shift+H { move-column-left; }
+    Mod+Shift+L { consume-or-expel-window-right; }
+    Mod+Shift+H { consume-or-expel-window-left; }
+
+    Mod+Ctrl+K { focus-workspace-up; }
+    Mod+Ctrl+J { focus-workspace-down; }
+    Mod+Ctrl+L { focus-monitor-right; }
+    Mod+Ctrl+H { focus-monitor-left; }
+    
+    Mod+Home { focus-column-first; }
+    Mod+End  { focus-column-last; }
+    
+    Mod+Ctrl+Home { move-column-to-first; }
+    Mod+Ctrl+End  { move-column-to-last; }
+
+    Mod+WheelScrollDown  { focus-workspace-down; }
+    Mod+WheelScrollUp    { focus-workspace-up; }
+    Mod+WheelScrollRight                { focus-column-right; }
+    Mod+WheelScrollLeft                 { focus-column-left; }
+
+    // window manipulation
+    Mod+O repeat=false { toggle-overview; }
+    Mod+W { close-window; }
+    Mod+F {fullscreen-window;}
+    Mod+S {toggle-window-floating;}
+    Mod+Shift+F {maximize-column;}
+
+    // spawns
+    Mod+Return repeat=false { spawn "alacritty"; }
+    Mod+R repeat=false { spawn "rofi" "-show" "run"; }
+    Mod+E repeat=false { spawn "dolphin"; }
+    Mod+P repeat=false { spawn "alacritty" "-e" "zsh" "-c" "PYTHONSTARTUP=$HOME/.local/share/mathstart.py python"; }
+    //Mod+T repeat=false { spawn "notify-send" "hola"; }
+    Mod+T repeat=false { spawn "/usr/bin/env" "bash" "-c" "echo hola > ~/.test"; }
+
+    Mod+Shift+S { screenshot; }
+    Mod+Shift+W { screenshot-window write-to-disk=false; }
+    //Mod+Shift+S repeat=false { spawn "grim -g \"$(slurp -d)\" - | wl-copy"; }
+
+    Mod+Space repeat=false { switch-layout "next"; }
+
+    // implement window screenshot
+    //Mod+Shift+W repeat=false { spawn "grim -g \"$(hyprctl activewindow -j | jq -j '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')\" - | wl-copy"; }
+
+    Mod+Ctrl+Shift+G allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Mod+M { quit; }
+}

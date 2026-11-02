@@ -88,19 +88,6 @@
         "type": "github"
       }
     },
-    "hardware-configuration": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1749808664,
-        "narHash": "sha256-TBx7q803SVdvRjroxhR+Jpo7mzYzC5eK5Ovug3faJxY=",
-        "path": "/etc/nixos/hardware-configuration.nix",
-        "type": "path"
-      },
-      "original": {
-        "path": "/etc/nixos/hardware-configuration.nix",
-        "type": "path"
-      }
-    },
     "hass-light-eww": {
       "inputs": {
         "flake-utils": [
@@ -206,7 +193,7 @@
         "nixpkgs-stable": "nixpkgs-stable",
         "pipewire-screenaudio": "pipewire-screenaudio",
         "rubik": "rubik",
-        "system-config": "system-config"
+        "sops-nix": "sops-nix"
       }
     },
     "rubik": {
@@ -254,19 +241,24 @@
         "type": "github"
       }
     },
-    "system-config": {
+    "sops-nix": {
       "inputs": {
-        "hardware-configuration": "hardware-configuration"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
-        "lastModified": 1782140381,
-        "narHash": "sha256-ZB08ADUvxzhFJybKKf9NSQ8phoDK0cGdjOtoBU+qJGo=",
-        "path": "/home/alan/nixos/config",
-        "type": "path"
+        "lastModified": 1783174389,
+        "narHash": "sha256-aCWC8ngycU7OdJrU2+Je3qf+1a2ykuBvpPhZT/9tXMc=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "f1406619a3884cd5c47992a70b8b35c9c0fcb4c9",
+        "type": "github"
       },
       "original": {
-        "path": "/home/alan/nixos/config",
-        "type": "path"
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "type": "github"
       }
     },
     "systems": {

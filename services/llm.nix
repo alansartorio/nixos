@@ -1,14 +1,21 @@
 {
+  config,
   pkgs,
   lib,
-  system-config,
   ...
 }:
 let
-  cfg = system-config.options.llm;
+  cfg = config.my.services.llm;
 in
 {
-  config = lib.mkIf (cfg != null) {
+  config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.llamaCppModel != null;
+        message = "my.services.llm.enable requires my.services.llm.llamaCppModel to be set.";
+      }
+    ];
+
     services.ollama = {
       enable = true;
       package = pkgs.ollama;
@@ -27,7 +34,7 @@ in
       enable = true;
       package = pkgs.llama-cpp-vulkan;
       settings = {
-        model = cfg.llama-cpp.model;
+        model = cfg.llamaCppModel;
         host = "0.0.0.0";
         port = 11435;
         ctx-checkpoints = 0;
@@ -55,6 +62,5 @@ in
       wantedBy = lib.mkForce [ ];
       stopIfChanged = lib.mkForce true;
     };
-
   };
 }

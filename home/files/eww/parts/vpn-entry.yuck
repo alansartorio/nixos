@@ -1,0 +1,5 @@
+    (metric :label {vpn ? "" : ""}
+            :value {vpn ? 100 : 0}
+            :icon-offset {-0.05}
+            :onclick "nmcli con ${vpn ? "down" : "up"} \"@VPN_CONNECTION@\" 2>&1 | xargs -0 notify-send -t 500 &"
+            :onrightclick "nm-connection-editor &")

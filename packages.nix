@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  system-config,
   inputs,
   ...
 }:
@@ -14,6 +13,7 @@ let
   cli-utils = with pkgs; [
     openssl
     age
+    sops
     alsa-utils
     brightnessctl
     zip

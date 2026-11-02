@@ -1,0 +1,2 @@
+(deflisten vpn :initial ""
+  "poll-vpn-status \"@VPN_CONNECTION@\"")

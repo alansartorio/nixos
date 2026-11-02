@@ -1,0 +1,296 @@
+(defvar day "0")
+(defvar month "0")
+(defvar year "0")
+
+
+(defwidget bar [monitor_id monitor_index]
+  (centerbox :class "bar" :orientation "h"
+    (workspaces
+        :monitor_id monitor_id
+        :monitor_index monitor_index)
+    (center)
+    (sidestuff)))
+
+(defvar show_tray false)
+
+(defwidget bar-niri []
+  (centerbox :class "bar" :orientation "h"
+    (box)
+    (center)
+    (box :space-evenly false
+      (revealer :reveal {show_tray} :duration 0 :halign "start"
+        (systray :prepend-new true :halign "start"))
+      (box :hexpand true)
+      (sidestuff))
+  )
+)
+
+(defwidget center []
+  (clock))
+
+(defwidget battery [id]
+  (box
+    :class "battery-container"
+    (box :class "battery-container-inner"
+      (label
+              :text "${round((EWW_BATTERY[id].capacity), 0)}% ${EWW_BATTERY[id].status}"
+    ))))
+
+(defvar expand_clock false)
+
+(defwidget clock []
+  (button
+    :class "clock"
+    :valign "baseline"
+    :onclick "popup_calendar"
+    :onrightclick "${EWW_CMD} update expand_clock=${!expand_clock}"
+    :onmiddleclick "${EWW_CMD} update show_tray=${!show_tray}"
+    (stack :transition "slidedown" :selected {expand_clock ? 1 : 0}
+      (box :space-evenly false
+        (box :class "clock-time" (label :text {time}))
+        (box :class "clock-date" (label :text {date}))
+      )
+      (box :space-evenly false
+        (box :class "clock-time" (label :text {time + ":${time_sec}"}))
+        (box :class "clock-date" (label :text {date_num}))
+      )
+    )
+  )
+)
+
+
+;; Calendar window
+(defwindow calendar
+  :monitor 0
+  :geometry 
+    (geometry 
+      :x "43%"
+      :y "20px"
+      :width "14%"
+      :height "100px")
+      
+	(box :class "cal-box" 
+		 :orientation "v"
+	(box :class "cal-inner-box"
+    (calendar
+      :class "cal"
+      :day day
+      :month month
+      :year year
+      ;:show-details "true"
+      ;:show-heading "true"
+      ;:show-day-names "true"
+      )
+    ))
+)
+
+;(defwidget keyboard [] 
+    ;(box
+      ;:orientation "v"
+      ;:space-evenly false
+      ;:valign "fill"
+      ;:halign "center"
+      ;(eventbox 
+        ;:cursor "pointer"
+        ;:tooltip "Change layout to US english"
+        ;(button
+          ;:onclick "kb_layouts set us"
+          ;:valign "center"
+          ;"US"))
+      ;(box :vexpand true :class "layout-separator")
+      ;(eventbox
+        ;:cursor "pointer"
+        ;:tooltip "Change layout to US spanish"
+        ;(button
+          ;:onclick "kb_layouts set es"
+          ;:valign "center"
+          ;"ES")
+          ;)))
+(defvar expand_cpu true)
+
+(defwidget expandable [
+    expanded label
+    ?onretractedclick ?onretractedmiddleclick ?onretractedrightclick
+    ?onexpandedclick ?onexpandedmiddleclick ?onexpandedrightclick
+    ?icon-offset ?value]
+  (stack :transition "crossfade" :selected {expanded ? 1 : 0}
+    (metric
+        :halign "start"
+        :label label
+        :icon-offset icon-offset
+        :onclick onretractedclick
+        :onmiddleclick onretractedmiddleclick
+        :onrightclick onretractedrightclick
+        :value value)
+    (button
+        :onclick onexpandedclick
+        :onmiddleclick onexpandedmiddleclick
+        :onrightclick onexpandedrightclick
+      (overlay :halign "start"
+        (box
+          :hexpand true
+          :vexpand true
+          (children)
+        )
+        (metric :halign "start" :label label :icon-offset icon-offset :fill true :value 100)
+      )
+    )
+  )
+)
+
+(defwidget expandable_cpu []
+  (expandable
+    :expanded {expand_cpu}
+    :label ""
+    :icon-offset {-0.14}
+    :onretractedclick "${EWW_CMD} update expand_cpu=${!expand_cpu}"
+    :onexpandedclick "${EWW_CMD} update expand_cpu=${!expand_cpu}"
+    :value "${EWW_CPU.avg}"
+      (box
+        :vexpand true
+        :valign "center"
+        :orientation "h"
+        :visible {expand_cpu}
+        :class "expander cpu-usage"
+        (for cpu in {EWW_CPU.cores}
+          (transform
+            ;:scale-y "${cpu.usage}%"
+            :translate-y "${100 - cpu.usage}%"
+            (box
+              :valign "fill"
+              :width 5
+              :class "cpu-usage-bar"
+              :style {cpu.usage > 70 ? "background-color: orange" : ""})
+          )
+      ))
+    )
+)
+
+@CLOCKIN_WIDGET@
+
+(defwidget sidestuff []
+  (box :class "sidestuff" :orientation "h" :space-evenly false :halign "end"
+@CLOCKIN_ENTRY@
+@VPN_ENTRY@
+    (metric :label {volume.mute ? "󰖁" : "󰕾"}
+            :value {volume.volume}
+            :onscroll "pamixer --allow-boost --set-limit 150 $(test {} = up && echo -i || echo -d) 1"
+            :onclick "pamixer --toggle-mute"
+            :onrightclick "pavucontrol &")
+@HASS_ENTRY@
+    (expandable_cpu)
+    (metric :label ""
+            :icon-offset {-0.14}
+            :value {EWW_RAM.used_mem_perc})
+    (metric :label "󱐖"
+            :value {round((1 - (EWW_DISK["/"].free / EWW_DISK["/"].total)) * 100, 0)})
+@BATTERY_ENTRY@
+    ;(keyboard)
+  )
+)
+
+@HASS_LISTEN@
+
+(deflisten workspaces :initial "[]" "get-workspaces")
+(deflisten current_workspace :initial "[1]" "get-active-workspace")
+
+(defwidget workspaces [monitor_id monitor_index]
+    (eventbox :onscroll "change-active-workspace ${monitor_id} {} ${current_workspace[monitor_id]}" :class "workspaces-widget"
+      (box :halign "start" :space-evenly true
+        ; (label :text "${workspaces}${current_workspace}" :visible false)
+        (for workspace in {workspaces[monitor_index]}
+          (eventbox :cursor "pointer" :onclick "hyprctl dispatch workspace ${workspace.id}"
+            (box 
+              :valign "center" 
+              :class "workspace-entry ${workspace.id == current_workspace[monitor_id] ? "current" : ""} ${workspace.windows > 0 ? "occupied" : "empty"}"
+              (label :text "${workspace.id}")
+              )
+            )
+          )
+        )
+      )
+  )
+
+(defwidget music []
+  (box :class "music"
+       :orientation "h"
+       :space-evenly false
+       :halign "center"
+    {music != "" ? "🎵${music}" : ""}))
+
+
+(defwidget metric [label value ?icon-offset ?halign ?visible ?onscroll
+    ?onclick ?onmiddleclick ?onrightclick
+    ?fill ?label-classes]
+  (box :visible visible :halign halign :style "margin: 0 6px"
+    (eventbox :onscroll onscroll
+      (overlay
+        (circular-progress :width 30 :class "circular-indicator" :value "${value <= 100 ? value : 100}" :thickness {(fill ?: false) ? 30 / 2 : 3})
+        (button
+            :class "label ${label-classes}" :hexpand true :vexpand true
+            :onclick onclick :onrightclick onrightclick :onmiddleclick onmiddleclick
+            (label
+                :hexpand true :vexpand true :justify "center" :xalign {(icon-offset ?: 0) + 0.5} :yalign 0.5
+                :text label))
+      ))))
+
+
+
+(deflisten music :initial ""
+  "playerctl --follow metadata --format '{{ artist }} - {{ title }}' || true")
+
+@VPN_LISTEN@
+
+(deflisten volume :initial "{\"volume\": 0, \"mute\": false}"
+  "getvol")
+
+(defpoll time_sec :interval "1s"
+  "date '+%S'")
+(defpoll time :interval "1s"
+  "date '+%H:%M'")
+
+(defpoll date_num :interval "10s"
+  "date '+%Y-%m-%d'")
+(defpoll date :interval "10s"
+  "date '+%b %d, %Y'")
+
+(defwindow main-bar [monitor_id monitor_index]
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100%"
+                      :height "10px"
+                      :anchor "top center")
+  :exclusive true
+  (bar
+    :monitor_id monitor_id
+    :monitor_index monitor_index))
+
+(defwindow secondary-bar [monitor_id monitor_index]
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100%"
+                      :height "30px"
+                      :anchor "top center")
+  :exclusive true
+  (bar
+    :monitor_id monitor_id
+    :monitor_index monitor_index))
+
+(defwindow main-bar-niri [monitor_id monitor_index]
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100%"
+                      :height "10px"
+                      :anchor "top center")
+  :exclusive true
+  (bar-niri))
+
+(defwindow secondary-bar-niri [monitor_id monitor_index]
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100%"
+                      :height "10px"
+                      :anchor "top center")
+  :exclusive true
+  (bar-niri))
+

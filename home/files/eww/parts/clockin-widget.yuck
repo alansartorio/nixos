@@ -1,0 +1,23 @@
+
+(deflisten clockin "clockin-integration @CLOCKIN_PROJECT@")
+(defvar clockin_synching false)
+
+(defwidget clockin []
+  (expandable
+    :expanded {clockin.session == "started"}
+    :label {clockin_synching ? "󰇘" : ""}
+    :icon-offset {clockin_synching ? 0 : -0.1}
+    :onretractedclick "alacritty -e env CLOCKIN_PROJECT=@CLOCKIN_PROJECT@ clockin &"
+    :onretractedrightclick "alacritty -e env CLOCKIN_PROJECT=@CLOCKIN_PROJECT@ clockin edit &"
+    :onretractedmiddleclick "env 'EWW_CMD=${EWW_CMD}' sync-clockin &"
+    :value 0
+    (box
+      :vexpand true
+      :valign "center"
+      :height 25
+      :orientation "h"
+      :class "expander"
+      (label :text "${clockin.last_session_time} / ${clockin.today_time}")
+    )
+  )
+)
