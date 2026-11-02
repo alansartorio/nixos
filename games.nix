@@ -13,8 +13,6 @@ let
       pkgs.flatpak
     ];
     text = ''
-      udisksctl mount -b /dev/vg0/games || true
-      udisksctl mount -b /dev/disk/by-partlabel/Data || true
 
       # assume gamescope is installed via security wrapper
       gamescope --force-grab-cursor --steam -O DP-2 -- flatpak run com.valvesoftware.Steam -pipewire-dmabuf -tenfoot
@@ -62,6 +60,7 @@ in
 {
   imports = [
     ./games/beamng.nix
+    ./games/shooterspool.nix
   ];
 
   options.games = {
@@ -76,6 +75,8 @@ in
       steam-gamescope
       #gamescope
       minecraft-notifier-script
+
+      depotdownloader
     ];
 
     services.displayManager.sessionPackages = [
@@ -87,9 +88,9 @@ in
           Exec=${steam-gamescope}/bin/steam-gamescope
           Type=Application
         '').overrideAttrs
-        (_: {
-          passthru.providedSessions = [ "steam" ];
-        })
+          (_: {
+            passthru.providedSessions = [ "steam" ];
+          })
       )
     ];
 
@@ -137,7 +138,7 @@ in
         ignore novideo
 
         whitelist ''${HOME}/.config/openxr
-        noblacklist /run/media/alan/Games
+        noblacklist /games
 
         ignore seccomp
       '';

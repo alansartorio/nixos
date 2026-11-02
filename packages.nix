@@ -133,7 +133,9 @@ in
     builtins.toJSON {
       name = "com.icedborn.pipewirescreenaudioconnector";
       description = "Connector to communicate with the browser";
-      path = "${inputs.pipewire-screenaudio.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/connector-rs";
+      path = "${
+        inputs.pipewire-screenaudio.packages.${pkgs.stdenv.hostPlatform.system}.default
+      }/bin/connector-rs";
       #path = "/home/alan/Documents/PipewireScreenaudio/pipewire-screenaudio/native/connector-rs/target/debug/connector-rs";
       type = "stdio";
       allowed_origins = [

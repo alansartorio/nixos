@@ -1,46 +1,63 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
 let
-  libvirtIsolationRules = [
+  # The only things the libvirt guest may reach on this host. Everything else
+  # it aims at the LAN -- including the rest of this host -- is dropped below,
+  # so a port that is not listed here does not exist as far as VibeVM is
+  # concerned. Keep the log tags short: nftables truncates long prefixes.
+  guestAllowedHostPorts = [
     {
+      ports = "11434-11435";
+      tag = "llm";
+    }
+  ]
+  ++ lib.optional config.my.services.claudeMcp.enable {
+    # The read-only MCP proxy. Deliberately derived from the option rather
+    # than repeated, so the hole and the listener cannot drift apart.
+    ports = toString config.my.services.claudeMcp.port;
+    tag = "mcp";
+  };
+
+  libvirtIsolationRules =
+    (map (allowed: {
       "@family" = "ipv4";
       "@priority" = "100";
       destination = {
         "@address" = "192.168.100.1/32";
       };
       port = {
-        "@port" = "11434-11435";
+        "@port" = allowed.ports;
         "@protocol" = "tcp";
       };
       log = {
-        "@prefix" = "GUEST -> HOST allowed ";
+        "@prefix" = "GUEST -> HOST ${allowed.tag} ";
         "@level" = "info";
       };
       accept = "";
-    }
-  ]
-  ++ (map
-    (prefix: {
-      "@family" = "ipv4";
-      "@priority" = "1000";
-      destination = {
-        "@address" = prefix;
-      };
-      log = {
-        "@prefix" = "GUEST -> LAN blocked ";
-        "@level" = "warning";
-      };
-      drop = "";
-    })
-    [
-      "10.0.0.0/8"
-      "172.16.0.0/12"
-      "192.168.0.0/16"
-    ]
-  );
+    }) guestAllowedHostPorts)
+    ++ (map
+      (prefix: {
+        "@family" = "ipv4";
+        "@priority" = "1000";
+        destination = {
+          "@address" = prefix;
+        };
+        log = {
+          "@prefix" = "GUEST -> LAN blocked ";
+          "@level" = "warning";
+        };
+        drop = "";
+      })
+      [
+        "10.0.0.0/8"
+        "172.16.0.0/12"
+        "192.168.0.0/16"
+      ]
+    );
 in
 {
   environment.systemPackages = with pkgs; [
@@ -50,6 +67,7 @@ in
     curl
     socat
     nmap
+    proxychains-ng
     ethtool
     mitmproxy
     networkmanagerapplet

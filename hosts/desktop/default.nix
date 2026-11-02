@@ -53,7 +53,34 @@
 
       llm = {
         enable = true;
-        llamaCppModel = "/huge-storage/llamacpp-models/gemma-4-12B-it-q6_k_m.gguf";
+        llamaCppModelsDir = "/huge-storage/llamacpp-models";
+      };
+
+      # Claude Code runs on VibeVM, which has no VPN of its own. This host
+      # does, so it holds the intranet credentials and hands the guest one
+      # unauthenticated port that speaks MCP and refuses to write.
+      claudeMcp = {
+        enable = true;
+
+        gitea = {
+          enable = true;
+          host = "https://repo.intra.chyps.com.ar";
+        };
+
+        outline = {
+          enable = true;
+          url = "https://docs.intra.chyps.com.ar";
+        };
+
+        taiga = {
+          enable = true;
+          url = "https://proj.intra.chyps.com.ar";
+        };
+
+        elastic = {
+          enable = true;
+          url = "https://elasticsearch.metatron.intra.chyps.com.ar";
+        };
       };
     };
   };

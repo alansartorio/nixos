@@ -8,6 +8,7 @@
   imports = [
     ./services/llm.nix
     ./services/claude-usage.nix
+    ./services/claude-mcp.nix
   ];
 
   services.immich = {
