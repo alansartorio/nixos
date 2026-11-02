@@ -47,6 +47,21 @@
         "type": "github"
       }
     },
+    "crane": {
+      "locked": {
+        "lastModified": 1785782307,
+        "narHash": "sha256-MPaRdVkf6zZP5fCPxYCi8Dr4pZzgmXzg8T9nVEbp3Mw=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "2c71e194474d13de031d729b729c968ddbe3507f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
     "croptool": {
       "inputs": {
         "flake-utils": [
@@ -85,29 +100,6 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "hass-light-eww": {
-      "inputs": {
-        "flake-utils": [
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1772412672,
-        "narHash": "sha256-60M9169hohhLC92ZeEV8iKMJZOBQ6p2Uj3sGamrm+uw=",
-        "owner": "alansartorio",
-        "repo": "hass-light-eww",
-        "rev": "cc2730d54b2f1b4ab3a8e373b6223f90fd08cb23",
-        "type": "github"
-      },
-      "original": {
-        "owner": "alansartorio",
-        "repo": "hass-light-eww",
         "type": "github"
       }
     },
@@ -187,13 +179,13 @@
         "clockin": "clockin",
         "croptool": "croptool",
         "flake-utils": "flake-utils",
-        "hass-light-eww": "hass-light-eww",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nixpkgs-stable": "nixpkgs-stable",
         "pipewire-screenaudio": "pipewire-screenaudio",
         "rubik": "rubik",
-        "sops-nix": "sops-nix"
+        "sops-nix": "sops-nix",
+        "widgets": "widgets"
       }
     },
     "rubik": {
@@ -273,6 +265,30 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "widgets": {
+      "inputs": {
+        "crane": "crane",
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793653789,
+        "narHash": "sha256-Vmo4ePg1/PFy4BGKS7Q1BWXwFLTBI5n6TSbiy8U6WLo=",
+        "owner": "alansartorio",
+        "repo": "widgets",
+        "rev": "a399caf061705bbde33043361ba01a84be8e5ba2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alansartorio",
+        "repo": "widgets",
         "type": "github"
       }
     }

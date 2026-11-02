@@ -45,7 +45,17 @@
 
     services = {
       hass.enable = false;
+      timers.enable = true;
       llm.enable = false;
+      # Off for now rather than by accident: this machine still uses clockin
+      # (desktop.clockinProject above), and two pills answering the same
+      # question is one too many. Turning it on is `enable` plus the same `url`
+      # the desktop uses; the sops secret follows the enable on its own.
+      kimai.enable = false;
+      # Deliberate, not just the default: the daemon is a second poller with a
+      # state dir and a db of its own, and one machine already keeps that
+      # history. No pill on this bar is the price, and it is worth paying.
+      claudeUsage.enable = false;
     };
   };
 }

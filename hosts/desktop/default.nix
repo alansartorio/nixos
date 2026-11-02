@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -32,6 +33,23 @@
 
     services = {
       hass.enable = true;
+      timers.enable = true;
+
+      kimai = {
+        enable = true;
+        # Behind the same VPN as desktop.vpnConnection above, so the pill says
+        # "unreachable" whenever that is down -- which is the point of it saying
+        # anything at all.
+        url = "https://kimai.intra.chyps.com.ar";
+      };
+
+      claudeUsage = {
+        enable = true;
+        # Claude Code runs on vibevm, so the credentials to refresh from live
+        # there. The key this reads and the known_hosts entry behind it are set
+        # up out of band, under the daemon's state dir.
+        tokenRefreshCommand = "${pkgs.openssh}/bin/ssh -o BatchMode=yes alan@vibevm.local";
+      };
 
       llm = {
         enable = true;

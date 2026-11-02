@@ -7,6 +7,7 @@
     ./niri.nix
     ./hyprland.nix
     ./eww.nix
+    ./widgets.nix
     ./vmpk.nix
   ];
 }

@@ -7,6 +7,12 @@
 # Dropped on the way over: `getram` (nothing referenced it -- the bar reads
 # EWW_RAM.used_mem_perc directly) and `kb_layouts` (referenced only from the
 # commented-out keyboard widget, and the script never existed in the repo).
+#
+# And later `popup_calendar`, which opened and closed eww's own calendar window
+# after pushing today's date into three defvars. The calendar is `calendar-gui`
+# now -- a GTK4 layer-shell window that knows the date itself and toggles on
+# relaunch -- so the clock spawns it directly and there is nothing left to
+# script. `coreutils` went with it: `date` was the only thing that wanted it.
 {
   lib,
   symlinkJoin,
@@ -16,7 +22,6 @@
   eww,
   niri,
   procps,
-  coreutils,
   findutils,
   pamixer,
   pulseaudio,
@@ -222,24 +227,6 @@ let
     '';
   };
 
-  popup_calendar = writeShellApplication {
-    name = "popup_calendar";
-    runtimeInputs = [
-      eww
-      coreutils
-    ];
-    text = ''
-      eww_cmd=(eww -c "$HOME/.config/eww/bar")
-
-      "''${eww_cmd[@]}" close calendar || {
-        "''${eww_cmd[@]}" update day="$(date '+%d')"
-        "''${eww_cmd[@]}" update month="$(date '+%m')"
-        "''${eww_cmd[@]}" update year="$(date '+%y')"
-        "''${eww_cmd[@]}" open calendar
-      }
-    '';
-  };
-
   sync-clockin = writeShellApplication {
     name = "sync-clockin";
     runtimeInputs = [
@@ -265,7 +252,6 @@ symlinkJoin {
     get-active-workspace
     get-workspaces
     getvol
-    popup_calendar
     sync-clockin
   ];
   meta.description = "Shell helpers for the eww bar and compositor session";

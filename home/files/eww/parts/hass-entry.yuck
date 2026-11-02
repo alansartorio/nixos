@@ -1,6 +1,6 @@
     (metric :label {hass-lamp.state == "loading" || hass-lamp.type == "loading" ? "󰇘" : hass-lamp.state == "off" ? "󰹐" : hass-lamp.type == "brightness" ? "󰛨" : "󰔏"}
             :value {hass-lamp.value ?: 0}
             :icon-offset {hass-lamp.state == "loading" || hass-lamp.type == "loading" ? 0 : hass-lamp.state == "off" ? -0.05 : hass-lamp.type == "brightness" ? -0.08 : 0}
-            :onscroll "socat -u - UNIX-SENDTO:/tmp/hass-light.sock <<< $(test {} = up && printf increase || printf decrease)"
-            :onclick "socat -u - UNIX-SENDTO:/tmp/hass-light.sock <<< toggle_state"
-            :onrightclick "socat -u - UNIX-SENDTO:/tmp/hass-light.sock <<< toggle_mode")
+            :onscroll "socat -u - UNIX-SENDTO:$XDG_RUNTIME_DIR/hass/command.sock <<< $(test {} = up && printf increase || printf decrease)"
+            :onclick "socat -u - UNIX-SENDTO:$XDG_RUNTIME_DIR/hass/command.sock <<< toggle_state"
+            :onrightclick "socat -u - UNIX-SENDTO:$XDG_RUNTIME_DIR/hass/command.sock <<< toggle_mode")
