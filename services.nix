@@ -7,6 +7,7 @@
 {
   imports = [
     ./services/llm.nix
+    ./services/claude-mcp.nix
   ];
 
   services.immich = {

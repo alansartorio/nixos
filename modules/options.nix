@@ -217,6 +217,150 @@ in
           default = null;
         };
       };
+
+      # Read-only MCP servers for Claude Code on VibeVM, behind a filtering
+      # proxy. See services/claude-mcp.nix for why the enforcement lives on
+      # this machine rather than in Claude Code's own config.
+      claudeMcp = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Run the read-only MCP stack and expose it to the libvirt guest.
+            Only meaningful on a host that holds the CHYPS VPN, since every
+            backend reaches the intranet through it.
+          '';
+        };
+
+        listenAddress = mkOption {
+          type = types.str;
+          default = "192.168.100.1";
+          description = ''
+            Address the filtering proxy binds. Defaults to this host's address
+            on the libvirt network -- the one interface the guest can reach,
+            and deliberately not 0.0.0.0: the LAN has no business here.
+          '';
+        };
+
+        port = mkOption {
+          type = types.port;
+          default = 18100;
+          description = ''
+            Port for the filtering proxy. Must match the accept rule in
+            networking.nix, which is the only hole punched for the guest.
+          '';
+        };
+
+        gitea = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Expose Gitea, via upstream's own MCP server in --read-only mode.";
+          };
+
+          host = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "https://repo.intra.chyps.com.ar";
+            description = ''
+              Base URL of the Gitea instance. The token behind it wants only
+              the read:* scopes -- that, not the --read-only flag, is what
+              makes a write impossible.
+            '';
+          };
+        };
+
+        outline = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description =
+              ""
+              + "Expose the Outline wiki through Outline's own MCP server at\n"
+              + "<url>/mcp, which every workspace ships and an admin enables\n"
+              + "under Settings -> AI. Nothing is packaged or run: the proxy\n"
+              + "talks to Outline directly and attaches the API key.\n\n"
+              + "Requires `tools`.";
+          };
+
+          url = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "https://docs.intra.chyps.com.ar";
+            description = "Outline's base URL, with no path. /mcp is appended.";
+          };
+
+        };
+
+        taiga = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description = ''
+              Expose Taiga. The one route with no second layer: its MCP server
+              has no read-only mode and authenticates as an ordinary user with
+              full write rights, so the proxy's tools/call allowlist is the
+              whole of the enforcement. Note that this puts a real Taiga
+              password, not a scoped token, in sops.
+            '';
+          };
+
+          url = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "https://proj.intra.chyps.com.ar";
+            description =
+              ""
+              + "Taiga's base URL, WITHOUT /api/v1. pytaigaclient appends the\n"
+              + "version itself (client.py: urljoin(host, \"api/v1/\")), so a\n"
+              + "value ending in /api/v1 yields /api/api/v1/auth, which 404s.\n"
+              + "The failure is quiet: auto-authentication logs the error at\n"
+              + "startup, the unit stays running, and every tool then reports\n"
+              + "\"no default session available\" as though the credentials were\n"
+              + "missing rather than the URL being wrong.";
+          };
+        };
+
+        elastic = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
+            description =
+              ""
+              + "Expose Elasticsearch through Elastic's own MCP server.\n\n"
+              + "Talks to Elasticsearch directly rather than to Kibana's Agent\n"
+              + "Builder MCP endpoint that upstream now prefers: Agent Builder\n"
+              + "needs an Enterprise subscription. Elasticsearch's own API keys\n"
+              + "and role descriptors are Basic-tier and enforce read-only at\n"
+              + "the source, which is the stronger layer anyway.";
+          };
+
+          url = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "https://elasticsearch.metatron.intra.chyps.com.ar";
+            description =
+              ""
+              + "Elasticsearch REST endpoint -- not Kibana. No :9200 when a\n"
+              + "reverse proxy fronts it on 443.\n\n"
+              + "The API key behind it wants a role descriptor of:\n\n"
+              + "  cluster: [ monitor ]\n"
+              + "  indices: names [ <patterns> ],\n"
+              + "           privileges [ read view_index_metadata monitor ]\n\n"
+              + "monitor is needed in BOTH places. _cat/indices and _cat/shards\n"
+              + "check the cluster privilege and then the index privilege for\n"
+              + "every index they would return, and neither read nor\n"
+              + "view_index_metadata satisfies the second check -- so with\n"
+              + "cluster monitor alone, list_indices and get_shards 403 while\n"
+              + "search and esql work, which reads like a cluster problem and\n"
+              + "is not one. Everything here is read-only.\n\n"
+              + "Reissue the key after any change: an Elasticsearch API key\n"
+              + "freezes its privileges at creation, holding the intersection\n"
+              + "of its role_descriptors and what its creator held at that\n"
+              + "moment, so widening the role does nothing for an existing key.";
+          };
+        };
+      };
     };
   };
 }
