@@ -28,7 +28,7 @@
         #
         # `desktop` is its LAN address, so this works from the house. Away from
         # it, swap in desktop-zt.
-        Host vibevm popos
+        Host vibevm.local popos
             ProxyJump desktop
       '';
     };
