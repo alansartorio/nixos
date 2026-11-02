@@ -19,6 +19,7 @@
     ./virtualization.nix
     ./desktop.nix
     ./audio.nix
+    ./bluetooth.nix
     ./users.nix
     ./vr.nix
     ./games.nix

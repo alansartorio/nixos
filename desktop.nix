@@ -51,6 +51,7 @@
 
   programs.niri = {
     package = pkgs.niri;
+    useNautilus = false;
     enable = true;
   };
 
