@@ -1,0 +1,13 @@
+# Encryption policy for everything under secrets/.
+#
+# The recipient below is the age identity that already existed in the chezmoi
+# setup (.chezmoi.toml.tmpl), so no new key material is introduced: drop the
+# same key.txt at /var/lib/sops-nix/key.txt on a new machine and it decrypts.
+keys:
+  - &alan age1hgl4grm4nq22tv0cc0xr6ap7xs6x7hlapmdnlh4s6m2y730ylflsvqr8h6
+
+creation_rules:
+  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *alan

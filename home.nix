@@ -1,20 +1,29 @@
+# home-manager config for alan.
+#
+# Imported as a real home-manager module now, so `osConfig` gives access to the
+# NixOS side (config.my.*) instead of the old hand-rolled `import ./home.nix`.
 {
-  system-config,
+  osConfig,
   pkgs,
   lib,
   ...
 }:
+let
+  identity = osConfig.my.identity;
+  signs = identity.signingKey != null;
+in
 {
   imports = [
-    ./vmpk.nix
+    ./home
   ];
   home.packages = with pkgs; [
-    chezmoi
     less
     age
+    # Was four `#!/usr/bin/env rust-script` files applied by chezmoi.
+    desktop-scripts
   ];
 
-  home.stateVersion = system-config.options.stateVersion;
+  home.stateVersion = osConfig.my.stateVersion;
   home.username = "alan";
   home.homeDirectory = "/home/alan";
   programs.home-manager.enable = true;
@@ -23,21 +32,21 @@
     enable = true;
     settings = {
       user = {
-        name = system-config.options.fullName;
-        email = system-config.options.email;
-        signingkey = system-config.options.signingKey;
-      };
+        name = identity.fullName;
+        email = identity.email;
+      }
+      // lib.optionalAttrs signs { signingkey = identity.signingKey; };
       init.defaultBranch = "main";
       core.excludesFile = "~/.gitignore";
-      commit.gpgsign = system-config.options.signingKey != null;
+      commit.gpgsign = signs;
     };
     includes = [
       {
-        condition = "gitdir:${system-config.options.work.dir}";
+        condition = "gitdir:${identity.work.dir}";
         contents = {
           user = {
-            name = system-config.options.fullName;
-            email = system-config.options.work.email;
+            name = identity.fullName;
+            email = identity.work.email;
           };
         };
       }

@@ -34,7 +34,6 @@
     # needed for gnome file picker
     nautilus
 
-    chezmoi
     inputs.hass-light-eww.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 

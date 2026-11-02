@@ -1,6 +1,6 @@
 {
+  config,
   pkgs,
-  system-config,
   ...
 }:
 let
@@ -65,7 +65,7 @@ in
     package = pkgs.wireshark;
   };
 
-  networking.hostName = system-config.options.hostname; # Define your hostname.
+  networking.hostName = config.my.hostname; # Define your hostname.
 
   # Enable networking
   networking.networkmanager = {

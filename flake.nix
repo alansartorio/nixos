@@ -1,8 +1,17 @@
 {
+  description = "Alan's NixOS configuration";
+
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "nixpkgs/nixos-25.05";
     flake-utils.url = "github:numtide/flake-utils";
+
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     clockin.url = "github:alansartorio/clockin";
     clockin.inputs.nixpkgs.follows = "nixpkgs";
     clockin.inputs.flake-utils.follows = "flake-utils";
@@ -21,74 +30,68 @@
     clipper.url = "github:alansartorio/Clipper/all-merged";
     clipper.inputs.nixpkgs.follows = "nixpkgs";
     clipper.inputs.flake-utils.follows = "flake-utils";
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    system-config.url = "/home/alan/nixos/config";
   };
+
   outputs =
     {
       nixpkgs,
-      nixpkgs-stable,
       home-manager,
-      system-config,
+      sops-nix,
       ...
     }@inputs:
-    {
-      nixosConfigurations."${system-config.options.hostname}" = nixpkgs.lib.nixosSystem rec {
-        pkgs = import nixpkgs {
-          inherit system;
-          config = {
-            allowUnfree = true;
-            rocmSupport = system-config.options.gpu == "amd";
-          };
-          overlays = [
-            (
-              let
-                pkgs-stable = import nixpkgs-stable {
-                  inherit system;
-                  allowUnfree = true;
-                  rocmSupport = system-config.options.gpu == "amd";
-                };
-                pkgs-no-gpu = import nixpkgs {
-                  inherit system;
-                  allowUnfree = true;
-                  rocmSupport = false;
-                };
-              in
-              final: prev: {
-              }
-            )
+    let
+      # Shared skeleton for every machine. The host directory supplies its
+      # hardware, its mounts and its my.* values; everything else is common.
+      mkHost =
+        name:
+        nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./modules/options.nix
+            ./modules/identity.nix
+            ./modules/nixpkgs.nix
+            ./modules/secrets.nix
+            ./modules/hass.nix
+            sops-nix.nixosModules.sops
+
+            (./hosts + "/${name}")
+            ./configuration.nix
+
+            # Make `nix shell nixpkgs#...` resolve to the same nixpkgs the
+            # system was built from.
+            { nix.registry.nixpkgs.flake = nixpkgs; }
+
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = { inherit inputs; };
+              home-manager.users.alan.imports = [ ./home.nix ];
+
+              # Without this, activation aborts as soon as it finds a file it
+              # wants to manage that it did not write -- which on the first
+              # switch is every file chezmoi ever applied. Identical files are
+              # skipped silently; only genuinely differing ones get moved to
+              # <file>.backup.
+              home-manager.backupFileExtension = "backup";
+            }
           ];
         };
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs system system-config;
-        };
-        modules = [
-          ./configuration.nix
-          # This fixes nixpkgs (for e.g. "nix shell") to match the system nixpkgs
-          (
-            { ... }:
-            {
-              nix.registry.nixpkgs.flake = nixpkgs;
-            }
-          )
-
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.alan.imports = [
-              (
-                { ... }:
-                import ./home.nix {
-                  inherit pkgs system-config;
-                  lib = nixpkgs.lib;
-                }
-              )
-            ];
-          }
-        ];
+      hosts = {
+        desktop = mkHost "desktop";
+        laptop = mkHost "laptop";
       };
+
+      # Also expose each host under its own networking.hostName, so a bare
+      # `nixos-rebuild switch --flake /path/to/repo` works on the machine
+      # itself -- that is how the old flake behaved when it was keyed on
+      # system-config.options.hostname. Derived from the config rather than
+      # hardcoded, so it cannot drift from hosts/<host>/default.nix.
+      byHostname = nixpkgs.lib.mapAttrs' (
+        _: host: nixpkgs.lib.nameValuePair host.config.my.hostname host
+      ) hosts;
+    in
+    {
+      nixosConfigurations = hosts // byHostname;
     };
 }

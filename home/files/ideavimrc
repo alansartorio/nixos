@@ -1,0 +1,29 @@
+set relativenumber
+set number
+set idearefactormode=keep
+let mapleader=" "
+nmap <leader>r <Action>(Refactorings.QuickListPopupAction)
+set surround
+set ignorecase
+" nmap <C-CR> <Action>(CompileDirty)
+nmap <silent> <A-S-F> <Action>(ReformatCode)
+map gh <Action>(ShowErrorDescription)
+
+map <C-e> <Action>(GotoFile)
+map <C-p> <Action>(FindInPath)
+
+nmap <leader>cc <Action>(CommentByLineComment)
+vmap <leader>cc <Action>(CommentByBlockComment)
+
+nmap <A-h> <Action>(PreviousTab)
+nmap <A-l> <Action>(NextTab)
+
+" VSCode like line moving
+vnoremap <A-k> dpgv
+vnoremap <A-j> dkPgv
+nnoremap <A-k> :m -2<CR>
+nnoremap <A-j> :m +1<CR>
+
+" nnoremap <leader>rn <Action>(Refactorings.)
+
+xnoremap p pgvy

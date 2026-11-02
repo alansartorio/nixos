@@ -1,11 +1,15 @@
-{ pkgs, system-config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  lib = pkgs.lib;
+  gpu = config.my.gpu;
 in
 {
-
-  boot.initrd.kernelModules = lib.optionals (system-config.options.gpu == "amd") [ "amdgpu" ];
-  systemd.tmpfiles.rules = lib.optionals (system-config.options.gpu == "amd") [
+  boot.initrd.kernelModules = lib.optionals (gpu == "amd") [ "amdgpu" ];
+  systemd.tmpfiles.rules = lib.optionals (gpu == "amd") [
     "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
   ];
 
@@ -13,7 +17,7 @@ in
     enable = true;
     extraPackages =
       with pkgs;
-      lib.optionals (system-config.options.gpu == "intel") [
+      lib.optionals (gpu == "intel") [
         intel-vaapi-driver
         intel-media-driver
       ];
