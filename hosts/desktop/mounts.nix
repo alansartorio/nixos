@@ -18,4 +18,13 @@
     fsType = "none";
     options = [ "bind" ];
   };
+
+  fileSystems."/games" = {
+    device = "/dev/disk/by-uuid/812b6e5a-3193-4558-a18c-5052efb776aa";
+    fsType = "ext4";
+    options = [
+      "nofail"
+      "noatime"
+    ];
+  };
 }

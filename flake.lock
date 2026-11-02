@@ -279,18 +279,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1791739901,
-        "narHash": "sha256-pzJT8D2E9rn+F0k8FRBfxDmJn/flzUMJA/eqgbTZRAY=",
-        "ref": "hass-retry",
-        "rev": "e2553c9f57e03ca57599fe5533d7abf6bc7e5cac",
-        "revCount": 20,
-        "type": "git",
-        "url": "ssh://alan@vibevm/home/alan/git/personal/widgets.git"
+        "lastModified": 1793653789,
+        "narHash": "sha256-Vmo4ePg1/PFy4BGKS7Q1BWXwFLTBI5n6TSbiy8U6WLo=",
+        "owner": "alansartorio",
+        "repo": "widgets",
+        "rev": "a399caf061705bbde33043361ba01a84be8e5ba2",
+        "type": "github"
       },
       "original": {
-        "ref": "hass-retry",
-        "type": "git",
-        "url": "ssh://alan@vibevm/home/alan/git/personal/widgets.git"
+        "owner": "alansartorio",
+        "repo": "widgets",
+        "type": "github"
       }
     }
   },
