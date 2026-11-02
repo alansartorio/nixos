@@ -419,8 +419,9 @@ in
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
       serviceConfig = noJit // {
-        LoadCredential = lib.optional cfg.outline.enable
-          "outline-auth:${config.sops.templates."claude-mcp-outline-auth".path}";
+        LoadCredential = lib.optional cfg.outline.enable "outline-auth:${
+          config.sops.templates."claude-mcp-outline-auth".path
+        }";
         ExecStart = lib.concatStringsSep " " [
           (lib.getExe pkgs.mcp-readonly-proxy)
           "--config ${proxyConfig}"

@@ -265,7 +265,8 @@ in
           enable = mkOption {
             type = types.bool;
             default = false;
-            description = ""
+            description =
+              ""
               + "Expose the Outline wiki through Outline's own MCP server at\n"
               + "<url>/mcp, which every workspace ships and an admin enables\n"
               + "under Settings -> AI. Nothing is packaged or run: the proxy\n"
