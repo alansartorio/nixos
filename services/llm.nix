@@ -35,6 +35,7 @@ in
       package = pkgs.llama-cpp-vulkan;
       settings = {
         models-dir = cfg.llamaCppModelsDir;
+        models-preset = toString (/. + cfg.llamaCppModelsDir + "/models.ini");
         models-max = 1;
         parallel = 1;
         models-autoload = true;
